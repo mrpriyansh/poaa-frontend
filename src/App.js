@@ -1,25 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useState, useEffect } from 'react';
+import { makeStyles, CssBaseline } from '@material-ui/core';
+import { Route } from 'react-router-dom';
+import Header from './view/Header';
+import Login from './view/Login';
+import AllAccounts from './view/AllAccounts';
+import { AuthContext } from './services/Auth';
+
+const useStyles = makeStyles({
+  root: {
+    backgroundColor: '#fff',
+  },
+});
 
 function App() {
+  const classes = useStyles();
+  const [authToken, setAuthToken] = useState(false);
+  const [currentUser, setCurrentUser] = useState();
+  useEffect(() => {
+    const token = window.localStorage.getItem('token');
+    if (token) setAuthToken(token);
+  }, []);
+  window.onstorage = () => {
+    const token = window.localStorage.getItem('token');
+    setAuthToken(token);
+  };
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <AuthContext.Provider value={{ authToken, setAuthToken, currentUser, setCurrentUser }}>
+      <div className={classes.root}>
+        <Header />
+        <Route exact path="/">
+          {authToken ? <AllAccounts /> : <Login />}
+        </Route>
+      </div>
+      <CssBaseline />
+    </AuthContext.Provider>
   );
 }
 

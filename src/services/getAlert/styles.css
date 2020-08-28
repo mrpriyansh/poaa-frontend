@@ -1,0 +1,33 @@
+/* .swal2-popup.swal2-toast{
+    flex-direction: column;
+} */
+.swal2-container{
+    z-index: 1300;
+}
+.container-class{
+    background: rgba(249,249,249,0.5);
+}
+.popup-class{
+    padding: 5vh 3vw;
+    box-sizing: border-box;
+}
+.header-class{
+    display: flex;
+    font-size: 1.2em;
+    flex-direction: column-reverse;
+}
+.title-class{
+    /* width: 7em; */
+    color: #10116E;
+    font-size: 1.5em;
+}
+
+.content-class{
+    font-size: 0.8em;
+    font-weight: bold;
+    color: #10116E;
+}
+
+.actions-class{
+    display: none;
+}
