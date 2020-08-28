@@ -14,9 +14,12 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     '& thead th': {
       fontWeight: '600',
-      color: theme.palette.primary.main,
+      color: "#fff",
       // background: theme.palette.primary.light,
-      background: theme.palette.primary.light,
+      background: "#3454d1",
+    },
+    '& thead tr':{
+      borderRadius: '5px',
     },
     '& tbody td': {
       fontWeight: '300',

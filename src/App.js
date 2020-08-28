@@ -4,6 +4,7 @@ import { Route } from 'react-router-dom';
 import Header from './view/Header';
 import Login from './view/Login';
 import AllAccounts from './view/AllAccounts';
+import StatisticList from './view/StatisticList';
 import { AuthContext } from './services/Auth';
 
 const useStyles = makeStyles({
@@ -14,8 +15,8 @@ const useStyles = makeStyles({
 
 function App() {
   const classes = useStyles();
+  const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
-  const [currentUser, setCurrentUser] = useState();
   useEffect(() => {
     const token = window.localStorage.getItem('token');
     if (token) setAuthToken(token);
@@ -25,12 +26,13 @@ function App() {
     setAuthToken(token);
   };
   return (
-    <AuthContext.Provider value={{ authToken, setAuthToken, currentUser, setCurrentUser }}>
+    <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
       <div className={classes.root}>
         <Header />
         <Route exact path="/">
           {authToken ? <AllAccounts /> : <Login />}
         </Route>
+        <Route exact path="/stats"> <StatisticList /> </Route>
       </div>
       <CssBaseline />
     </AuthContext.Provider>

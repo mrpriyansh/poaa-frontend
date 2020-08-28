@@ -4,17 +4,18 @@ import { AppBar, Toolbar, Button } from '@material-ui/core';
 import { useAuth } from '../services/Auth';
 const useStyles = makeStyles({
     root:{
-        background: '#20639B'
+        background: '#3454d1'
     },
     title:{
-        color: '#000', 
-        fontSize: '0.875rem',
-        fontWeight:'500',
+        color: '#000',
     },
     grow: {
         flexGrow: 1,
     },
     button: {
+    },
+    '& .MuiButton-label':{
+        color: '#fff'
     }
   })
 
@@ -29,7 +30,7 @@ function Header() {
     return (
         <AppBar position="static" className={classes.root}>
             <Toolbar>
-                <Typography  className={classes.title}>
+                <Typography variant='h4' className={classes.title}>
                     POAA
                 </Typography>
                 <div className={classes.grow} />

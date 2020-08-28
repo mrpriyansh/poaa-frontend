@@ -5,11 +5,11 @@ import fetcher from '../services/fetcher';
 import useSWR from 'swr';
 import config from '../services/config';
 import { Search } from "@material-ui/icons";
+import {useAuth} from '../services/Auth';
 import AddIcon from "@material-ui/icons/Add";
 import Controls from '../components/controls/Controls';
 import Popup from "../components/Popup";
 import AddAccount from './AddAccount';
-import { ReactComponent as LoaderSVG} from '../assets/icons/spinner.svg';
 
 const useStyle = makeStyles(theme=>({
     root: {
@@ -20,10 +20,8 @@ const useStyle = makeStyles(theme=>({
         // height: '100%'
     }, 
     pageContent: {
-        margin: theme.spacing(0.5,5),
+        margin: theme.spacing(0,5),
         padding: theme.spacing(3),
-        // minWidth: '990px',
-        minHeight: '100%',
         overflow: 'auto',
         '&::-webkit-scrollbar:vertical': {
             display:'none',
@@ -38,20 +36,20 @@ const useStyle = makeStyles(theme=>({
     }
 }));
 
-function AllAccounts () {
-    const {data, error} = useSWR(`${config.apiUrl}/api/allaccounts`, fetcher);
+function StatisticList () {
     const [accounts, setAccounts] = useState([]);
     const [searchValue, changeSearchValue] = useState('');
     const [openPopup, setOpenPopup] = useState(false);
     const styles = useStyle();
+    const {statsData} = useAuth();
     useEffect(()=>{
-        if(data){
-            const filterAccounts = data.filter(account=>{
-                return account.name.toLowerCase().includes(searchValue.toLowerCase());
+        if(statsData){
+            const filterAccounts = statsData.filter(account=>{
+                return account.name && account.name.toLowerCase().includes(searchValue.toLowerCase());
             })
         setAccounts(filterAccounts);
         }
-    },[data, searchValue]);
+    },[statsData, searchValue]);
     
     const headCells = [
         {id:'index', label:'Sno'},
@@ -64,12 +62,12 @@ function AllAccounts () {
         {id: 'mobile', label:'Mobile'},
     ]
     const {TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting} = useTable(accounts, headCells );
-    if(error) return <p styles={{color: 'red',}}> Error in Fetching</p>
-    if(!data) return <LoaderSVG />
+    if(!statsData) return <p> Loading</p>
     
-    const convertDate = date => (
-        `${date.split('-')[2][0]}${date.split('-')[2][1]}-${date.split('-')[1]}-${date.split('-')[0]}`
-    )
+    const convertDate = date => {
+        return (
+        date?.split('-')?.length>=2 ?`${date.split('-')[2][0]}${date.split('-')[2][1]}-${date.split('-')[1]}-${date.split('-')[0]}`: null
+    )}
     return (
         <Box className={styles.root}>
             <Paper className={styles.pageContent}>
@@ -82,13 +80,6 @@ function AllAccounts () {
                             </InputAdornment>)
                         }}
                         onChange={event=>changeSearchValue(event.target.value)}
-                    />
-                    <Controls.Button
-                        text="Add Account"
-                        variant = "outlined"
-                        startIcon = {<AddIcon />}
-                        className={styles.newButton}
-                        onClick={()=>setOpenPopup(true)}
                     />
                     {/* <TextField 
                         variant ="outlined"
@@ -113,8 +104,8 @@ function AllAccounts () {
                                 <TableCell> {account.accountno}</TableCell>
                                 <TableCell> {account.accountType}</TableCell>
                                 <TableCell> {account.amount}</TableCell>
-                                <TableCell> {convertDate(account.openingDate)}</TableCell>
-                                <TableCell> {convertDate(account.maturityDate)}</TableCell>
+                                <TableCell> {convertDate(account.openingDate?.toString())}</TableCell>
+                                <TableCell> {convertDate(account.maturityDate?.toString())}</TableCell>
                                 <TableCell> {account.mobile}</TableCell>
                             </TableRow>
                         ))}
@@ -129,4 +120,4 @@ function AllAccounts () {
     )
 }
 
-export default AllAccounts;
+export default StatisticList;

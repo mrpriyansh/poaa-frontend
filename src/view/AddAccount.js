@@ -12,7 +12,6 @@ const date = new Date();
 const y=date.getFullYear();
 const m=date.getMonth()+1;
 const d=date.getDate();
-console.log(date);
 const initialValues= {
     name: '',
     accountno: '',
@@ -22,7 +21,6 @@ const initialValues= {
     maturityDate: `${y+5}-${m<10? `0${m}`: m}-${d<10 ? `0${d}`: d}`,
     mobile: '',
 }
-console.log(initialValues.maturityDate)
 const useStyles = makeStyles(theme=>({
     root: {
         '& .MuiGrid-item': {
@@ -72,7 +70,6 @@ function AddAccount ({setOpenPopup}) {
     const {authToken} = useAuth();
     const handleAddAccount = event => {
         event.preventDefault();
-        console.log(values);
         setLoading(true);
         fetch(`${config.apiUrl}/api/addaccount`,{
             method: 'POST',
@@ -89,7 +86,6 @@ function AddAccount ({setOpenPopup}) {
         })
         .catch(err=>handleError(err, triggerAlert))
         .finally(()=> setLoading(false));
-        console.log('aadfas');
     }
     const styles = useStyles();
     const accountTypeList=[

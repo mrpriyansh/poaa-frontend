@@ -65,7 +65,6 @@ function Login() {
         })
         .catch(err=>handleError(err, triggerAlert))
         .finally(()=> setLoading(false));
-        console.log('a');
     }
 
     const styles = useStyle();
