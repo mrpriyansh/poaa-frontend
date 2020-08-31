@@ -43,16 +43,30 @@ function AllAccounts () {
     const [accounts, setAccounts] = useState([]);
     const [searchValue, changeSearchValue] = useState('');
     const [openPopup, setOpenPopup] = useState(false);
+    const [searchType, changeSearchType] = useState('Name');
     const styles = useStyle();
     useEffect(()=>{
+        console.log(searchType, searchValue);
         if(data){
             const filterAccounts = data.filter(account=>{
+                // console.log(typeof(account.maturityDate), convertDate(account.maturityDate), account.maturityDate.toLowerCase().includes(searchValue.toLowerCase()));
+                if(searchType==='Name')
                 return account.name.toLowerCase().includes(searchValue.toLowerCase());
+                if(searchType==='Account Number')
+                return (''+account.accountno).includes(searchValue);
+                if(searchType==='Account Type')
+                return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
+                if(searchType==='Maturity Date')
+                return convertDate(account.maturityDate).toLowerCase().includes(searchValue.toLowerCase());
             })
         setAccounts(filterAccounts);
         }
-    },[data, searchValue]);
+    },[data, searchValue, searchType]);
     
+    const searchTypeList = [{title: 'Name'},
+                            {title: 'Account Number'},
+                            {title: 'Account Type'},
+                            {title: 'Maturity Date'}];
     const headCells = [
         {id:'index', label:'Sno'},
         {id:'name', label:'Name'},
@@ -82,6 +96,14 @@ function AllAccounts () {
                             </InputAdornment>)
                         }}
                         onChange={event=>changeSearchValue(event.target.value)}
+                    />
+                    <Controls.Select
+                        label="Type"
+                        name="accountType"
+                        value={searchType}
+                        onChange={event=>changeSearchType(event.target.value)}
+                        options={searchTypeList}
+                        required
                     />
                     <Controls.Button
                         text="Add Account"

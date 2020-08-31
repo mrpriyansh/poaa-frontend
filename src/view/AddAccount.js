@@ -7,6 +7,7 @@ import { triggerAlert } from '../services/getAlert/getAlert';
 import handleError from '../services/handleError';
 import { useAuth } from '../services/Auth';
 import { mutate } from 'swr';
+import accountTypeList from '../assets/data/accountType';
 
 const date = new Date();
 const y=date.getFullYear();
@@ -88,11 +89,6 @@ function AddAccount ({setOpenPopup}) {
         .finally(()=> setLoading(false));
     }
     const styles = useStyles();
-    const accountTypeList=[
-        {title: 'RD'},
-        {title: 'MIS'},
-        {title: 'TD'},
-    ]
     const {values, setValues, errors, setErrors, handleInputChange} = useForm(initialValues, true, validate);
     return(
         <Form onSubmit={handleAddAccount} className={styles.root}>

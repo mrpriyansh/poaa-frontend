@@ -15,7 +15,7 @@ export default function Select(props) {
                 name={name}
                 value={value}
                 onChange={onChange}>
-                <MenuItem value="">None</MenuItem>
+                {/* <MenuItem value="">None</MenuItem> */}
                 {
                     options.map(
                         item => (<MenuItem key={item.title} value={item.title}>{item.title}</MenuItem>)
