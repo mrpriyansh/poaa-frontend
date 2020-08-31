@@ -35,6 +35,7 @@ function Header() {
                 </Typography>
                 <div className={classes.grow} />
                 {authToken && <>
+                    
                 <Button onClick={handleLogout}>Logout</Button>
                 </>}
             </Toolbar>

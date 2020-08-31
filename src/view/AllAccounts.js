@@ -10,6 +10,10 @@ import Controls from '../components/controls/Controls';
 import Popup from "../components/Popup";
 import AddAccount from './AddAccount';
 import { ReactComponent as LoaderSVG} from '../assets/icons/spinner.svg';
+import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
+import CloseIcon from '@material-ui/icons/Close';
+import { deleteTrigger } from '../services/getAlert/getAlert';
+
 
 const useStyle = makeStyles(theme=>({
     root: {
@@ -44,6 +48,8 @@ function AllAccounts () {
     const [searchValue, changeSearchValue] = useState('');
     const [openPopup, setOpenPopup] = useState(false);
     const [searchType, changeSearchType] = useState('Name');
+    const [recordForEdit, setRecordForEdit] = useState();
+    
     const styles = useStyle();
     useEffect(()=>{
         console.log(searchType, searchValue);
@@ -75,7 +81,8 @@ function AllAccounts () {
         {id: 'amount', label:'Amount'},
         {id: 'Opening', label:'Opening Date'},
         {id: 'maturityDate', label:'Maturity Date'},
-        {id: 'mobile', label:'Mobile'},
+        {id: 'actions', label: 'Actions'},
+        // {id: 'mobile', label:'Mobile'},
     ]
     const {TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting} = useTable(accounts, headCells );
     if(error) return <p styles={{color: 'red',}}> Error in Fetching</p>
@@ -84,6 +91,13 @@ function AllAccounts () {
     const convertDate = date => (
         `${date.split('-')[2][0]}${date.split('-')[2][1]}-${date.split('-')[1]}-${date.split('-')[0]}`
     )
+    const handleEdit = item =>{
+        setRecordForEdit(item);
+        setOpenPopup(true);
+    }
+    const handleDelete = item =>{
+        deleteTrigger(item.accountno);
+    }
     return (
         <Box className={styles.root}>
             <Paper className={styles.pageContent}>
@@ -110,7 +124,7 @@ function AllAccounts () {
                         variant = "outlined"
                         startIcon = {<AddIcon />}
                         className={styles.newButton}
-                        onClick={()=>setOpenPopup(true)}
+                        onClick={()=>(setRecordForEdit(),   setOpenPopup(true)) }
                     />
                     {/* <TextField 
                         variant ="outlined"
@@ -137,7 +151,20 @@ function AllAccounts () {
                                 <TableCell> {account.amount}</TableCell>
                                 <TableCell> {convertDate(account.openingDate)}</TableCell>
                                 <TableCell> {convertDate(account.maturityDate)}</TableCell>
-                                <TableCell> {account.mobile}</TableCell>
+                                <TableCell>
+                                    <Controls.ActionButton
+                                     color="primary"
+                                     onClick={()=>handleEdit(account)}>
+                                         <EditOutlinedIcon fontSize="small" />
+                                     </Controls.ActionButton>
+                                    <Controls.ActionButton
+                                     color="secondary"
+                                     onClick={()=>handleDelete(account)}>
+                                         <CloseIcon fontSize="small" />
+                                     </Controls.ActionButton>
+                                </TableCell>
+                                {/* <TableCell> {account.mobile}</TableCell> */}
+
                             </TableRow>
                         ))}
                     </TableBody>
@@ -145,7 +172,7 @@ function AllAccounts () {
                 <TblPagination />
             </Paper>
             <Popup openPopup={openPopup} setOpenPopup={setOpenPopup} title="Add Account">
-                    <AddAccount setOpenPopup={setOpenPopup}/>
+                    <AddAccount setOpenPopup={setOpenPopup} recordForEdit={recordForEdit} />
             </Popup>
       </Box>
     )

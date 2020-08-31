@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {useForm, Form} from '../components/useForm';
 import {Grid, makeStyles} from '@material-ui/core'
 import Controls from '../components/controls/Controls';
@@ -52,8 +52,16 @@ const useStyles = makeStyles(theme=>({
             alignItems: 'center',
     }
 }))
-
-function AddAccount ({setOpenPopup}) {
+const convertDate = date => (
+    `${date.split('-')[0]}-${date.split('-')[1]}-${date.split('-')[2][0]}${date.split('-')[2][1]}`
+)
+function AddAccount ({setOpenPopup, recordForEdit}) {
+    useEffect(()=>{
+        console.log(recordForEdit);
+        if(recordForEdit){
+            setValues(prev=>({...recordForEdit, openingDate: convertDate(recordForEdit.openingDate), maturityDate: convertDate(recordForEdit.maturityDate) }));
+        }
+    }, [recordForEdit]);
     const validate = (fieldValues = values) => {
         let temp = {...errors}
         if('name' in fieldValues)
@@ -71,9 +79,11 @@ function AddAccount ({setOpenPopup}) {
     const {authToken} = useAuth();
     const handleAddAccount = event => {
         event.preventDefault();
+        const url = recordForEdit ? `${config.apiUrl}/api/editaccount`: `${config.apiUrl}/api/addaccount`;
         setLoading(true);
-        fetch(`${config.apiUrl}/api/addaccount`,{
-            method: 'POST',
+        console.log(values, url);
+        fetch(url,{
+            method: recordForEdit? 'PUT': 'POST',
             headers: { 'Content-Type': 'application/json', authorization: `Bearer ${authToken}` },
             body: JSON.stringify(values)
         })
@@ -158,7 +168,7 @@ function AddAccount ({setOpenPopup}) {
                     {/* <div className={styles.button_wrapper}> */}
                     <Controls.Button
                         type="submit"
-                        text="Add Account"
+                        text={recordForEdit ? `Edit Account` : "Add Account"}
                         disabled={loading}
                     />
                     {/* </div> */}
