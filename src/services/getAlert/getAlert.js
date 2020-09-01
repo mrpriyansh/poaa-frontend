@@ -53,7 +53,7 @@ export const deleteTrigger = accountno => {
           Swal.fire({
             title: 'Deleted!',
             text: 'Your file has been deleted.',
-            icons: 'success',
+            icon: 'success',
             background: '#3454d1',
           });
         })

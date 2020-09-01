@@ -54,7 +54,7 @@ function Login() {
         fetch(`${config.apiUrl}/api/signin`,{
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(values)
+            body: JSON.stringify({...values, email: values.email.toLowerCase()})
         })
         .then(response => response.json().then(data => ({ status: response.status, body: data })))
         .then(res => {
@@ -87,6 +87,7 @@ function Login() {
                             variant="outlined"
                             label="Password"
                             name="password"
+                            type="password"
                             value={values.password}
                             onChange={handleInputChange}
                             />
