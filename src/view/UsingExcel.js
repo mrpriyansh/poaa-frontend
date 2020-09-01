@@ -1,16 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import XLSX from 'xlsx';
-import { make_cols } from '../services/MakeColumns';
-import { SheetJSFT } from '../services/types';
 import { useAuth } from '../services/Auth';
 import config from '../services/config';
 import Controls from '../components/controls/Controls';
 import { Grid, makeStyles } from '@material-ui/core';
 import accountTypeList from '../assets/data/accountType';
-import red from '@material-ui/core/colors/red';
 import {triggerAlert} from '../services/getAlert/getAlert';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import AccountCircle from '@material-ui/icons/AccountCircle';
 import StatisticList from './StatisticList';
 import NewWindow from 'react-new-window';
 
@@ -36,7 +31,6 @@ const useStyles = makeStyles(theme=>({
 function UsingExcel () {
     const [file, setFile] = useState();
     const [data, setData] = useState([]);
-    const [cols, setCols] = useState([]);
     const [failedCount, setFailedCount] = useState([]);
     const [addedCount,setAddedCount]= useState([]);
     const [matureCount, setMatureCount] = useState([]);
@@ -45,7 +39,6 @@ function UsingExcel () {
     const {authToken} = useAuth();
     const [type, setType] = useState('RD');
     const styles = useStyles();
-    const primary = red[500]; 
     useEffect(()=>{
         if(data.length){
             data.forEach((account) => {
@@ -146,7 +139,6 @@ function UsingExcel () {
             const data = XLSX.utils.sheet_to_json(ws);
             /* Update state */
             setData(data);
-            setCols(make_cols(ws['!ref']));
         //   this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
         //     console.log(JSON.stringify(this.state.data, null, 2));
         //   });

@@ -1,12 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Box, makeStyles, TableBody, TableRow, TableCell, Paper, Toolbar, TextField, InputAdornment } from '@material-ui/core';
+import { Box, makeStyles, TableBody, TableRow, TableCell, Paper, Toolbar, InputAdornment } from '@material-ui/core';
 import useTable from '../components/useTable';
-import fetcher from '../services/fetcher';
-import useSWR from 'swr';
-import config from '../services/config';
 import { Search } from "@material-ui/icons";
 import {useAuth} from '../services/Auth';
-import AddIcon from "@material-ui/icons/Add";
 import Controls from '../components/controls/Controls';
 import Popup from "../components/Popup";
 import AddAccount from './AddAccount';
