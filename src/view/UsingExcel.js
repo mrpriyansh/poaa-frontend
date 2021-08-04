@@ -169,9 +169,6 @@ function UsingExcel() {
       const data = XLSX.utils.sheet_to_json(ws);
       /* Update state */
       setData(data);
-      //   this.setState({ data: data, cols: make_cols(ws['!ref']) }, () => {
-      //     console.log(JSON.stringify(this.state.data, null, 2));
-      //   });
     };
 
     if (rABS) {

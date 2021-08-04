@@ -16,13 +16,12 @@ import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 
 import useTable from '../components/useTable';
-import fetcher from '../services/fetcher';
-import config from '../services/config';
 import Controls from '../components/controls/Controls';
 import Popup from '../components/Popup';
 import AddAccount from './AddAccount';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
+import { axiosUtil } from '../services/axiosinstance';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -53,7 +52,7 @@ const useStyle = makeStyles(theme => ({
 
 function AllAccounts() {
   const styles = useStyle();
-  const { data: response, error } = useSWR(`${config.apiUrl}/api/allaccounts`, fetcher);
+  const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
 
   const [accounts, setAccounts] = useState([]);
   const [searchValue, changeSearchValue] = useState('');
@@ -106,7 +105,7 @@ function AllAccounts() {
     accounts,
     headCells
   );
-  if (error) return <p styles={{ color: 'red' }}> Error in Fetching</p>;
+  if (error) return <p style={{ color: 'red' }}> Error in Fetching</p>;
   if (!response) return <LoaderSVG />;
 
   const handleDelete = item => {

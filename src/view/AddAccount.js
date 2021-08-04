@@ -1,15 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, makeStyles } from '@material-ui/core';
 import { mutate } from 'swr';
-import axios from 'axios';
 
 import { useForm, Form } from '../components/useForm';
 import Controls from '../components/controls/Controls';
-import config from '../services/config';
 import { triggerAlert } from '../services/getAlert/getAlert';
-import handleError from '../services/handleError';
-import { useAuth } from '../services/Auth';
 import accountTypeList from '../assets/data/accountType';
+import { axiosUtil } from '../services/axiosinstance';
 
 const curDate = new Date();
 const y = curDate.getFullYear();
@@ -59,7 +56,6 @@ const convertDate = date =>
 function AddAccount({ setOpenPopup, recordForEdit }) {
   const styles = useStyles();
   const [loading, setLoading] = useState(false);
-  const { authToken } = useAuth();
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
     if ('name' in fieldValues) temp.name = fieldValues.name ? '' : 'Name is required';
@@ -90,22 +86,14 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
 
   const handleAddAccount = event => {
     event.preventDefault();
-    const url = recordForEdit
-      ? `${config.apiUrl}/api/editaccount`
-      : `${config.apiUrl}/api/addaccount`;
+    const endpoint = recordForEdit ? `editaccount` : `addaccount`;
     setLoading(true);
-    axios({
-      url,
-      method: recordForEdit ? 'PUT' : 'POST',
-      headers: { 'Content-Type': 'application/json', authorization: `Bearer ${authToken}` },
-      data: values,
-    })
+    axiosUtil[recordForEdit ? 'put' : 'post'](endpoint, values)
       .then(res => {
         triggerAlert({ icon: 'success', title: res.data });
         setOpenPopup(false);
-        mutate(`${config.apiUrl}/api/allaccounts`);
+        mutate(`allaccounts`);
       })
-      .catch(err => handleError(err, triggerAlert))
       .finally(() => setLoading(false));
   };
 

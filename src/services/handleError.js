@@ -1,8 +1,8 @@
 const handleError = (error, function1) => {
-  if (error.status === 498) {
+  if (error.response.status === 498) {
     localStorage.removeItem('token');
-    function1(null);
-  } else if (error.status) function1({ icon: 'error', title: error.body });
+    window.location.reload();
+  } else if (error.response.status) function1({ icon: 'error', title: error.response.data });
 };
 
 export default handleError;

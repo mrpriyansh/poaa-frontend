@@ -1,13 +1,10 @@
 import { Box, Grid, Paper, Typography, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
-import axios from 'axios';
 
 import { Form, useForm } from '../components/useForm';
 import Controls from '../components/controls/Controls';
-import config from '../services/config';
-import handleError from '../services/handleError';
-import { triggerAlert } from '../services/getAlert/getAlert';
 import { useAuth } from '../services/Auth';
+import { axiosUtil } from '../services/axiosinstance';
 
 const useStyle = makeStyles(theme => ({
   root: {
@@ -53,13 +50,12 @@ function Login() {
   const handleSubmit = event => {
     event.preventDefault();
     setLoading(true);
-    axios
-      .post(`${config.apiUrl}/api/signin`, values)
+    axiosUtil
+      .post('signin', values)
       .then(res => {
         window.localStorage.setItem('token', res.data);
         setAuthToken(res.data);
       })
-      .catch(err => handleError(err, triggerAlert))
       .finally(() => setLoading(false));
   };
 
