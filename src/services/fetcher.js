@@ -1,11 +1,12 @@
 /* eslint-disable no-undef */
+import axios from 'axios';
+
 function fetcher(url) {
-  return fetch(url, {
+  return axios.get(url, {
     headers: {
       Authorization: `Bearer ${window.localStorage.getItem('token')}`,
-      'Content-Type': 'application/json',
     },
-  }).then(response => response.json());
+  });
 }
 
 export default fetcher;

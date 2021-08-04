@@ -1,5 +1,6 @@
 import { Box, Grid, Paper, Typography, makeStyles } from '@material-ui/core';
 import React, { useState } from 'react';
+import axios from 'axios';
 
 import { Form, useForm } from '../components/useForm';
 import Controls from '../components/controls/Controls';
@@ -48,19 +49,15 @@ function Login() {
     setErrors({ ...temp });
   };
   const { values, errors, setErrors, handleInputChange } = useForm(initialValues, true, validate);
+
   const handleSubmit = event => {
     event.preventDefault();
     setLoading(true);
-    fetch(`${config.apiUrl}/api/signin`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...values, email: values.email.toLowerCase() }),
-    })
-      .then(response => response.json().then(data => ({ status: response.status, body: data })))
+    axios
+      .post(`${config.apiUrl}/api/signin`, values)
       .then(res => {
-        if (res.status !== 200) throw res;
-        window.localStorage.setItem('token', res.body);
-        setAuthToken(res.body);
+        window.localStorage.setItem('token', res.data);
+        setAuthToken(res.data);
       })
       .catch(err => handleError(err, triggerAlert))
       .finally(() => setLoading(false));

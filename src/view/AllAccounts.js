@@ -53,7 +53,8 @@ const useStyle = makeStyles(theme => ({
 
 function AllAccounts() {
   const styles = useStyle();
-  const { data, error } = useSWR(`${config.apiUrl}/api/allaccounts`, fetcher);
+  const { data: response, error } = useSWR(`${config.apiUrl}/api/allaccounts`, fetcher);
+
   const [accounts, setAccounts] = useState([]);
   const [searchValue, changeSearchValue] = useState('');
   const [openPopup, setOpenPopup] = useState(false);
@@ -67,8 +68,8 @@ function AllAccounts() {
     setOpenPopup(true);
   };
   useEffect(() => {
-    if (data) {
-      const filterAccounts = data.filter(account => {
+    if (response) {
+      const filterAccounts = response.data.filter(account => {
         if (searchType === 'Name')
           return account.name.toLowerCase().includes(searchValue.toLowerCase());
         if (searchType === 'Account Number')
@@ -83,7 +84,7 @@ function AllAccounts() {
       });
       setAccounts(filterAccounts);
     }
-  }, [data, searchValue, searchType]);
+  }, [response, searchValue, searchType]);
 
   const searchTypeList = [
     { title: 'Name' },
@@ -106,7 +107,7 @@ function AllAccounts() {
     headCells
   );
   if (error) return <p styles={{ color: 'red' }}> Error in Fetching</p>;
-  if (!data) return <LoaderSVG />;
+  if (!response) return <LoaderSVG />;
 
   const handleDelete = item => {
     deleteTrigger(item.accountno);

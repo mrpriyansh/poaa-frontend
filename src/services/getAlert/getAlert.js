@@ -1,7 +1,9 @@
 import Swal from 'sweetalert2/src/sweetalert2';
 import '@sweetalert2/theme-dark/dark.css';
-import './styles.css';
+import axios from 'axios';
 import { mutate } from 'swr';
+
+import './styles.css';
 import config from '../config';
 import handleError from '../handleError';
 
@@ -38,17 +40,15 @@ export const deleteTrigger = accountno => {
     confirmButtonText: 'Yes, delete it!',
   }).then(result => {
     if (result.value) {
-      fetch(`${config.apiUrl}/api/deleteaccount`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${window.localStorage.getItem('token')}`,
-        },
-        body: JSON.stringify({ accountno }),
-      })
-        .then(response => response.json().then(data => ({ status: response.status, body: data })))
-        .then(res => {
-          if (res.status !== 200) throw res;
+      axios
+        .delete(`${config.apiUrl}/api/deleteaccount`, {
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${window.localStorage.getItem('token')}`,
+          },
+          data: { accountno },
+        })
+        .then(() => {
           mutate(`${config.apiUrl}/api/allaccounts`);
           Swal.fire({
             title: 'Deleted!',

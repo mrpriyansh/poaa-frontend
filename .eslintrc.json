@@ -10,6 +10,7 @@
     "no-shadow": "off",
     "no-use-before-define": "off",
     "import/no-cycle": "off",
+    "import\no-extraneous-dependenciesin": "off",
     "prettier/prettier": [
       "warn",
       {

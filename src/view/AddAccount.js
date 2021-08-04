@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Grid, makeStyles } from '@material-ui/core';
 import { mutate } from 'swr';
+import axios from 'axios';
 
 import { useForm, Form } from '../components/useForm';
 import Controls from '../components/controls/Controls';
@@ -71,7 +72,6 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
 
     setErrors({ ...temp });
   };
-
   const { values, setValues, errors, setErrors, handleInputChange } = useForm(
     initialValues,
     true,
@@ -94,15 +94,14 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
       ? `${config.apiUrl}/api/editaccount`
       : `${config.apiUrl}/api/addaccount`;
     setLoading(true);
-    fetch(url, {
+    axios({
+      url,
       method: recordForEdit ? 'PUT' : 'POST',
       headers: { 'Content-Type': 'application/json', authorization: `Bearer ${authToken}` },
-      body: JSON.stringify(values),
+      data: values,
     })
-      .then(response => response.json().then(data => ({ status: response.status, body: data })))
       .then(res => {
-        if (res.status !== 200) throw res;
-        triggerAlert({ icon: 'success', title: res.body });
+        triggerAlert({ icon: 'success', title: res.data });
         setOpenPopup(false);
         mutate(`${config.apiUrl}/api/allaccounts`);
       })
