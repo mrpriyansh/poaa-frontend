@@ -32,7 +32,9 @@ function App() {
         <Route exact path="/">
           {authToken ? <AllAccounts /> : <Login />}
         </Route>
-        <Route exact path="/stats"> <StatisticList /> </Route>
+        <Route exact path="/stats">
+          <StatisticList />
+        </Route>
       </div>
       <CssBaseline />
     </AuthContext.Provider>

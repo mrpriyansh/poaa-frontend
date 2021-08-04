@@ -6,7 +6,6 @@ import {
   TableHead,
   makeStyles,
   TablePagination,
-  TableSortLabel,
 } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
@@ -14,11 +13,11 @@ const useStyles = makeStyles(theme => ({
     marginTop: theme.spacing(3),
     '& thead th': {
       fontWeight: '600',
-      color: "#fff",
+      color: '#fff',
       // background: theme.palette.primary.light,
-      background: "#3454d1",
+      background: '#3454d1',
     },
-    '& thead tr':{
+    '& thead tr': {
       borderRadius: '5px',
     },
     '& tbody td': {
@@ -30,22 +29,21 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function useTable(accounts, headCells, filterFn) {
+function useTable(accounts, headCells) {
   const classes = useStyles();
 
-  const pages = [10, 30, 50,100];
+  const pages = [10, 30, 50, 100];
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(pages[0]);
-  const [order, setOrder] = useState();
-  const [orderBy, setOrderBy] = useState();
 
+  // eslint-disable-next-line
   const TblContainer = props => <Table className={classes.table}>{props.children}</Table>;
-  const TblHead = props => {
-    const handleSortRequest = cellId => {
-      const isAsc = orderBy === cellId && order === 'asc';
-      setOrder(isAsc ? 'desc' : 'asc');
-      setOrderBy(cellId);
-    };
+  const TblHead = () => {
+    // const handleSortRequest = cellId => {
+    //   const isAsc = orderBy === cellId && order === 'asc';
+    //   setOrder(isAsc ? 'desc' : 'asc');
+    //   setOrderBy(cellId);
+    // };
     return (
       <TableHead>
         <TableRow>
