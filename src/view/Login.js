@@ -64,9 +64,9 @@ function Login() {
     <Box className={styles.root}>
       <Paper className={styles.pageContent}>
         <Form onSubmit={handleSubmit}>
-          <Grid container justify="center">
+          <Grid container justifyContent="center">
             <Typography>Login</Typography>
-            <Grid item xs={12} justify="center">
+            <Grid item xs={12}>
               <Controls.Input
                 variant="outlined"
                 label="Email"
@@ -88,7 +88,7 @@ function Login() {
           </Grid>
         </Form>
         {/* <form onSubmit={handleSubmit} className={styles.form}>
-               <Grid container spacing={3}   justify="center"  alignItems="center">
+               <Grid container spacing={3}   justifyContent="center"  alignItems="center">
                     <Grid item><Typography variant='h3'> SignIn</Typography></Grid>
                     <Grid item>
                     <TextField

@@ -68,8 +68,8 @@ function useTable(accounts, headCells) {
       rowsPerPage={rowsPerPage}
       rowsPerPageOptions={pages}
       count={accounts.length}
-      onChangePage={handleChangePage}
-      onChangeRowsPerPage={handleChangeRowsPerPage}
+      onPageChange={handleChangePage}
+      onRowsPerPageChange={handleChangeRowsPerPage}
     />
   );
   const recordsAfterPagingAndSorting = () => {

@@ -99,8 +99,8 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
 
   return (
     <Form onSubmit={handleAddAccount} className={styles.root}>
-      <Grid container justify="center">
-        <Grid item xs={6} justify="center">
+      <Grid container justifyContent="center">
+        <Grid item xs={6}>
           <Controls.Input
             label="Name"
             name="name"
@@ -136,7 +136,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             error={errors.accountType}
           />
         </Grid>
-        <Grid item xs={6} justify="center">
+        <Grid item xs={6} justifyContent="center">
           <Controls.Input
             label="Amount"
             name="amount"
