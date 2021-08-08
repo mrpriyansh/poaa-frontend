@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import { mutate } from 'swr';
 
 import { useForm, Form } from '../components/useForm';
@@ -7,6 +7,7 @@ import Controls from '../components/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import accountTypeList from '../assets/data/accountType';
 import { axiosUtil } from '../services/axiosinstance';
+import { addAccountStyles } from '../styles/view/addAcount';
 
 const curDate = new Date();
 const y = curDate.getFullYear();
@@ -21,40 +22,10 @@ const initialValues = {
   maturityDate: `${y + 5}-${m < 10 ? `0${m}` : m}-${d < 10 ? `0${d}` : d}`,
   mobile: '',
 };
-const useStyles = makeStyles(theme => ({
-  root: {
-    '& .MuiGrid-item': {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    '& .MuiTextField-root': {
-      width: '80%',
-      margin: theme.spacing(1),
-    },
-    '& .MuiButton-root': {
-      width: '80%',
-      height: '52px',
-      margin: theme.spacing(1),
-    },
-    '& .MuiFormControl-root': {
-      width: '80%',
-    },
-  },
-  button_wrapper: {
-    margin: theme.spacing(1),
-    width: '100%',
-    height: '56px',
-    justifyContent: 'center',
-    display: 'flex',
-    alignItems: 'center',
-  },
-}));
 const convertDate = date =>
   `${date.split('-')[0]}-${date.split('-')[1]}-${date.split('-')[2][0]}${date.split('-')[2][1]}`;
 function AddAccount({ setOpenPopup, recordForEdit }) {
-  const styles = useStyles();
+  const classes = addAccountStyles();
   const [loading, setLoading] = useState(false);
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
@@ -98,7 +69,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
   };
 
   return (
-    <Form onSubmit={handleAddAccount} className={styles.root}>
+    <Form onSubmit={handleAddAccount} className={classes.root}>
       <Grid container justifyContent="center">
         <Grid item xs={6}>
           <Controls.Input

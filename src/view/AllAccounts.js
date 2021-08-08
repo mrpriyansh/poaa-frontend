@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import {
   Box,
-  makeStyles,
   TableBody,
   TableRow,
   TableCell,
@@ -22,36 +21,10 @@ import AddAccount from './AddAccount';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
-
-const useStyle = makeStyles(theme => ({
-  root: {
-    height: 'calc(100vh - 64px)',
-    background: '#fafafa',
-    display: 'flex',
-    justifyContent: 'center',
-    // height: '100%'
-  },
-  pageContent: {
-    margin: theme.spacing(0.5, 5),
-    padding: theme.spacing(3),
-    // minWidth: '990px',
-    minHeight: '100%',
-    overflow: 'auto',
-    '&::-webkit-scrollbar:vertical': {
-      display: 'none',
-    },
-  },
-  // pageContent::-webkit-scrollbar: {
-  //     display: 'none'
-  // },
-  newButton: {
-    position: 'absolute',
-    right: '0px',
-  },
-}));
+import { allAccountStyles } from '../styles/view/allAccounts';
 
 function AllAccounts() {
-  const styles = useStyle();
+  const classes = allAccountStyles();
   const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
 
   const [accounts, setAccounts] = useState([]);
@@ -112,8 +85,8 @@ function AllAccounts() {
     deleteTrigger(item.accountno);
   };
   return (
-    <Box className={styles.root}>
-      <Paper className={styles.pageContent}>
+    <Box className={classes.root}>
+      <Paper className={classes.pageContent}>
         <Toolbar>
           <Controls.Input
             label="Search"
@@ -138,7 +111,7 @@ function AllAccounts() {
             text="Add Account"
             variant="outlined"
             startIcon={<AddIcon />}
-            className={styles.newButton}
+            className={classes.newButton}
             onClick={() => {
               setRecordForEdit();
               setOpenPopup(true);

@@ -1,25 +1,10 @@
 import React from 'react';
-import { AppBar, Toolbar, Button, makeStyles, Typography } from '@material-ui/core';
+import { AppBar, Toolbar, Button, Typography } from '@material-ui/core';
 import { useAuth } from '../services/Auth';
-
-const useStyles = makeStyles({
-  root: {
-    background: '#3454d1',
-  },
-  title: {
-    color: '#000',
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  button: {},
-  '& .MuiButton-label': {
-    color: '#fff',
-  },
-});
+import { headerStyles } from '../styles/view/header';
 
 function Header() {
-  const classes = useStyles();
+  const classes = headerStyles();
   const { setAuthToken, authToken } = useAuth();
   const handleLogout = event => {
     event.preventDefault();

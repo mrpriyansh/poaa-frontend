@@ -1,35 +1,11 @@
-import { Box, Grid, Paper, Typography, makeStyles } from '@material-ui/core';
+import { Box, Grid, Paper, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 
 import { Form, useForm } from '../components/useForm';
 import Controls from '../components/controls/Controls';
 import { useAuth } from '../services/Auth';
 import { axiosUtil } from '../services/axiosinstance';
-
-const useStyle = makeStyles(theme => ({
-  root: {
-    // height: 'calc(100vh - 64px)',
-    background: '#fafafa',
-    display: 'flex',
-    justifyContent: 'center',
-    // height: '100%',
-    '& .MuiGrid-item': {
-      display: 'flex',
-      flexDirection: 'column',
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-  },
-  pageContent: {
-    margin: theme.spacing(5),
-    padding: theme.spacing(3),
-    width: '300px',
-    // display: 'flex',
-    // flexDirection: 'column',
-    // justifyContent: 'center',
-    // alignItems: 'center',
-  },
-}));
+import { loginStyles } from '../styles/view/login';
 
 const initialValues = {
   email: '',
@@ -37,6 +13,7 @@ const initialValues = {
 };
 
 function Login() {
+  const classes = loginStyles();
   const { setAuthToken } = useAuth();
   const [loading, setLoading] = useState(false);
   const validate = (fieldValues = values) => {
@@ -59,10 +36,9 @@ function Login() {
       .finally(() => setLoading(false));
   };
 
-  const styles = useStyle();
   return (
-    <Box className={styles.root}>
-      <Paper className={styles.pageContent}>
+    <Box className={classes.root}>
+      <Paper className={classes.pageContent}>
         <Form onSubmit={handleSubmit}>
           <Grid container justifyContent="center">
             <Typography>Login</Typography>

@@ -1,6 +1,6 @@
 // eslint-disable no-shadow
 
-import { Grid, makeStyles } from '@material-ui/core';
+import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 
 import NewWindow from 'react-new-window';
@@ -11,27 +11,10 @@ import accountTypeList from '../assets/data/accountType';
 import config from '../services/config';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { useAuth } from '../services/Auth';
+import { usingExcelStyles } from '../styles/view/usingExcel';
 
-const useStyles = makeStyles(() => ({
-  root: {
-    '& .MuiButton-root': {
-      width: '90%',
-    },
-    '& .MuiTextField-root': {
-      width: '90%',
-    },
-    '& .MuiFormControl-root': {
-      width: '90%',
-    },
-    '& .MuiGrid-grid-xs-6': {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-  },
-}));
 function UsingExcel() {
+  const classes = usingExcelStyles();
   const [file, setFile] = useState();
   const [data, setData] = useState([]);
   const [failedCount, setFailedCount] = useState([]);
@@ -41,7 +24,6 @@ function UsingExcel() {
   const [loading, setLoading] = useState(false);
   const { authToken } = useAuth();
   const [type, setType] = useState('RD');
-  const styles = useStyles();
   useEffect(() => {
     if (data.length) {
       data.forEach(account => {
@@ -182,7 +164,7 @@ function UsingExcel() {
     setStatsData(data);
   };
   return (
-    <div className={styles.root}>
+    <div className={classes.root}>
       <Grid container>
         <Grid items xs={6}>
           <Controls.Input

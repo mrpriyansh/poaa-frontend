@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { makeStyles, CssBaseline } from '@material-ui/core';
+import { makeStyles, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { Route } from 'react-router-dom';
 import Header from './view/Header';
 import Login from './view/Login';
 import AllAccounts from './view/AllAccounts';
 import StatisticList from './view/StatisticList';
 import { AuthContext } from './services/Auth';
+import { theme } from './styles/customTheme';
 
 const useStyles = makeStyles({
   root: {
@@ -26,18 +27,20 @@ function App() {
     setAuthToken(token);
   };
   return (
-    <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
-      <div className={classes.root}>
-        <Header />
-        <Route exact path="/">
-          {authToken ? <AllAccounts /> : <Login />}
-        </Route>
-        <Route exact path="/stats">
-          <StatisticList />
-        </Route>
-      </div>
-      <CssBaseline />
-    </AuthContext.Provider>
+    <ThemeProvider theme={theme}>
+      <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
+        <div className={classes.root}>
+          <Header />
+          <Route exact path="/">
+            {authToken ? <AllAccounts /> : <Login />}
+          </Route>
+          <Route exact path="/stats">
+            <StatisticList />
+          </Route>
+        </div>
+        <CssBaseline />
+      </AuthContext.Provider>
+    </ThemeProvider>
   );
 }
 

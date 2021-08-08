@@ -6,7 +6,6 @@ import {
   TableCell,
   TableRow,
   Toolbar,
-  makeStyles,
 } from '@material-ui/core';
 import { Search } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
@@ -16,37 +15,13 @@ import Controls from '../components/controls/Controls';
 import Popup from '../components/Popup';
 import { useAuth } from '../services/Auth';
 import useTable from '../components/useTable';
-
-const useStyle = makeStyles(theme => ({
-  root: {
-    height: 'calc(100vh - 64px)',
-    background: '#fafafa',
-    display: 'flex',
-    justifyContent: 'center',
-    // height: '100%'
-  },
-  pageContent: {
-    margin: theme.spacing(0, 5),
-    padding: theme.spacing(3),
-    overflow: 'auto',
-    '&::-webkit-scrollbar:vertical': {
-      display: 'none',
-    },
-  },
-  // pageContent::-webkit-scrollbar: {
-  //     display: 'none'
-  // },
-  newButton: {
-    position: 'absolute',
-    right: '0px',
-  },
-}));
+import { statisticListStyles } from '../styles/view/statisticList';
 
 function StatisticList() {
+  const classes = statisticListStyles();
   const [accounts, setAccounts] = useState([]);
   const [searchValue, changeSearchValue] = useState('');
   const [openPopup, setOpenPopup] = useState(false);
-  const styles = useStyle();
   const { statsData } = useAuth();
   useEffect(() => {
     if (statsData) {
@@ -81,8 +56,8 @@ function StatisticList() {
       : null;
   };
   return (
-    <Box className={styles.root}>
-      <Paper className={styles.pageContent}>
+    <Box className={classes.root}>
+      <Paper className={classes.pageContent}>
         <Toolbar>
           <Controls.Input
             label="Search"
