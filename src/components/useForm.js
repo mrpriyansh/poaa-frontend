@@ -18,11 +18,10 @@ export function useForm(initialValues, validateOnChange = false, validate) {
     handleInputChange,
   };
 }
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles(() => ({
   root: {
     '& .MuiFormControl-root': {
-      width: '80%',
-      margin: theme.spacing(1),
+      width: '90%',
     },
   },
 }));

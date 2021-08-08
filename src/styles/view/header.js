@@ -1,17 +1,7 @@
 import { makeStyles } from '@material-ui/core';
 
-export const headerStyles = makeStyles({
-  root: {
-    background: '#3454d1',
+export const headerStyles = makeStyles(() => ({
+  titleRoot: {
+    margin: 'auto',
   },
-  title: {
-    color: '#000',
-  },
-  grow: {
-    flexGrow: 1,
-  },
-  button: {},
-  '& .MuiButton-label': {
-    color: '#fff',
-  },
-});
+}));

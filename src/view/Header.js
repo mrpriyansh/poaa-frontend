@@ -12,12 +12,11 @@ function Header() {
     setAuthToken();
   };
   return (
-    <AppBar position="static" className={classes.root}>
+    <AppBar position="static">
       <Toolbar>
-        <Typography variant="h4" className={classes.title}>
-          POAA
+        <Typography variant="h5" classes={{ root: classes.titleRoot }}>
+          Post Office Agent Assistant
         </Typography>
-        <div className={classes.grow} />
         {authToken && (
           <>
             <Button onClick={handleLogout}>Logout</Button>

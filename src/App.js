@@ -9,8 +9,9 @@ import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 
 const useStyles = makeStyles({
-  root: {
-    backgroundColor: '#fff',
+  container: {
+    height: '-webkit-fill-available',
+    padding: '1em 0.5em',
   },
 });
 
@@ -29,15 +30,17 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
-        <div className={classes.root}>
+        <>
           <Header />
-          <Route exact path="/">
-            {authToken ? <AllAccounts /> : <Login />}
-          </Route>
-          <Route exact path="/stats">
-            <StatisticList />
-          </Route>
-        </div>
+          <div className={classes.container}>
+            <Route exact path="/">
+              {authToken ? <AllAccounts /> : <Login />}
+            </Route>
+            <Route exact path="/stats">
+              <StatisticList />
+            </Route>
+          </div>
+        </>
         <CssBaseline />
       </AuthContext.Provider>
     </ThemeProvider>

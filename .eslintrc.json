@@ -9,10 +9,11 @@
     "react/no-array-index-key": "off",
     "consistent-return": "off",
     "no-shadow": "off",
+    "no-unused-vars": "warn",
     "no-use-before-define": "off",
     "import/no-cycle": "off",
     "import\no-extraneous-dependenciesin": "off",
-    "import/prefer-default-export": "off", 
+    "import/prefer-default-export": "off",
     "prettier/prettier": [
       "warn",
       {

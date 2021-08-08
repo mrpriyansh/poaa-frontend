@@ -5,5 +5,16 @@ export const theme = createTheme({
     primary: {
       main: '#000',
     },
+    secondary: {
+      main: '#fff',
+    },
+  },
+  typography: {
+    fontFamily: ['Noto Serif', 'serif'],
+  },
+  props: {
+    MuiTextField: {
+      size: 'small',
+    },
   },
 });
