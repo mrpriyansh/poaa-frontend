@@ -15,6 +15,24 @@ export const theme = createTheme({
   props: {
     MuiTextField: {
       size: 'small',
+      fullWidth: true,
+    },
+    MuiMenuItem: {
+      dense: true,
+    },
+    MuiIconButton: {
+      size: 'small',
+    },
+    MuiButton: {
+      size: 'small',
+    },
+  },
+
+  overrides: {
+    MuiTextField: {
+      root: {
+        margin: '0.5em',
+      },
     },
   },
 });

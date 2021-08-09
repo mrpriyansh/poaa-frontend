@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import {
-  Box,
-  TableBody,
-  TableRow,
-  TableCell,
-  Paper,
-  Toolbar,
-  InputAdornment,
-} from '@material-ui/core';
+import { TableBody, TableRow, TableCell, Paper, Toolbar, InputAdornment } from '@material-ui/core';
 import useSWR from 'swr';
 import { Search } from '@material-ui/icons';
-import AddIcon from '@material-ui/icons/Add';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 
@@ -85,9 +76,19 @@ function AllAccounts() {
     deleteTrigger(item.accountno);
   };
   return (
-    <Box className={classes.root}>
+    // <Box className={classes.root}>
+    <>
       <Paper className={classes.pageContent}>
-        <Toolbar>
+        <Toolbar classes={{ root: classes.toolbarRoot }}>
+          <Controls.Select
+            label="Type"
+            name="accountType"
+            value={searchType}
+            onChange={event => changeSearchType(event.target.value)}
+            options={searchTypeList}
+            required
+            classes={{ root: classes.typeField }}
+          />
           <Controls.Input
             label="Search"
             InputProps={{
@@ -99,15 +100,7 @@ function AllAccounts() {
             }}
             onChange={event => changeSearchValue(event.target.value)}
           />
-          <Controls.Select
-            label="Type"
-            name="accountType"
-            value={searchType}
-            onChange={event => changeSearchType(event.target.value)}
-            options={searchTypeList}
-            required
-          />
-          <Controls.Button
+          {/* <Controls.Button
             text="Add Account"
             variant="outlined"
             startIcon={<AddIcon />}
@@ -116,7 +109,7 @@ function AllAccounts() {
               setRecordForEdit();
               setOpenPopup(true);
             }}
-          />
+          /> */}
           {/* <TextField 
                         variant ="outlined"
                         label="Search"
@@ -160,7 +153,8 @@ function AllAccounts() {
       <Popup openPopup={openPopup} setOpenPopup={setOpenPopup} title="Add Account">
         <AddAccount setOpenPopup={setOpenPopup} recordForEdit={recordForEdit} />
       </Popup>
-    </Box>
+    </>
+    // </Box>
   );
 }
 

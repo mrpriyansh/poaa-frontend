@@ -37,7 +37,7 @@ export default function Popup(props) {
             onClick={() => setExcelPopup(prev => !prev)}
           />
           <Controls.ActionButton
-            color="secondary"
+            color="primary"
             onClick={() => {
               setOpenPopup(false);
             }}

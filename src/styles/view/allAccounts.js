@@ -1,16 +1,12 @@
 import { makeStyles } from '@material-ui/core';
 
 export const allAccountStyles = makeStyles(theme => ({
-  root: {
-    height: 'calc(100vh - 64px)',
-    background: '#fafafa',
-    display: 'flex',
-    justifyContent: 'center',
-    // height: '100%'
+  toolbarRoot: {
+    flexDirection: 'column',
   },
   pageContent: {
-    margin: theme.spacing(0.5, 5),
-    padding: theme.spacing(3),
+    // margin: theme.spacing(0.5, 5),
+    padding: theme.spacing(2),
     // minWidth: '990px',
     minHeight: '100%',
     overflow: 'auto',
@@ -18,11 +14,11 @@ export const allAccountStyles = makeStyles(theme => ({
       display: 'none',
     },
   },
-  // pageContent::-webkit-scrollbar: {
-  //     display: 'none'
-  // },
   newButton: {
-    position: 'absolute',
-    right: '0px',
+    // position: 'absolute',
+    // right: '0px',
+  },
+  typeField: {
+    minWidth: '12em',
   },
 }));
