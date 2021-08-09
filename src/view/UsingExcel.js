@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react';
 import NewWindow from 'react-new-window';
 import XLSX from 'xlsx';
 import StatisticList from './StatisticList';
-import Controls from '../components/controls/Controls'; // eslint-disable-line import/order
+import Controls from '../common/controls/Controls'; // eslint-disable-line import/order
 import accountTypeList from '../assets/data/accountType';
 import config from '../services/config';
 import { triggerAlert } from '../services/getAlert/getAlert';

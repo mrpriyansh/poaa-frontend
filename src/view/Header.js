@@ -6,7 +6,7 @@ import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/view/header';
-import Popup from '../components/Popup';
+import Popup from '../common/Popup';
 import AddAccount from './AddAccount';
 
 function Header() {

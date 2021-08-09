@@ -5,9 +5,9 @@ import { Search } from '@material-ui/icons';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import CloseIcon from '@material-ui/icons/Close';
 
-import useTable from '../components/useTable';
-import Controls from '../components/controls/Controls';
-import Popup from '../components/Popup';
+import useTable from '../common/useTable';
+import Controls from '../common/controls/Controls';
+import Popup from '../common/Popup';
 import AddAccount from './AddAccount';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';

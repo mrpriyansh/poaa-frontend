@@ -1,8 +1,8 @@
 import { Grid, Paper, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 
-import { Form, useForm } from '../components/useForm';
-import Controls from '../components/controls/Controls';
+import { Form, useForm } from '../common/useForm';
+import Controls from '../common/controls/Controls';
 import { useAuth } from '../services/Auth';
 import { axiosUtil } from '../services/axiosinstance';
 import { loginStyles } from '../styles/view/login';

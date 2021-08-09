@@ -1,6 +1,6 @@
 import React from 'react';
 import { Route, Redirect, useLocation } from 'react-router-dom';
-import { useAuth } from '../Hooks/Auth';
+import { useAuth } from '../services/Auth';
 
 const ProtectedRoute = ({ children, ...rest }) => {
   const { authToken } = useAuth();

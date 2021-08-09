@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Grid } from '@material-ui/core';
 import { mutate } from 'swr';
 
-import { useForm, Form } from '../components/useForm';
-import Controls from '../components/controls/Controls';
+import { useForm, Form } from '../common/useForm';
+import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import accountTypeList from '../assets/data/accountType';
 import { axiosUtil } from '../services/axiosinstance';

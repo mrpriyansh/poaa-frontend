@@ -11,10 +11,10 @@ import { Search } from '@material-ui/icons';
 import React, { useEffect, useState } from 'react';
 
 import AddAccount from './AddAccount';
-import Controls from '../components/controls/Controls';
-import Popup from '../components/Popup';
+import Controls from '../common/controls/Controls';
+import Popup from '../common/Popup';
 import { useAuth } from '../services/Auth';
-import useTable from '../components/useTable';
+import useTable from '../common/useTable';
 import { statisticListStyles } from '../styles/view/statisticList';
 
 function StatisticList() {
