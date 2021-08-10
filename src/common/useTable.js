@@ -14,8 +14,8 @@ const useStyles = makeStyles(theme => ({
     '& thead th': {
       fontWeight: '600',
       color: '#fff',
-      // background: theme.palette.primary.light,
-      background: '#3454d1',
+      backgroundColor: theme.palette.primary.main,
+      lineHeight: '0.8em',
     },
     '& thead tr': {
       borderRadius: '5px',

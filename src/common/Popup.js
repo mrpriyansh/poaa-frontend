@@ -1,53 +1,49 @@
-import React, { useState } from 'react';
-import { Dialog, DialogContent, DialogTitle, Typography, makeStyles } from '@material-ui/core';
+import React from 'react';
+import {
+  Dialog,
+  IconButton,
+  DialogContent,
+  DialogTitle,
+  Typography,
+  makeStyles,
+} from '@material-ui/core';
 import CloseIcon from '@material-ui/icons/Close';
-import AddIcon from '@material-ui/icons/Add';
 
-import UsingExcel from '../view/UsingExcel';
-import Controls from './controls/Controls';
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles(theme => ({
   dialogTitle: {
-    paddingRight: '0px',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: theme.spacing(2),
+  },
+  typographyRoot: {
+    fontWeight: '700',
   },
   content: {
-    minHeight: '330px',
-    minWidth: '550px',
+    width: 'clamp(250px, 80vw, 600px)',
+    padding: theme.spacing(2),
   },
 }));
 export default function Popup(props) {
   const styles = useStyles();
   const { title, children, openPopup, setOpenPopup } = props;
-  const [excelPopup, setExcelPopup] = useState(false);
   return (
     <Dialog open={openPopup}>
-      <DialogTitle className={styles.dialogTitle}>
-        <div style={{ display: 'flex' }}>
-          <Typography
-            variant="h6"
-            component="div"
-            style={{ flexGrow: 1, alignItems: 'center', display: 'flex' }}
-          >
-            {title}
-          </Typography>
-          <Controls.Button
-            text={excelPopup ? `Add One Account` : `Add using excel`}
-            variant="outlined"
-            startIcon={<AddIcon />}
-            onClick={() => setExcelPopup(prev => !prev)}
-          />
-          <Controls.ActionButton
-            color="primary"
-            onClick={() => {
-              setOpenPopup(false);
-            }}
-          >
-            <CloseIcon />
-          </Controls.ActionButton>
-        </div>
+      <DialogTitle className={styles.dialogTitle} disableTypography="true">
+        <Typography
+          variant="h6"
+          component="div"
+          align="center"
+          classes={{ root: styles.typographyRoot }}
+        >
+          {title}
+        </Typography>
+        <IconButton onClick={() => setOpenPopup(false)}>
+          <CloseIcon />
+        </IconButton>
       </DialogTitle>
       <DialogContent dividers className={styles.content}>
-        {excelPopup ? <UsingExcel /> : children}
+        {children}
       </DialogContent>
     </Dialog>
   );

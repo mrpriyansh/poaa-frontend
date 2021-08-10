@@ -71,7 +71,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
   return (
     <Form onSubmit={handleAddAccount} className={classes.root}>
       <Grid container justifyContent="center">
-        <Grid item xs={6}>
+        <Grid item xs={12}>
           <Controls.Input
             label="Name"
             name="name"
@@ -107,7 +107,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             error={errors.accountType}
           />
         </Grid>
-        <Grid item xs={6} justifyContent="center">
+        <Grid item xs={12}>
           <Controls.Input
             label="Amount"
             name="amount"
@@ -132,13 +132,11 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             required
             error={errors.maturityDate}
           />
-          {/* <div className={styles.button_wrapper}> */}
           <Controls.Button
             type="submit"
             text={recordForEdit ? `Edit Account` : 'Add Account'}
             disabled={loading}
           />
-          {/* </div> */}
         </Grid>
       </Grid>
     </Form>

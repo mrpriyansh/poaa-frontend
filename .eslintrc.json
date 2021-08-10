@@ -10,10 +10,12 @@
     "consistent-return": "off",
     "no-shadow": "off",
     "no-unused-vars": "warn",
+    "no-unneeded-ternary": "off",
     "no-use-before-define": "off",
     "import/no-cycle": "off",
     "import\no-extraneous-dependenciesin": "off",
     "import/prefer-default-export": "off",
+    "prefer-template": "off",
     "prettier/prettier": [
       "warn",
       {

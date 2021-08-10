@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { TableBody, TableRow, TableCell, Paper, Toolbar, InputAdornment } from '@material-ui/core';
+import { Paper, Toolbar, InputAdornment, IconButton } from '@material-ui/core';
 import useSWR from 'swr';
 import { Search } from '@material-ui/icons';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import CloseIcon from '@material-ui/icons/Close';
+import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
-import useTable from '../common/useTable';
 import Controls from '../common/controls/Controls';
 import Popup from '../common/Popup';
 import AddAccount from './AddAccount';
@@ -13,6 +12,14 @@ import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
 import { allAccountStyles } from '../styles/view/allAccounts';
+import CustomTable from '../common/Table';
+
+const searchTypeList = [
+  { title: 'Name' },
+  { title: 'Account Number' },
+  { title: 'Account Type' },
+  { title: 'Maturity Date' },
+];
 
 function AllAccounts() {
   const classes = allAccountStyles();
@@ -49,36 +56,50 @@ function AllAccounts() {
     }
   }, [response, searchValue, searchType]);
 
-  const searchTypeList = [
-    { title: 'Name' },
-    { title: 'Account Number' },
-    { title: 'Account Type' },
-    { title: 'Maturity Date' },
-  ];
-  const headCells = [
-    { id: 'index', label: 'Sno' },
-    { id: 'name', label: 'Name' },
-    { id: 'accountno', label: 'AccountNo' },
-    { id: 'accountType', label: 'Type' },
-    { id: 'amount', label: 'Amount' },
-    { id: 'Opening', label: 'Opening Date' },
-    { id: 'maturityDate', label: 'Maturity Date' },
-    { id: 'actions', label: 'Actions' },
-  ];
-  const { TblContainer, TblHead, TblPagination, recordsAfterPagingAndSorting } = useTable(
-    accounts,
-    headCells
-  );
-  if (error) return <p style={{ color: 'red' }}> Error in Fetching</p>;
-  if (!response) return <LoaderSVG />;
-
   const handleDelete = item => {
     deleteTrigger(item.accountno);
   };
+
+  const createData = (name, accountno, accountType, amount, opening, maturityDate, actions) => {
+    return { name, accountno, accountType, amount, opening, maturityDate, actions };
+  };
+
+  const columns = [
+    { id: 'name', label: 'Name', minWidth: '15em' },
+    { id: 'amount', label: 'Amount', align: 'center' },
+    { id: 'accountType', label: 'Type', align: 'center' },
+    { id: 'accountno', label: 'Account No.', align: 'center', minWidth: '8em' },
+    { id: 'opening', label: 'Opening Date', align: 'center', minWidth: '9em' },
+    { id: 'maturityDate', label: 'Maturity Date', align: 'center', minWidth: '9em' },
+    { id: 'actions', align: 'center', minWidth: '8em' },
+  ];
+
+  const rows = accounts.map(acc => {
+    return createData(
+      acc.name,
+      acc.accountno,
+      acc.accountType,
+      acc.amount,
+      convertDate(acc.openingDate),
+      convertDate(acc.maturityDate),
+      <>
+        <IconButton onClick={() => handleEdit(acc)}>
+          {' '}
+          <EditOutlinedIcon />{' '}
+        </IconButton>{' '}
+        <IconButton onClick={() => handleDelete(acc)}>
+          <DeleteForeverIcon color="error" />
+        </IconButton>{' '}
+      </>
+    );
+  });
+
+  if (error) return <p style={{ color: 'red' }}> Error in Fetching</p>;
+  if (!response) return <LoaderSVG />;
+
   return (
-    // <Box className={classes.root}>
     <>
-      <Paper className={classes.pageContent}>
+      <Paper className={classes.pageContent} m={6}>
         <Toolbar classes={{ root: classes.toolbarRoot }}>
           <Controls.Select
             label="Type"
@@ -100,61 +121,13 @@ function AllAccounts() {
             }}
             onChange={event => changeSearchValue(event.target.value)}
           />
-          {/* <Controls.Button
-            text="Add Account"
-            variant="outlined"
-            startIcon={<AddIcon />}
-            className={classes.newButton}
-            onClick={() => {
-              setRecordForEdit();
-              setOpenPopup(true);
-            }}
-          /> */}
-          {/* <TextField 
-                        variant ="outlined"
-                        label="Search"
-                        name="search"
-                        value={searchValue}
-                        onChange={event=>changeSearchValue(event.target.value)}
-                        InputProps={{
-                            startAdorment:(<InputAdornment position="start">
-                                <Search />
-                            </InputAdornment>)
-                        }}
-                    /> */}
         </Toolbar>
-        <TblContainer>
-          <TblHead />
-          <TableBody>
-            {recordsAfterPagingAndSorting().map((account, index) => (
-              <TableRow key={index}>
-                <TableCell> {index + 1}</TableCell>
-                <TableCell> {account.name}</TableCell>
-                <TableCell> {account.accountno}</TableCell>
-                <TableCell> {account.accountType}</TableCell>
-                <TableCell> {account.amount}</TableCell>
-                <TableCell> {convertDate(account.openingDate)}</TableCell>
-                <TableCell> {convertDate(account.maturityDate)}</TableCell>
-                <TableCell>
-                  <Controls.ActionButton color="primary" onClick={() => handleEdit(account)}>
-                    <EditOutlinedIcon fontSize="small" />
-                  </Controls.ActionButton>
-                  <Controls.ActionButton color="secondary" onClick={() => handleDelete(account)}>
-                    <CloseIcon fontSize="small" />
-                  </Controls.ActionButton>
-                </TableCell>
-                {/* <TableCell> {account.mobile}</TableCell> */}
-              </TableRow>
-            ))}
-          </TableBody>
-        </TblContainer>
-        <TblPagination />
+        <CustomTable rows={rows} columns={columns} pagination />
       </Paper>
       <Popup openPopup={openPopup} setOpenPopup={setOpenPopup} title="Add Account">
         <AddAccount setOpenPopup={setOpenPopup} recordForEdit={recordForEdit} />
       </Popup>
     </>
-    // </Box>
   );
 }
 
