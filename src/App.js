@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { makeStyles, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { Route } from 'react-router-dom';
-import Header from './view/Header';
+import Header from './components/Header';
 import Login from './view/Login';
-import AllAccounts from './view/AllAccounts';
-import StatisticList from './view/StatisticList';
+import Home from './view/Home';
+import StatisticList from './components/StatisticList';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 
@@ -34,7 +34,7 @@ function App() {
           <Header />
           <div className={classes.container}>
             <Route exact path="/">
-              {authToken ? <AllAccounts /> : <Login />}
+              {authToken ? <Home /> : <Login />}
             </Route>
             <Route exact path="/stats">
               <StatisticList />

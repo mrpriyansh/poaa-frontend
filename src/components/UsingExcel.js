@@ -11,7 +11,7 @@ import accountTypeList from '../assets/data/accountType';
 import config from '../services/config';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { useAuth } from '../services/Auth';
-import { usingExcelStyles } from '../styles/view/usingExcel';
+import { usingExcelStyles } from '../styles/components/usingExcel';
 
 function UsingExcel() {
   const classes = usingExcelStyles();

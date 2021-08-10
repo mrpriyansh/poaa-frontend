@@ -15,7 +15,7 @@ import Controls from '../common/controls/Controls';
 import Popup from '../common/Popup';
 import { useAuth } from '../services/Auth';
 import useTable from '../common/useTable';
-import { statisticListStyles } from '../styles/view/statisticList';
+import { statisticListStyles } from '../styles/components/statisticList';
 
 function StatisticList() {
   const classes = statisticListStyles();

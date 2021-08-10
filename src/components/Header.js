@@ -8,7 +8,7 @@ import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 
 import UsingExcel from './UsingExcel';
 import { useAuth } from '../services/Auth';
-import { headerStyles } from '../styles/view/header';
+import { headerStyles } from '../styles/components/header';
 import Popup from '../common/Popup';
 import AddAccount from './AddAccount';
 

@@ -7,11 +7,11 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 
 import Controls from '../common/controls/Controls';
 import Popup from '../common/Popup';
-import AddAccount from './AddAccount';
+import AddAccount from '../components/AddAccount';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
-import { allAccountStyles } from '../styles/view/allAccounts';
+import { allAccountStyles } from '../styles/view/home';
 import CustomTable from '../common/Table';
 
 const searchTypeList = [
@@ -21,7 +21,7 @@ const searchTypeList = [
   { title: 'Maturity Date' },
 ];
 
-function AllAccounts() {
+function Home() {
   const classes = allAccountStyles();
   const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
 
@@ -131,4 +131,4 @@ function AllAccounts() {
   );
 }
 
-export default AllAccounts;
+export default Home;

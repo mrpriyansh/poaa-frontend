@@ -7,7 +7,7 @@ import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import accountTypeList from '../assets/data/accountType';
 import { axiosUtil } from '../services/axiosinstance';
-import { addAccountStyles } from '../styles/view/addAcount';
+import { addAccountStyles } from '../styles/components/addAcount';
 
 const curDate = new Date();
 const y = curDate.getFullYear();
