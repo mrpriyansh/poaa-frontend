@@ -83,8 +83,8 @@ export default function CustomTable({
             count={rows.length}
             rowsPerPage={rowsPerPage}
             page={page}
-            onChangePage={handleChangePage}
-            onChangeRowsPerPage={handleChangeRowsPerPage}
+            onPageChange={handleChangePage}
+            onRowsPerPageChange={handleChangeRowsPerPage}
             className="pagination"
             classes={{ root: classes.paginationRoot }}
           />

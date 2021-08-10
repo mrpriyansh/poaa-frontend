@@ -29,7 +29,7 @@ export default function Popup(props) {
   const { title, children, openPopup, setOpenPopup } = props;
   return (
     <Dialog open={openPopup}>
-      <DialogTitle className={styles.dialogTitle} disableTypography="true">
+      <DialogTitle className={styles.dialogTitle} disableTypography>
         <Typography
           variant="h6"
           component="div"
