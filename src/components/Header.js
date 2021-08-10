@@ -11,9 +11,11 @@ import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
 import Popup from '../common/Popup';
 import AddAccount from './AddAccount';
+import AddInstallment from './AddInstallment';
 
 const ADD_ACCOUNT = 'Add Account';
 const ADD_BATCH = 'Add Using Excel';
+const ADD_INSTALLMENT = 'Add Installment';
 
 function Header() {
   const classes = headerStyles();
@@ -21,6 +23,18 @@ function Header() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [popupType, setPopupType] = useState('');
 
+  const popupComponent = () => {
+    switch (popupType) {
+      case ADD_ACCOUNT:
+        return <AddAccount />;
+      case ADD_BATCH:
+        return <UsingExcel />;
+      case ADD_INSTALLMENT:
+        return <AddInstallment />;
+      default:
+        <> </>;
+    }
+  };
   const handleOpenMenu = e => {
     setAnchorEl(e.currentTarget);
   };
@@ -41,6 +55,11 @@ function Header() {
 
   const handleAddBatchAccounts = () => {
     setPopupType(ADD_BATCH);
+    handleClose();
+  };
+
+  const handleAddInstallment = () => {
+    setPopupType(ADD_INSTALLMENT);
     handleClose();
   };
 
@@ -72,7 +91,7 @@ function Header() {
               }}
               getContentAnchorEl={null}
             >
-              <MenuItem>
+              <MenuItem onClick={handleAddInstallment}>
                 <IconButton>
                   <PostAddIcon />
                 </IconButton>
@@ -100,8 +119,8 @@ function Header() {
           </>
         )}
       </Toolbar>
-      <Popup openPopup={popupType?.length} setOpenPopup={setPopupType} title={popupType}>
-        {popupType === ADD_BATCH ? <UsingExcel /> : <AddAccount setOpenPopup={setPopupType} />}
+      <Popup openPopup={Boolean(popupType?.length)} setOpenPopup={setPopupType} title={popupType}>
+        {popupComponent()}
       </Popup>
     </AppBar>
   );

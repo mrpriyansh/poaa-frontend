@@ -34,5 +34,10 @@ export const theme = createTheme({
         margin: '0.5em',
       },
     },
+    Autocomplete: {
+      root: {
+        margin: '0.5em',
+      },
+    },
   },
 });
