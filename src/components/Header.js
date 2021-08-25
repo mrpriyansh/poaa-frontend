@@ -20,7 +20,7 @@ const ADD_ACCOUNT = 'Add Account';
 const ADD_BATCH = 'Add Using Excel';
 const ADD_INSTALLMENT = 'Add Installment';
 
-function Header() {
+function Header({ isOnline }) {
   const classes = headerStyles();
   const { setAuthToken, authToken } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
@@ -84,14 +84,16 @@ function Header() {
         </Typography>
         {authToken && (
           <>
-            <IconButton
-              aria-controls="menu"
-              aria-haspopup="true"
-              onClick={handleOpenMenu}
-              color="secondary"
-            >
-              <MenuIcon />
-            </IconButton>
+            {isOnline ? (
+              <IconButton
+                aria-controls="menu"
+                aria-haspopup="true"
+                onClick={handleOpenMenu}
+                color="secondary"
+              >
+                <MenuIcon />
+              </IconButton>
+            ) : null}
             <Menu
               id="menu"
               anchorEl={anchorEl}

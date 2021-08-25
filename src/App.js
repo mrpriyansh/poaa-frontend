@@ -10,6 +10,7 @@ import ProtectedRoute from './common/ProtectedRoute';
 import { theme } from './styles/customTheme';
 import GenerateList from './view/GenerateList';
 import PreviousList from './view/PreviousList';
+import Offline from './view/Offline';
 
 const useStyles = makeStyles({
   container: {
@@ -23,6 +24,7 @@ function App() {
   const classes = useStyles();
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
+  const [isOnline, setIsOnline] = useState(true);
   useEffect(() => {
     const token = window.localStorage.getItem('token');
     if (token) setAuthToken(token);
@@ -31,24 +33,44 @@ function App() {
     const token = window.localStorage.getItem('token');
     setAuthToken(token);
   };
+  useEffect(() => {
+    window.addEventListener('online', () => {
+      setIsOnline(true);
+    });
+    return () => window.removeEventListener('online');
+  }, []);
+
+  useEffect(() => {
+    window.addEventListener('offline', () => {
+      setIsOnline(false);
+    });
+    return () => window.removeEventListener('offline');
+  }, []);
   return (
     <ThemeProvider theme={theme}>
       <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
         <>
-          <Header />
+          <Header isOnline={isOnline} />
           <div className={classes.container}>
-            <Route exact path="/">
-              {authToken ? <Home /> : <Login />}
-            </Route>
-            <ProtectedRoute exact path="/generate-list">
-              <GenerateList />
-            </ProtectedRoute>
-            <ProtectedRoute exact path="/previous-lists">
-              <PreviousList />
-            </ProtectedRoute>
-            <ProtectedRoute exact path="/stats">
-              <StatisticList />
-            </ProtectedRoute>
+            {isOnline ? (
+              <>
+                <Route exact path="/">
+                  {authToken ? <Home /> : <Login />}
+                </Route>
+                <ProtectedRoute exact path="/generate-list">
+                  <GenerateList />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/previous-lists">
+                  <PreviousList />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/stats">
+                  <StatisticList />
+                </ProtectedRoute>
+                ){' '}
+              </>
+            ) : (
+              <Offline />
+            )}
           </div>
         </>
         <CssBaseline />
