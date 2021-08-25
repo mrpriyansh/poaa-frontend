@@ -10,6 +10,7 @@ import { axiosUtil } from '../services/axiosinstance';
 import { addInstallmentsStyles } from '../styles/components/addInstallments';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
+import Offline from '../view/Offline';
 
 const initialValues = {
   name: '',
@@ -60,7 +61,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
       .finally(() => setIsLoading(false));
   };
 
-  if (!data && error) return <div> Error occured </div>;
+  if (!data && error) return <Offline />;
   if (!data) return <LoaderSVG />;
   return (
     <Form onSubmit={handleAddInstallment} className={classes.root}>

@@ -37,14 +37,14 @@ function App() {
     window.addEventListener('online', () => {
       setIsOnline(true);
     });
-    return () => window.removeEventListener('online');
+    return () => window.removeEventListener('online', () => {});
   }, []);
 
   useEffect(() => {
     window.addEventListener('offline', () => {
       setIsOnline(false);
     });
-    return () => window.removeEventListener('offline');
+    return () => window.removeEventListener('offline', () => {});
   }, []);
   return (
     <ThemeProvider theme={theme}>
@@ -65,8 +65,7 @@ function App() {
                 </ProtectedRoute>
                 <ProtectedRoute exact path="/stats">
                   <StatisticList />
-                </ProtectedRoute>
-                ){' '}
+                </ProtectedRoute>{' '}
               </>
             ) : (
               <Offline />

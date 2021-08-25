@@ -11,6 +11,7 @@ import { formatDateTime } from '../services/utils';
 import CustomTable from '../common/Table';
 import { previousListsStyles } from '../styles/view/previousLists';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
+import Offline from './Offline';
 
 export default function PreviousList() {
   const classes = previousListsStyles();
@@ -51,7 +52,7 @@ export default function PreviousList() {
     { id: 'accountno', label: 'Account No.', minWidth: '8em', align: 'center' },
   ];
 
-  if (error) return <div> Error occured </div>;
+  if (error) return <Offline />;
   if (!response) return <LoaderSVG />;
 
   const rows = selectedList?.accounts?.map(acc => acc);

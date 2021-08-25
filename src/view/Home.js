@@ -14,6 +14,7 @@ import { axiosUtil } from '../services/axiosinstance';
 import { allAccountStyles } from '../styles/view/home';
 import CustomTable from '../common/Table';
 import { formatDate } from '../services/utils';
+import Offline from './Offline';
 
 const searchTypeList = [
   { title: 'Name' },
@@ -94,7 +95,7 @@ function Home() {
     );
   });
 
-  if (error) return <p style={{ color: 'red' }}> Error in Fetching</p>;
+  if (error) return <Offline />;
   if (!response) return <LoaderSVG />;
 
   return (
