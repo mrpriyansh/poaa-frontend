@@ -10,6 +10,7 @@ import { axiosUtil } from '../services/axiosinstance';
 import { formatDateTime } from '../services/utils';
 import CustomTable from '../common/Table';
 import { previousListsStyles } from '../styles/view/previousLists';
+import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 
 export default function PreviousList() {
   const classes = previousListsStyles();
@@ -51,7 +52,7 @@ export default function PreviousList() {
   ];
 
   if (error) return <div> Error occured </div>;
-  if (!response) return <div> Loading </div>;
+  if (!response) return <LoaderSVG />;
 
   const rows = selectedList?.accounts?.map(acc => acc);
   return (

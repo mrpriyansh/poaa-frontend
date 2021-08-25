@@ -16,6 +16,7 @@ import Popup from '../common/Popup';
 import { useAuth } from '../services/Auth';
 import useTable from '../common/useTable';
 import { statisticListStyles } from '../styles/components/statisticList';
+import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 
 function StatisticList() {
   const classes = statisticListStyles();
@@ -46,7 +47,7 @@ function StatisticList() {
     accounts,
     headCells
   );
-  if (!statsData) return <p> Loading</p>;
+  if (!statsData) <LoaderSVG />;
 
   const convertDate = date => {
     return date?.split('-')?.length >= 2

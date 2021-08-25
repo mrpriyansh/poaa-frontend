@@ -9,6 +9,7 @@ import { Form } from '../common/useForm';
 import { axiosUtil } from '../services/axiosinstance';
 import { addInstallmentsStyles } from '../styles/components/addInstallments';
 import { triggerAlert } from '../services/getAlert/getAlert';
+import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 
 const initialValues = {
   name: '',
@@ -60,7 +61,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   };
 
   if (!data && error) return <div> Error occured </div>;
-  if (!data) return <div> Loading</div>;
+  if (!data) return <LoaderSVG />;
   return (
     <Form onSubmit={handleAddInstallment} className={classes.root}>
       <Grid container justifyContent="center">

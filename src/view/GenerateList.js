@@ -15,6 +15,7 @@ import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import Popup from '../common/Popup';
 import AddInstallment from '../components/AddInstallment';
+import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 
 const EDIT_INSTALLMENT = 'Edit Installment';
 const ADD_INSTALLMENT = 'Add Installment';
@@ -25,7 +26,7 @@ export default function GenerateList() {
   const [currentRecord, setCurrentRecord] = useState({});
   const { data: response, error } = useSWR('getAllInstallments', axiosUtil.get);
   if (error) return <p> Error occured</p>;
-  if (!response) return <p> Loading...</p>;
+  if (!response) return <LoaderSVG />;
 
   const columns = [
     { id: 'name', label: 'Name', minWidth: '15em' },
