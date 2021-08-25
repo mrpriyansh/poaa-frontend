@@ -4,6 +4,7 @@ import useSWR from 'swr';
 import { Search } from '@material-ui/icons';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
+import PostAddIcon from '@material-ui/icons/PostAdd';
 
 import Controls from '../common/controls/Controls';
 import Popup from '../common/Popup';
@@ -15,6 +16,7 @@ import { allAccountStyles } from '../styles/view/home';
 import CustomTable from '../common/Table';
 import { formatDate } from '../services/utils';
 import Offline from './Offline';
+import AddInstallment from '../components/AddInstallment';
 
 const searchTypeList = [
   { title: 'Name' },
@@ -23,6 +25,9 @@ const searchTypeList = [
   { title: 'Maturity Date' },
 ];
 
+const EDIT_ACCOUNT = 'Edit Account';
+const ADD_INSTALLMENT = 'Add Installment';
+
 function Home() {
   const classes = allAccountStyles();
 
@@ -30,13 +35,17 @@ function Home() {
 
   const [accounts, setAccounts] = useState([]);
   const [searchValue, changeSearchValue] = useState('');
-  const [openPopup, setOpenPopup] = useState(false);
+  const [openPopupType, setOpenPopupType] = useState('');
   const [searchType, changeSearchType] = useState('Name');
   const [recordForEdit, setRecordForEdit] = useState();
 
   const handleEdit = item => {
     setRecordForEdit(item);
-    setOpenPopup(true);
+    setOpenPopupType(EDIT_ACCOUNT);
+  };
+
+  const handleAddInstallment = () => {
+    setOpenPopupType(ADD_INSTALLMENT);
   };
   useEffect(() => {
     if (response) {
@@ -101,6 +110,12 @@ function Home() {
   return (
     <>
       <Paper className={classes.pageContent} m={6}>
+        <Controls.Button
+          text="Add Installment"
+          startIcon={<PostAddIcon />}
+          classes={{ root: classes.addInstButton }}
+          onClick={handleAddInstallment}
+        />
         <Toolbar classes={{ root: classes.toolbarRoot }}>
           <Controls.Select
             label="Type"
@@ -125,8 +140,16 @@ function Home() {
         </Toolbar>
         <CustomTable rows={rows} columns={columns} pagination />
       </Paper>
-      <Popup openPopup={openPopup} setOpenPopup={setOpenPopup} title="Add Account">
-        <AddAccount setOpenPopup={setOpenPopup} recordForEdit={recordForEdit} />
+      <Popup
+        openPopup={Boolean(openPopupType?.length)}
+        setOpenPopup={setOpenPopupType}
+        title={openPopupType}
+      >
+        {openPopupType === EDIT_ACCOUNT ? (
+          <AddAccount setOpenPopup={setOpenPopupType} recordForEdit={recordForEdit} />
+        ) : (
+          <AddInstallment setOpenPopup={setOpenPopupType} />
+        )}
       </Popup>
     </>
   );
