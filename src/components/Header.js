@@ -5,6 +5,9 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import SettingsIcon from '@material-ui/icons/Settings';
+import { useHistory } from 'react-router-dom';
+import HistoryIcon from '@material-ui/icons/History';
 
 import UsingExcel from './UsingExcel';
 import { useAuth } from '../services/Auth';
@@ -22,15 +25,16 @@ function Header() {
   const { setAuthToken, authToken } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [popupType, setPopupType] = useState('');
+  const history = useHistory();
 
   const popupComponent = () => {
     switch (popupType) {
       case ADD_ACCOUNT:
-        return <AddAccount />;
+        return <AddAccount setOpenPopup={setPopupType} />;
       case ADD_BATCH:
         return <UsingExcel />;
       case ADD_INSTALLMENT:
-        return <AddInstallment />;
+        return <AddInstallment setOpenPopup={setPopupType} />;
       default:
         <> </>;
     }
@@ -63,10 +67,19 @@ function Header() {
     handleClose();
   };
 
+  const redirectsTo = endpoint => {
+    handleClose();
+    history.push(endpoint);
+  };
+
   return (
     <AppBar position="static">
       <Toolbar>
-        <Typography variant="h6" classes={{ root: classes.titleRoot }}>
+        <Typography
+          variant="h6"
+          classes={{ root: classes.titleRoot }}
+          onClick={() => redirectsTo('/')}
+        >
           Post Office Agent Assistant
         </Typography>
         {authToken && (
@@ -96,6 +109,19 @@ function Header() {
                   <PostAddIcon />
                 </IconButton>
                 Add Installment
+              </MenuItem>
+              <MenuItem onClick={() => redirectsTo('/generate-list')}>
+                <IconButton>
+                  {' '}
+                  <SettingsIcon />
+                </IconButton>
+                Generate List
+              </MenuItem>
+              <MenuItem onClick={() => redirectsTo('/previous-lists')}>
+                <IconButton>
+                  <HistoryIcon />
+                </IconButton>
+                Previous Lists
               </MenuItem>
               <MenuItem onClick={handleAddAccount}>
                 <IconButton>

@@ -7,6 +7,8 @@ import Home from './view/Home';
 import StatisticList from './components/StatisticList';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
+import GenerateList from './view/GenerateList';
+import PreviousList from './view/PreviousList';
 
 const useStyles = makeStyles({
   container: {
@@ -35,6 +37,12 @@ function App() {
           <div className={classes.container}>
             <Route exact path="/">
               {authToken ? <Home /> : <Login />}
+            </Route>
+            <Route exact path="/generate-list">
+              <GenerateList />
+            </Route>
+            <Route exact path="/previous-lists">
+              <PreviousList />
             </Route>
             <Route exact path="/stats">
               <StatisticList />

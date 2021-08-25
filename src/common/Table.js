@@ -27,7 +27,7 @@ const StyledTableCell = withStyles(theme => ({
   },
 }))(TableCell);
 
-const customTableStyles = makeStyles(() => ({
+const customTableStyles = makeStyles(theme => ({
   paginationWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
@@ -39,6 +39,7 @@ const customTableStyles = makeStyles(() => ({
   },
   emptyBlock: {
     width: '100%',
+    marginTop: theme.spacing(1),
     textAlign: 'center',
   },
 }));

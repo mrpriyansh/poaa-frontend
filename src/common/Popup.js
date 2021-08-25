@@ -24,9 +24,8 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
   },
 }));
-export default function Popup(props) {
+export default function Popup({ title, children, openPopup, setOpenPopup }) {
   const styles = useStyles();
-  const { title, children, openPopup, setOpenPopup } = props;
   return (
     <Dialog open={openPopup}>
       <DialogTitle className={styles.dialogTitle} disableTypography>

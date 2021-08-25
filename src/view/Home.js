@@ -13,6 +13,7 @@ import { deleteTrigger } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
 import { allAccountStyles } from '../styles/view/home';
 import CustomTable from '../common/Table';
+import { formatDate } from '../services/utils';
 
 const searchTypeList = [
   { title: 'Name' },
@@ -23,6 +24,7 @@ const searchTypeList = [
 
 function Home() {
   const classes = allAccountStyles();
+
   const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
 
   const [accounts, setAccounts] = useState([]);
@@ -31,8 +33,6 @@ function Home() {
   const [searchType, changeSearchType] = useState('Name');
   const [recordForEdit, setRecordForEdit] = useState();
 
-  const convertDate = date =>
-    `${date.split('-')[2][0]}${date.split('-')[2][1]}-${date.split('-')[1]}-${date.split('-')[0]}`;
   const handleEdit = item => {
     setRecordForEdit(item);
     setOpenPopup(true);
@@ -47,7 +47,7 @@ function Home() {
         if (searchType === 'Account Type')
           return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
         if (searchType === 'Maturity Date')
-          return convertDate(account.maturityDate)
+          return formatDate(account.maturityDate)
             .toLowerCase()
             .includes(searchValue.toLowerCase());
         return true;
@@ -80,8 +80,8 @@ function Home() {
       acc.accountno,
       acc.accountType,
       acc.amount,
-      convertDate(acc.openingDate),
-      convertDate(acc.maturityDate),
+      formatDate(acc.openingDate),
+      formatDate(acc.maturityDate),
       <>
         <IconButton onClick={() => handleEdit(acc)}>
           {' '}

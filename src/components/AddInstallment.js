@@ -1,12 +1,15 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Grid, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
+import { useHistory } from 'react-router-dom';
+import { mutate } from 'swr';
 
 import Control from '../common/controls/Controls';
 import { Form } from '../common/useForm';
 import { usePersistentSWR } from '../services/userPersistentswr';
 import { axiosUtil } from '../services/axiosinstance';
 import { addInstallmentsStyles } from '../styles/components/addInstallments';
+import { triggerAlert } from '../services/getAlert/getAlert';
 
 const initialValues = {
   name: '',
@@ -15,13 +18,18 @@ const initialValues = {
   installments: 1,
 };
 
-export default function AddInstallment() {
+export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const classes = addInstallmentsStyles();
+  const history = useHistory();
   const [inputText, setInputText] = React.useState('');
   const [inputValue, setInputValue] = React.useState({ ...initialValues });
   const [errors, setErrors] = React.useState({});
+  const [isLoading, setIsLoading] = React.useState(false);
 
   const { data, error } = usePersistentSWR('allaccounts', axiosUtil.get);
+  useEffect(() => {
+    if (isModifying) setInputValue(record);
+  }, [isModifying, record]);
 
   const handleChangeInstallments = e => {
     const { value } = e.target;
@@ -37,7 +45,19 @@ export default function AddInstallment() {
 
   const handleAddInstallment = () => {
     if (errors.installments || errors.name) return;
-    console.log('in add');
+    setIsLoading(true);
+    axiosUtil[isModifying ? 'put' : 'post'](
+      isModifying ? 'editInstallment' : '/addInstallment',
+      inputValue
+    )
+      .then(res => {
+        mutate('getAllInstallments');
+        setOpenPopup(false);
+        history.push('/generate-list');
+        setInputValue({ ...initialValues });
+        triggerAlert({ icon: 'success', title: res.data });
+      })
+      .finally(() => setIsLoading(false));
   };
 
   if (!data && error) return <div> Error occured </div>;
@@ -54,7 +74,7 @@ export default function AddInstallment() {
             else setInputValue({ ...initialValues });
           }}
           inputValue={inputText}
-          onInputChange={newInputValue => {
+          onInputChange={(_, newInputValue) => {
             handleChangeInputText(newInputValue);
           }}
           options={data.data
@@ -92,7 +112,7 @@ export default function AddInstallment() {
         <TextField
           label="Installments"
           type="number"
-          inputProps={{ min: 0 }}
+          inputProps={{ min: 1 }}
           value={inputValue.installments}
           onChange={handleChangeInstallments}
           variant="outlined"
@@ -104,6 +124,7 @@ export default function AddInstallment() {
           text="Save"
           onClick={handleAddInstallment}
           classes={{ root: classes.saveButton }}
+          disabled={isLoading}
         />
       </Grid>
     </Form>
