@@ -13,7 +13,8 @@ import PreviousList from './view/PreviousList';
 
 const useStyles = makeStyles({
   container: {
-    height: '-webkit-fill-available',
+    display: 'flex',
+    justifyContent: 'center',
     padding: '1em 0.5em',
   },
 });

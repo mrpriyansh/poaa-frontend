@@ -11,7 +11,7 @@ const getAlert = () => {
     position: 'bottom-end',
     showConfirmButton: false,
     timer: 3000,
-    background: '#10116E',
+    background: '#000',
     timerProgressBar: true,
     onOpen: toast => {
       toast.addEventListener('mouseenter', Swal.stopTimer);
