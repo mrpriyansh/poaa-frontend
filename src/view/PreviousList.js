@@ -47,8 +47,8 @@ export default function PreviousList() {
   const columns = [
     { id: 'name', label: 'Name', minWidth: '15em' },
     { id: 'paidInstallments', label: 'Installments', align: 'center' },
-    { id: 'amount', label: 'Amount', align: 'center' },
-    { id: 'totalAmount', label: 'Total Amount', minWidth: '10em', align: 'center' },
+    { id: 'amount', label: 'Amount', align: 'right' },
+    { id: 'totalAmount', label: 'Total Amount', minWidth: '10em', align: 'right' },
     { id: 'accountno', label: 'Account No.', minWidth: '8em', align: 'center' },
   ];
 

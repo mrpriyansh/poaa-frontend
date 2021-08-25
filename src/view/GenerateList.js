@@ -1,4 +1,4 @@
-import { Paper, IconButton, Typography } from '@material-ui/core';
+import { Paper, IconButton, Typography, Box } from '@material-ui/core';
 import React, { useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
@@ -31,7 +31,7 @@ export default function GenerateList() {
 
   const columns = [
     { id: 'name', label: 'Name', minWidth: '15em' },
-    { id: 'amount', label: 'Amount' },
+    { id: 'amount', label: 'Amount', align: 'right' },
     { id: 'installments', label: 'Installments', align: 'center' },
     { id: 'accountno', label: 'Account No', align: 'center', minWidth: '8em' },
     { id: 'createdAt', label: 'Logged On', minWidth: '8em', align: 'center' },
@@ -75,6 +75,13 @@ export default function GenerateList() {
       ),
     };
   });
+  const totalAmount = () => {
+    let sum = 0;
+    response.data.forEach(item => {
+      sum += item.amount * item.installments;
+    });
+    return sum;
+  };
   return (
     <Paper className={classes.root}>
       <Typography variant="h5">Logged Installments</Typography>
@@ -84,6 +91,13 @@ export default function GenerateList() {
         pagination
         emptyMessage="No Insatallments Found! Click Below to Add"
       />
+      <Box mt={2} mb={2}>
+        <div className={classes.row}>
+          <b>Total Amount : </b>
+          <span> {totalAmount()} </span>
+          {/* <span>{selectedRecord.list[selectedListIndex].totalAmount}</span> */}
+        </div>
+      </Box>
       <div className={classes.generateButtonWrapper}>
         {rows?.length ? (
           <Controls.Button
