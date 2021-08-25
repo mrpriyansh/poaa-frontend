@@ -6,6 +6,7 @@ import Login from './view/Login';
 import Home from './view/Home';
 import StatisticList from './components/StatisticList';
 import { AuthContext } from './services/Auth';
+import ProtectedRoute from './common/ProtectedRoute';
 import { theme } from './styles/customTheme';
 import GenerateList from './view/GenerateList';
 import PreviousList from './view/PreviousList';
@@ -38,15 +39,15 @@ function App() {
             <Route exact path="/">
               {authToken ? <Home /> : <Login />}
             </Route>
-            <Route exact path="/generate-list">
+            <ProtectedRoute exact path="/generate-list">
               <GenerateList />
-            </Route>
-            <Route exact path="/previous-lists">
+            </ProtectedRoute>
+            <ProtectedRoute exact path="/previous-lists">
               <PreviousList />
-            </Route>
-            <Route exact path="/stats">
+            </ProtectedRoute>
+            <ProtectedRoute exact path="/stats">
               <StatisticList />
-            </Route>
+            </ProtectedRoute>
           </div>
         </>
         <CssBaseline />
