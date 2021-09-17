@@ -61,59 +61,67 @@ export default function PreviousList() {
       <Typography variant="h5" className={classes.heading}>
         Previous Lists
       </Typography>
-      <TextField
-        select
-        value={selectedRecord}
-        label="Select List"
-        onChange={handleChangeList}
-        variant="outlined"
-      >
-        {response.data.map((list, ind) => (
-          <MenuItem key={list.createdAt} value={list} selected={ind === 0}>
-            {' '}
-            {formatDateTime(list.createdAt)}
-          </MenuItem>
-        ))}
-      </TextField>
-      <Box mt={2} mb={2} className={classes.listTitleWrapper}>
-        <IconButton
-          fontSize="medium"
-          onClick={() => changeListNo(-1)}
-          disabled={selectedListIndex === 0}
-        >
-          <ArrowLeftIcon />
-        </IconButton>
-        <Typography component="span" align="center" className={classes.listTitle}>
-          {`List ${selectedListIndex + 1}`}
-        </Typography>
-        <IconButton
-          fontSize="medium"
-          onClick={() => changeListNo(1)}
-          disabled={selectedListIndex === selectedRecord?.list?.length - 1}
-        >
-          <ArrowRightIcon />
-        </IconButton>
-      </Box>
-      <CustomTable rows={rows || []} columns={columns} />
+      {rows?.length ? (
+        <>
+          <TextField
+            select
+            value={selectedRecord}
+            label="Select List"
+            onChange={handleChangeList}
+            variant="outlined"
+          >
+            {response.data.map((list, ind) => (
+              <MenuItem key={list.createdAt} value={list} selected={ind === 0}>
+                {' '}
+                {formatDateTime(list.createdAt)}
+              </MenuItem>
+            ))}
+          </TextField>
+          <Box mt={2} mb={2} className={classes.listTitleWrapper}>
+            <IconButton
+              fontSize="medium"
+              onClick={() => changeListNo(-1)}
+              disabled={selectedListIndex === 0}
+            >
+              <ArrowLeftIcon />
+            </IconButton>
+            <Typography component="span" align="center" className={classes.listTitle}>
+              {`List ${selectedListIndex + 1}`}
+            </Typography>
+            <IconButton
+              fontSize="medium"
+              onClick={() => changeListNo(1)}
+              disabled={selectedListIndex === selectedRecord?.list?.length - 1}
+            >
+              <ArrowRightIcon />
+            </IconButton>
+          </Box>
+          <CustomTable rows={rows || []} columns={columns} />
 
-      <Box mt={2} mb={2}>
-        <div className={classes.row}>
-          {' '}
-          <b>Total Amount : </b>
-          <span> {selectedList?.totalAmount} </span>
-          {/* <span>{selectedRecord.list[selectedListIndex].totalAmount}</span> */}
-        </div>
-        <div className={classes.row}>
-          {' '}
-          <b> Number of Accounts : </b>
-          <span>
-            {selectedList?.accounts?.length} {'   '}
-          </span>
-          <IconButton color="primary" onClick={copyToClipboard}>
-            <FileCopyIcon />
-          </IconButton>
-        </div>
-      </Box>
+          <Box mt={2} mb={2}>
+            <div className={classes.row}>
+              {' '}
+              <b>Total Amount : </b>
+              <span> {selectedList?.totalAmount} </span>
+              {/* <span>{selectedRecord.list[selectedListIndex].totalAmount}</span> */}
+            </div>
+            <div className={classes.row}>
+              {' '}
+              <b> Number of Accounts : </b>
+              <span>
+                {selectedList?.accounts?.length} {'   '}
+              </span>
+              <IconButton color="primary" onClick={copyToClipboard}>
+                <FileCopyIcon />
+              </IconButton>
+            </div>
+          </Box>
+        </>
+      ) : (
+        <Typography variant="h6" align="center">
+          ***No List Found***
+        </Typography>
+      )}
     </Paper>
   );
 }

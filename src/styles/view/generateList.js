@@ -5,6 +5,10 @@ export const generateListStyles = makeStyles(theme => ({
     minWidth: '70vw',
     padding: theme.spacing(2),
   },
+  header: {
+    display: 'flex',
+    justifyContent: 'space-between',
+  },
   generateButtonWrapper: {
     padding: theme.spacing(2, 0),
     display: 'flex',

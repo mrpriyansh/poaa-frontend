@@ -84,20 +84,30 @@ export default function GenerateList() {
   };
   return (
     <Paper className={classes.root}>
-      <Typography variant="h5">Logged Installments</Typography>
+      <header className={classes.header}>
+        <Typography variant="h5">Logged Installments</Typography>
+        {rows.length ? (
+          <Controls.Button
+            text="Add Installment"
+            startIcon={<PostAddIcon />}
+            onClick={handleAddInstallment}
+          />
+        ) : null}
+      </header>
       <CustomTable
         rows={rows}
         columns={columns}
         pagination
         emptyMessage="No Insatallments Found! Click Below to Add"
       />
-      <Box mt={2} mb={2}>
-        <div className={classes.row}>
-          <b>Total Amount : </b>
-          <span> {totalAmount()} </span>
-          {/* <span>{selectedRecord.list[selectedListIndex].totalAmount}</span> */}
-        </div>
-      </Box>
+      {rows.length ? (
+        <Box mt={2} mb={2}>
+          <div className={classes.row}>
+            <b>Total Amount : </b>
+            <span> {totalAmount()} </span>
+          </div>
+        </Box>
+      ) : null}
       <div className={classes.generateButtonWrapper}>
         {rows?.length ? (
           <Controls.Button
