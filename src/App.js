@@ -1,7 +1,10 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Offline, Online } from 'react-detect-offline';
-import { makeStyles, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { Route } from 'react-router-dom';
+
+import makeStyles from '@material-ui/core/styles/makeStyles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import { ThemeProvider } from '@material-ui/core';
 
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';

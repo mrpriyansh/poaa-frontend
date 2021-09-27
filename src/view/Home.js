@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Paper, Toolbar, InputAdornment, IconButton } from '@material-ui/core';
 import useSWR from 'swr';
-import { Search } from '@material-ui/icons';
+import Search from '@material-ui/icons/Search';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PostAddIcon from '@material-ui/icons/PostAdd';
