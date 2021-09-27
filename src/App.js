@@ -1,17 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Offline, Online } from 'react-detect-offline';
 import { makeStyles, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { Route } from 'react-router-dom';
-import Header from './components/Header';
-import Login from './view/Login';
-import Home from './view/Home';
-import StatisticList from './components/StatisticList';
+
 import { AuthContext } from './services/Auth';
-import ProtectedRoute from './common/ProtectedRoute';
 import { theme } from './styles/customTheme';
-import GenerateList from './view/GenerateList';
-import PreviousList from './view/PreviousList';
-import OfflineView from './view/Offline';
+
+const Header = lazy(() => import('./components/Header'));
+const Login = lazy(() => import('./view/Login'));
+const Home = lazy(() => import('./view/Home'));
+const StatisticList = lazy(() => import('./components/StatisticList'));
+const GenerateList = lazy(() => import('./view/GenerateList'));
+const PreviousList = lazy(() => import('./view/PreviousList'));
+const OfflineView = lazy(() => import('./view/Offline'));
+const ProtectedRoute = lazy(() => import('./common/ProtectedRoute'));
 
 const useStyles = makeStyles({
   container: {
@@ -48,33 +50,35 @@ function App() {
     return () => window.removeEventListener('offline', () => {});
   }, []);
   return (
-    <ThemeProvider theme={theme}>
-      <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
-        <>
-          <Header isOnline={isOnline} />
-          <div className={classes.container}>
-            <Online>
-              <Route exact path="/">
-                {authToken ? <Home /> : <Login />}
-              </Route>
-              <ProtectedRoute exact path="/generate-list">
-                <GenerateList />
-              </ProtectedRoute>
-              <ProtectedRoute exact path="/previous-lists">
-                <PreviousList />
-              </ProtectedRoute>
-              <ProtectedRoute exact path="/stats">
-                <StatisticList />
-              </ProtectedRoute>{' '}
-            </Online>
-            <Offline>
-              <OfflineView />
-            </Offline>
-          </div>
-        </>
-        <CssBaseline />
-      </AuthContext.Provider>
-    </ThemeProvider>
+    <Suspense fallback={<div> Loading ... </div>}>
+      <ThemeProvider theme={theme}>
+        <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
+          <>
+            <Header isOnline={isOnline} />
+            <div className={classes.container}>
+              <Online>
+                <Route exact path="/">
+                  {authToken ? <Home /> : <Login />}
+                </Route>
+                <ProtectedRoute exact path="/generate-list">
+                  <GenerateList />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/previous-lists">
+                  <PreviousList />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/stats">
+                  <StatisticList />
+                </ProtectedRoute>{' '}
+              </Online>
+              <Offline>
+                <OfflineView />
+              </Offline>
+            </div>
+          </>
+          <CssBaseline />
+        </AuthContext.Provider>
+      </ThemeProvider>
+    </Suspense>
   );
 }
 
