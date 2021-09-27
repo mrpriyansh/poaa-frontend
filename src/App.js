@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Offline, Online } from 'react-detect-offline';
 import { makeStyles, CssBaseline, ThemeProvider } from '@material-ui/core';
 import { Route } from 'react-router-dom';
 import Header from './components/Header';
@@ -10,7 +11,7 @@ import ProtectedRoute from './common/ProtectedRoute';
 import { theme } from './styles/customTheme';
 import GenerateList from './view/GenerateList';
 import PreviousList from './view/PreviousList';
-import Offline from './view/Offline';
+import OfflineView from './view/Offline';
 
 const useStyles = makeStyles({
   container: {
@@ -52,24 +53,23 @@ function App() {
         <>
           <Header isOnline={isOnline} />
           <div className={classes.container}>
-            {isOnline ? (
-              <>
-                <Route exact path="/">
-                  {authToken ? <Home /> : <Login />}
-                </Route>
-                <ProtectedRoute exact path="/generate-list">
-                  <GenerateList />
-                </ProtectedRoute>
-                <ProtectedRoute exact path="/previous-lists">
-                  <PreviousList />
-                </ProtectedRoute>
-                <ProtectedRoute exact path="/stats">
-                  <StatisticList />
-                </ProtectedRoute>{' '}
-              </>
-            ) : (
-              <Offline />
-            )}
+            <Online>
+              <Route exact path="/">
+                {authToken ? <Home /> : <Login />}
+              </Route>
+              <ProtectedRoute exact path="/generate-list">
+                <GenerateList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/previous-lists">
+                <PreviousList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/stats">
+                <StatisticList />
+              </ProtectedRoute>{' '}
+            </Online>
+            <Offline>
+              <OfflineView />
+            </Offline>
           </div>
         </>
         <CssBaseline />
