@@ -55,7 +55,11 @@ export default function PreviousList() {
   if (error) return <Offline />;
   if (!response) return <LoaderSVG />;
 
-  const rows = selectedList?.accounts?.map(acc => acc);
+  const rows = selectedList?.accounts
+    ?.sort((a, b) => {
+      return b.paidInstallments - a.paidInstallments;
+    })
+    .map(acc => acc);
   return (
     <Paper classes={{ root: classes.root }}>
       <Typography variant="h5" className={classes.heading}>
