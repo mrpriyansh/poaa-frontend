@@ -7,6 +7,7 @@ import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import accountTypeList from '../assets/data/accountType';
 import { axiosUtil } from '../services/axiosinstance';
+import { formatDateReverse } from '../services/utils';
 import { addAccountStyles } from '../styles/components/addAcount';
 import handleError from '../services/handleError';
 import { useAuth } from '../services/Auth';
@@ -52,8 +53,8 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
     if (recordForEdit) {
       setValues(() => ({
         ...recordForEdit,
-        openingDate: convertDate(recordForEdit.openingDate),
-        maturityDate: convertDate(recordForEdit.maturityDate),
+        openingDate: formatDateReverse(recordForEdit.openingDate),
+        maturityDate: formatDateReverse(recordForEdit.maturityDate),
       }));
     }
   }, [setValues, recordForEdit]);
@@ -73,15 +74,19 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
       setLoading(true);
       const collection = await client.db('poaa').collection('accounts');
       console.log(d, typeof d);
-      const exists = await collection.findOne({ accountno: values.accountno });
-      console.log('ds');
-      console.log(exists, 'dfs');
-      const data = await collection.insertOne({
-        ...values,
-        openingDate: new Date(values.openingDate),
-        maturityDate: new Date(values.maturityDate),
-        agentId1: user.id,
-      });
+      await collection.updateOne(
+        { accountno: values.accountno },
+        {
+          $set: {
+            ...values,
+            openingDate: new Date(values.openingDate),
+            maturityDate: new Date(values.maturityDate),
+            agentId1: user.id,
+          },
+        },
+        { upsert: true }
+      );
+      triggerAlert({ icon: 'success', title: 'Account Saved!' });
       setOpenPopup(false);
     } catch (error) {
       handleError(error, triggerAlert);
