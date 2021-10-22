@@ -116,8 +116,8 @@ function Home() {
     );
   });
 
-  if (error) return <Offline />;
-  if (!response) return <LoaderSVG />;
+  // if (error) return <Offline />;
+  // if (!response) return <LoaderSVG />;
 
   return (
     <>
