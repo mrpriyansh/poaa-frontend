@@ -88,35 +88,30 @@ function App() {
           }}
         >
           <>
-            <Header isOnline={isOnline} />
+            <Header isOnline />
             <div className={classes.container}>
-              <Online>
-                <ProtectedRoute exact path="/">
-                  <Home />
-                </ProtectedRoute>
-                <Route exact path="/login">
-                  {' '}
-                  <Login />{' '}
-                </Route>
-                <ProtectedRoute exact path="/user-details">
-                  <UserDetailsForm />
-                </ProtectedRoute>
-                <Route exact path="/confirm-user">
-                  <ConfirmUser />{' '}
-                </Route>
-                <ProtectedRoute exact path="/generate-list">
-                  <GenerateList />
-                </ProtectedRoute>
-                <ProtectedRoute exact path="/previous-lists">
-                  <PreviousList />
-                </ProtectedRoute>
-                <ProtectedRoute exact path="/stats">
-                  <StatisticList />
-                </ProtectedRoute>{' '}
-              </Online>
-              <Offline>
-                <OfflineView />
-              </Offline>
+              <ProtectedRoute exact path="/">
+                <Home />
+              </ProtectedRoute>
+              <Route exact path="/login">
+                {' '}
+                <Login />{' '}
+              </Route>
+              <ProtectedRoute exact path="/user-details">
+                <UserDetailsForm />
+              </ProtectedRoute>
+              <Route exact path="/confirm-user">
+                <ConfirmUser />{' '}
+              </Route>
+              <ProtectedRoute exact path="/generate-list">
+                <GenerateList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/previous-lists">
+                <PreviousList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/stats">
+                <StatisticList />
+              </ProtectedRoute>{' '}
             </div>
           </>
           <CssBaseline />
