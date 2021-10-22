@@ -7,7 +7,7 @@ export const loginStyles = makeStyles(theme => ({
   pageContent: {
     maxWidth: '360px',
     height: 'min(70vh, 400px)',
-    margin: theme.spacing(4),
+    margin: 'auto',
     marginTop: theme.spacing(8),
     padding: theme.spacing(2),
     paddingTop: theme.spacing(4),
