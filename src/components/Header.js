@@ -84,7 +84,7 @@ function Header({ isOnline }) {
         >
           Post Office Agent Assistant
         </Typography>
-        {authToken && (
+        {user && (
           <>
             {isOnline ? (
               <IconButton

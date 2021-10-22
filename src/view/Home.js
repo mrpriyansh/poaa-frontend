@@ -17,6 +17,7 @@ import CustomTable from '../common/Table';
 import { formatDate } from '../services/utils';
 import Offline from './Offline';
 import AddInstallment from '../components/AddInstallment';
+import { useAuth } from '../services/Auth';
 
 const searchTypeList = [
   { title: 'Name' },
@@ -30,6 +31,7 @@ const ADD_INSTALLMENT = 'Add Installment';
 
 function Home() {
   const classes = allAccountStyles();
+  const { client } = useAuth();
 
   const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
 
@@ -39,6 +41,15 @@ function Home() {
   const [searchType, changeSearchType] = useState('Name');
   const [recordForEdit, setRecordForEdit] = useState();
 
+  const fetchAllAccounts = async () => {
+    const collection = await client.db('poaa').collection('accounts');
+    const data = await collection.aggregate([{ $sort: { name: -1 } }]);
+    setAccounts(data);
+  };
+  useEffect(() => {
+    fetchAllAccounts();
+  }, []);
+
   const handleEdit = item => {
     setRecordForEdit(item);
     setOpenPopupType(EDIT_ACCOUNT);
@@ -47,24 +58,25 @@ function Home() {
   const handleAddInstallment = () => {
     setOpenPopupType(ADD_INSTALLMENT);
   };
-  useEffect(() => {
-    if (response) {
-      const filterAccounts = response.data.filter(account => {
-        if (searchType === 'Name')
-          return account.name.toLowerCase().includes(searchValue.toLowerCase());
-        if (searchType === 'Account Number')
-          return account.accountno?.toString().includes(searchValue);
-        if (searchType === 'Account Type')
-          return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
-        if (searchType === 'Maturity Date')
-          return formatDate(account.maturityDate)
-            .toLowerCase()
-            .includes(searchValue.toLowerCase());
-        return true;
-      });
-      setAccounts(filterAccounts);
-    }
-  }, [response, searchValue, searchType]);
+
+  // useEffect(() => {
+  //   if (response) {
+  //     const filterAccounts = response.data.filter(account => {
+  //       if (searchType === 'Name')
+  //         return account.name.toLowerCase().includes(searchValue.toLowerCase());
+  //       if (searchType === 'Account Number')
+  //         return account.accountno?.toString().includes(searchValue);
+  //       if (searchType === 'Account Type')
+  //         return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
+  //       if (searchType === 'Maturity Date')
+  //         return formatDate(account.maturityDate)
+  //           .toLowerCase()
+  //           .includes(searchValue.toLowerCase());
+  //       return true;
+  //     });
+  //     // setAccounts(filterAccounts);
+  //   }
+  // }, [response, searchValue, searchType]);
 
   const handleDelete = item => {
     deleteTrigger(item.accountno);

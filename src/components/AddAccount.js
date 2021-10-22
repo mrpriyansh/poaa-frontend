@@ -8,6 +8,8 @@ import { triggerAlert } from '../services/getAlert/getAlert';
 import accountTypeList from '../assets/data/accountType';
 import { axiosUtil } from '../services/axiosinstance';
 import { addAccountStyles } from '../styles/components/addAcount';
+import handleError from '../services/handleError';
+import { useAuth } from '../services/Auth';
 
 const curDate = new Date();
 const y = curDate.getFullYear();
@@ -26,12 +28,13 @@ const convertDate = date =>
   `${date.split('-')[0]}-${date.split('-')[1]}-${date.split('-')[2][0]}${date.split('-')[2][1]}`;
 function AddAccount({ setOpenPopup, recordForEdit }) {
   const classes = addAccountStyles();
+  const { user, client } = useAuth();
   const [loading, setLoading] = useState(false);
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
     if ('name' in fieldValues) temp.name = fieldValues.name ? '' : 'Name is required';
     if ('accountno' in fieldValues)
-      temp.accountno = fieldValues.accountno.length === 10 ? '' : 'Incorrect Account Number';
+      temp.accountno = fieldValues.accountno.length >= 10 ? '' : 'Incorrect Account Number';
     if ('amount' in fieldValues)
       temp.amount = Number.isInteger(+fieldValues.amount) ? '' : 'Incorrect Amount';
     if ('mobile' in fieldValues)
@@ -55,17 +58,36 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
     }
   }, [setValues, recordForEdit]);
 
-  const handleAddAccount = event => {
+  const handleAddAccount = async event => {
     event.preventDefault();
-    const endpoint = recordForEdit ? `editaccount` : `addaccount`;
-    setLoading(true);
-    axiosUtil[recordForEdit ? 'put' : 'post'](endpoint, values)
-      .then(res => {
-        triggerAlert({ icon: 'success', title: res.data });
-        setOpenPopup(false);
-        mutate(`allaccounts`);
-      })
-      .finally(() => setLoading(false));
+    // const endpoint = recordForEdit ? `editaccount` : `addaccount`;
+    // setLoading(true);
+    // axiosUtil[recordForEdit ? 'put' : 'post'](endpoint, values)
+    //   .then(res => {
+    //     triggerAlert({ icon: 'success', title: res.data });
+    //     setOpenPopup(false);
+    //     mutate(`allaccounts`);
+    //   })
+    //   .finally(() => setLoading(false));
+    try {
+      setLoading(true);
+      const collection = await client.db('poaa').collection('accounts');
+      console.log(d, typeof d);
+      const exists = await collection.findOne({ accountno: values.accountno });
+      console.log('ds');
+      console.log(exists, 'dfs');
+      const data = await collection.insertOne({
+        ...values,
+        openingDate: new Date(values.openingDate),
+        maturityDate: new Date(values.maturityDate),
+        agentId1: user.id,
+      });
+      setOpenPopup(false);
+    } catch (error) {
+      handleError(error, triggerAlert);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
