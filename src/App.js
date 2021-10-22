@@ -20,8 +20,6 @@ const ProtectedRoute = lazy(() => import('./common/ProtectedRoute'));
 
 const useStyles = makeStyles({
   container: {
-    display: 'flex',
-    justifyContent: 'center',
     padding: '1em 0.5em',
   },
 });

@@ -31,10 +31,10 @@ export const deleteTrigger = accountno => {
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
     icon: 'warning',
-    background: '#3454d1',
+    background: '#000',
     showCancelButton: true,
-    confirmButtonColor: '#3085d6',
-    cancelButtonColor: '#d33',
+    confirmButtonColor: '#d33',
+    cancelButtonColor: '#3363dd',
     confirmButtonText: 'Yes, delete it!',
   }).then(result => {
     if (result.value) {
@@ -44,7 +44,8 @@ export const deleteTrigger = accountno => {
           title: 'Deleted!',
           text: 'Your file has been deleted.',
           icon: 'success',
-          background: '#3454d1',
+          background: '#000',
+          confirmButtonColor: '#3363dd',
         });
       });
     }
