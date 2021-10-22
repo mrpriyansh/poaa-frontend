@@ -6,7 +6,6 @@ export const loginStyles = makeStyles(theme => ({
   },
   pageContent: {
     maxWidth: '360px',
-    height: 'min(70vh, 400px)',
     margin: 'auto',
     marginTop: theme.spacing(8),
     padding: theme.spacing(2),
@@ -17,6 +16,14 @@ export const loginStyles = makeStyles(theme => ({
     marginTop: theme.spacing(4),
   },
   buttonRoot: {
-    marginTop: theme.spacing(4),
+    marginTop: theme.spacing(2),
+  },
+  footLine: {
+    marginTop: theme.spacing(2),
+    '& > span': {
+      cursor: 'pointer',
+      fontWeight: '700',
+      color: '#0645AD',
+    },
   },
 }));

@@ -12,6 +12,7 @@
     "no-unused-vars": "warn",
     "no-unneeded-ternary": "off",
     "no-use-before-define": "off",
+    "no-nested-ternary": "off",
     "import/no-cycle": "off",
     "import\no-extraneous-dependenciesin": "off",
     "import/prefer-default-export": "off",

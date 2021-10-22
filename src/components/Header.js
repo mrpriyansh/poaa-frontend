@@ -22,7 +22,7 @@ const ADD_INSTALLMENT = 'Add Installment';
 
 function Header({ isOnline }) {
   const classes = headerStyles();
-  const { setAuthToken, authToken } = useAuth();
+  const { setAuthToken, authToken, setUser, user } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [popupType, setPopupType] = useState('');
   const history = useHistory();
@@ -45,10 +45,12 @@ function Header({ isOnline }) {
   const handleClose = () => {
     setAnchorEl(null);
   };
-  const handleLogout = event => {
-    event.preventDefault();
-    window.localStorage.removeItem('token');
-    setAuthToken();
+  const handleLogout = async () => {
+    // event.preventDefault();
+    // window.localStorage.removeItem('token');
+    // setAuthToken();
+    await user.logOut();
+    setUser(null);
     handleClose();
   };
 

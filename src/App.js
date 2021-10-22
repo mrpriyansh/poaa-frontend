@@ -1,6 +1,7 @@
 import React, { useState, useEffect, Suspense, lazy } from 'react';
 import { Offline, Online } from 'react-detect-offline';
 import { Route } from 'react-router-dom';
+import * as Realm from 'realm-web';
 
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
@@ -8,6 +9,8 @@ import { ThemeProvider } from '@material-ui/core';
 
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
+import ConfirmUser from './view/ConfirmUser';
+import UserDetailsForm from './view/UserDetailsForm';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -29,6 +32,22 @@ function App() {
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
   const [isOnline, setIsOnline] = useState(true);
+
+  const [app, setApp] = useState(new Realm.App({ id: process.env.REACT_APP_REALM_ID }));
+  const [user, setUser] = useState(null);
+  const [client, setClient] = useState(null);
+
+  useEffect(() => {
+    async function initClientsUser() {
+      console.log('hello', user, app.currentUser);
+      if (!user && app.currentUser) {
+        setUser(app.currentUser);
+      }
+      if (!client && user) setClient(user.mongoClient('mongodb-atlas'));
+    }
+    initClientsUser();
+  }, [user, client, app]);
+
   useEffect(() => {
     const token = window.localStorage.getItem('token');
     if (token) setAuthToken(token);
@@ -50,16 +69,40 @@ function App() {
     });
     return () => window.removeEventListener('offline', () => {});
   }, []);
+
   return (
     <Suspense fallback={<div> Loading ... </div>}>
       <ThemeProvider theme={theme}>
-        <AuthContext.Provider value={{ authToken, setAuthToken, statsData, setStatsData }}>
+        <AuthContext.Provider
+          value={{
+            authToken,
+            setAuthToken,
+            statsData,
+            setStatsData,
+            app,
+            setApp,
+            client,
+            setClient,
+            user,
+            setUser,
+          }}
+        >
           <>
             <Header isOnline={isOnline} />
             <div className={classes.container}>
               <Online>
-                <Route exact path="/">
-                  {authToken ? <Home /> : <Login />}
+                <ProtectedRoute exact path="/">
+                  <Home />
+                </ProtectedRoute>
+                <Route exact path="/login">
+                  {' '}
+                  <Login />{' '}
+                </Route>
+                <ProtectedRoute exact path="/user-details">
+                  <UserDetailsForm />
+                </ProtectedRoute>
+                <Route exact path="/confirm-user">
+                  <ConfirmUser />{' '}
                 </Route>
                 <ProtectedRoute exact path="/generate-list">
                   <GenerateList />
