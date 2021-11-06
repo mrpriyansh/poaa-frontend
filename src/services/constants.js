@@ -1,0 +1,1 @@
+export const INSTALLMENT_PENDING = 'PENDING';

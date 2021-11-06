@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Grid, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useHistory } from 'react-router-dom';
@@ -11,6 +11,9 @@ import { addInstallmentsStyles } from '../styles/components/addInstallments';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import Offline from '../view/Offline';
+import { useAuth } from '../services/Auth';
+import { INSTALLMENT_PENDING } from '../services/constants';
+import handleError from '../services/handleError';
 
 const initialValues = {
   name: '',
@@ -22,12 +25,30 @@ const initialValues = {
 export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const classes = addInstallmentsStyles();
   const history = useHistory();
+  const [rdAccounts, setRdAccounts] = useState();
   const [inputText, setInputText] = React.useState('');
   const [inputValue, setInputValue] = React.useState({ ...initialValues });
   const [errors, setErrors] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
+  const { client, user } = useAuth();
 
-  const { data, error } = useSWR('allaccounts', axiosUtil.get);
+  // const { data, error } = useSWR('allaccounts', axiosUtil.get);
+
+  const fetchRDAccounts = async () => {
+    try {
+      const collection = await client.db('poaa').collection('accounts');
+      const data = await collection.aggregate([
+        { $match: { accountType: 'RD' } },
+        { $sort: { maturityDate: 1 } },
+      ]);
+      setRdAccounts(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+  useEffect(() => {
+    fetchRDAccounts();
+  }, []);
   useEffect(() => {
     if (isModifying) setInputValue(record);
   }, [isModifying, record]);
@@ -44,7 +65,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
     setInputText(value);
   };
 
-  const handleAddInstallment = () => {
+  const handleAddInstallment1 = () => {
     if (errors.installments || errors.name) return;
     setIsLoading(true);
     axiosUtil[isModifying ? 'put' : 'post'](
@@ -61,8 +82,46 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
       .finally(() => setIsLoading(false));
   };
 
-  if (!data && error) return <Offline />;
-  if (!data) return <LoaderSVG />;
+  const handleAddInstallment = async () => {
+    if (errors.installments || errors.name) return;
+    if (inputValue.installments <= 0) return;
+    setIsLoading(true);
+
+    try {
+      const collection = await client.db('poaa').collection('installments');
+      if (!isModifying) {
+        const exists = await collection.findOne({
+          accountno: inputValue.accountno,
+          status: INSTALLMENT_PENDING,
+        });
+        console.log(exists);
+        if (exists) throw new Error('Accoun already logged, Try to edit it!');
+      }
+      await collection.updateOne(
+        { accountno: inputValue.accountno },
+        {
+          $set: {
+            ...inputValue,
+            status: INSTALLMENT_PENDING,
+            agentId1: user.id,
+          },
+        },
+        { upsert: true }
+      );
+      triggerAlert({ icon: 'success', title: 'Installment Saved!' });
+      setOpenPopup(false);
+      history.push('/generate-list');
+      setInputValue({ ...initialValues });
+    } catch (err) {
+      console.log(err);
+      handleError(err, triggerAlert);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // if () return <Offline />;
+  if (!rdAccounts) return <LoaderSVG />;
   return (
     <Form onSubmit={handleAddInstallment} className={classes.root}>
       <Grid container justifyContent="center">
@@ -78,8 +137,8 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           onInputChange={(_, newInputValue) => {
             handleChangeInputText(newInputValue);
           }}
-          options={data.data
-            .filter(item => item.accountType === 'RD')
+          options={rdAccounts
+            // .filter(item => item.accountType === 'RD')
             .map(option => ({
               name: option.name,
               installments: 1,
