@@ -14,7 +14,7 @@ import { deleteTrigger } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
 import { allAccountStyles } from '../styles/view/home';
 import CustomTable from '../common/Table';
-import { formatDate } from '../services/utils';
+import { formatDateReverse, formatDate } from '../services/utils';
 import Offline from './Offline';
 import AddInstallment from '../components/AddInstallment';
 import { useAuth } from '../services/Auth';
@@ -33,18 +33,23 @@ function Home() {
   const classes = allAccountStyles();
   const { client } = useAuth();
 
-  const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
+  // const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
 
   const [accounts, setAccounts] = useState([]);
+  const [response, setResponse] = useState(null);
   const [searchValue, changeSearchValue] = useState('');
   const [openPopupType, setOpenPopupType] = useState('');
   const [searchType, changeSearchType] = useState('Name');
   const [recordForEdit, setRecordForEdit] = useState();
 
   const fetchAllAccounts = async () => {
-    const collection = await client.db('poaa').collection('accounts');
-    const data = await collection.aggregate([{ $sort: { name: -1 } }]);
-    setAccounts(data);
+    try {
+      const collection = await client.db('poaa').collection('accounts');
+      const data = await collection.aggregate([{ $sort: { maturityDate: 1 } }]);
+      setResponse(data);
+    } catch (err) {
+      console.log(err);
+    }
   };
   useEffect(() => {
     fetchAllAccounts();
@@ -59,24 +64,24 @@ function Home() {
     setOpenPopupType(ADD_INSTALLMENT);
   };
 
-  // useEffect(() => {
-  //   if (response) {
-  //     const filterAccounts = response.data.filter(account => {
-  //       if (searchType === 'Name')
-  //         return account.name.toLowerCase().includes(searchValue.toLowerCase());
-  //       if (searchType === 'Account Number')
-  //         return account.accountno?.toString().includes(searchValue);
-  //       if (searchType === 'Account Type')
-  //         return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
-  //       if (searchType === 'Maturity Date')
-  //         return formatDate(account.maturityDate)
-  //           .toLowerCase()
-  //           .includes(searchValue.toLowerCase());
-  //       return true;
-  //     });
-  //     // setAccounts(filterAccounts);
-  //   }
-  // }, [response, searchValue, searchType]);
+  useEffect(() => {
+    if (response?.length) {
+      const filterAccounts = response.filter(account => {
+        if (searchType === 'Name')
+          return account.name.toLowerCase().includes(searchValue.toLowerCase());
+        if (searchType === 'Account Number')
+          return account.accountno?.toString().includes(searchValue);
+        if (searchType === 'Account Type')
+          return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
+        if (searchType === 'Maturity Date')
+          return formatDate(account.maturityDate)
+            .toLowerCase()
+            .includes(searchValue.toLowerCase());
+        return true;
+      });
+      setAccounts(filterAccounts);
+    }
+  }, [response, searchValue, searchType]);
 
   const handleDelete = item => {
     deleteTrigger(item.accountno);
@@ -102,8 +107,8 @@ function Home() {
       acc.accountno,
       acc.accountType,
       acc.amount,
-      formatDate(acc.openingDate),
-      formatDate(acc.maturityDate),
+      formatDateReverse(acc.openingDate),
+      formatDateReverse(acc.maturityDate),
       <>
         <IconButton onClick={() => handleEdit(acc)}>
           {' '}
@@ -117,7 +122,7 @@ function Home() {
   });
 
   // if (error) return <Offline />;
-  // if (!response) return <LoaderSVG />;
+  if (!response) return <LoaderSVG />;
 
   return (
     <>

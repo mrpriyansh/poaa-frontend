@@ -8,5 +8,9 @@ export const formatDateTime = date => {
 };
 
 export const formatDateReverse = date => {
-  return date.toISOString().split('T')[0];
+  const splits = date
+    .toISOString()
+    .split('T')[0]
+    .split('-');
+  return splits[2] + '-' + splits[1] + '-' + splits[0];
 };
