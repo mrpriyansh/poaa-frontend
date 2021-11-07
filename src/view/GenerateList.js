@@ -47,7 +47,7 @@ export default function GenerateList() {
     { id: 'name', label: 'Name', minWidth: '15em' },
     { id: 'amount', label: 'Amount', align: 'right' },
     { id: 'installments', label: 'Installments', align: 'center' },
-    { id: 'accountno', label: 'Account No', align: 'center', minWidth: '8em' },
+    { id: 'accountNo', label: 'Account No', align: 'center', minWidth: '8em' },
     { id: 'createdAt', label: 'Logged On', minWidth: '8em', align: 'center' },
     { id: 'actions', minWidth: '8em' },
   ];
@@ -60,13 +60,13 @@ export default function GenerateList() {
     setOpenPopupType(ADD_INSTALLMENT);
   };
   const handleDelete = async item => {
-    // axiosUtil.delete('/deleteInstallment', { data: { accountno: item.accountno } }).then(res => {
+    // axiosUtil.delete('/deleteInstallment', { data: { accountNo: item.accountNo } }).then(res => {
     // triggerAlert({ icon: 'success', title: res.data });
     // mutate('getAllInstallments');
     // });
     try {
       const collection = await client.db('poaa').collection('installments');
-      await collection.deleteOne({ accountno: item.accountno });
+      await collection.deleteOne({ accountNo: item.accountNo });
       triggerAlert({ icon: 'success', title: 'Installment deleted!' });
       fetchInstallments();
     } catch (err) {
@@ -145,7 +145,7 @@ export default function GenerateList() {
     //       }
     //       list[listNo - 1].accounts.push({
     //         paidInstallments: payableInst,
-    //         accountno: inst.accountno,
+    //         accountNo: inst.accountNo,
     //         name: inst.name,
     //         amount: inst.amount,
     //         totalAmount: inst.amount * payableInst,

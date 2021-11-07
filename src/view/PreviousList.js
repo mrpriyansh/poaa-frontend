@@ -47,7 +47,7 @@ export default function PreviousList() {
   };
 
   const copyToClipboard = () => {
-    copy(selectedList.accounts.map(record => record.accountno).toString());
+    copy(selectedList.accounts.map(record => record.accountNo).toString());
   };
 
   const changeListNo = change => {
@@ -60,7 +60,7 @@ export default function PreviousList() {
     { id: 'paidInstallments', label: 'Installments', align: 'center' },
     { id: 'amount', label: 'Amount', align: 'right' },
     { id: 'totalAmount', label: 'Total Amount', minWidth: '10em', align: 'right' },
-    { id: 'accountno', label: 'Account No.', minWidth: '8em', align: 'center' },
+    { id: 'accountNo', label: 'Account No.', minWidth: '8em', align: 'center' },
   ];
 
   // if (error) return <Offline />;

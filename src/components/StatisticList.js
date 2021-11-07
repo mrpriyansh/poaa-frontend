@@ -36,7 +36,7 @@ function StatisticList() {
   const headCells = [
     { id: 'index', label: 'Sno' },
     { id: 'name', label: 'Name' },
-    { id: 'accountno', label: 'AccountNo' },
+    { id: 'accountNo', label: 'AccountNo' },
     { id: 'accountType', label: 'Type' },
     { id: 'amount', label: 'Amount' },
     { id: 'Opening', label: 'Opening Date' },
@@ -91,7 +91,7 @@ function StatisticList() {
               <TableRow key={index}>
                 <TableCell> {index + 1}</TableCell>
                 <TableCell> {account.name}</TableCell>
-                <TableCell> {account.accountno}</TableCell>
+                <TableCell> {account.accountNo}</TableCell>
                 <TableCell> {account.accountType}</TableCell>
                 <TableCell> {account.amount}</TableCell>
                 <TableCell> {convertDate(account.openingDate?.toString())}</TableCell>

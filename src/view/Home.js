@@ -59,8 +59,7 @@ function Home() {
       const filterAccounts = allAccounts.filter(account => {
         if (searchType === 'Name')
           return account.name.toLowerCase().includes(searchValue.toLowerCase());
-        if (searchType === 'Account Number')
-          return account.accountno?.toString().includes(searchValue);
+        if (searchType === 'Account Number') return account.accountNo?.includes(searchValue);
         if (searchType === 'Account Type')
           return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
         if (searchType === 'Maturity Date')
@@ -75,18 +74,18 @@ function Home() {
 
   const handleDelete = async item => {
     const collection = await client.db('poaa').collection('accounts');
-    deleteTrigger(collection, fetchAllAccounts, item.accountno);
+    deleteTrigger(collection, fetchAllAccounts, item.accountNo);
   };
 
-  const createData = (name, accountno, accountType, amount, opening, maturityDate, actions) => {
-    return { name, accountno, accountType, amount, opening, maturityDate, actions };
+  const createData = (name, accountNo, accountType, amount, opening, maturityDate, actions) => {
+    return { name, accountNo, accountType, amount, opening, maturityDate, actions };
   };
 
   const columns = [
     { id: 'name', label: 'Name', minWidth: '15em' },
     { id: 'amount', label: 'Amount', align: 'center' },
     { id: 'accountType', label: 'Type', align: 'center' },
-    { id: 'accountno', label: 'Account No.', align: 'center', minWidth: '8em' },
+    { id: 'accountNo', label: 'Account No.', align: 'center', minWidth: '8em' },
     { id: 'opening', label: 'Opening Date', align: 'center', minWidth: '9em' },
     { id: 'maturityDate', label: 'Maturity Date', align: 'center', minWidth: '9em' },
     { id: 'actions', align: 'center', minWidth: '8em' },
@@ -95,7 +94,7 @@ function Home() {
   const rows = accounts.map(acc => {
     return createData(
       acc.name,
-      acc.accountno,
+      acc.accountNo,
       acc.accountType,
       acc.amount,
       formatDateReverse(acc.openingDate),

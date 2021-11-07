@@ -18,7 +18,7 @@ import { isNull } from '../services/utils';
 
 const initialValues = {
   name: '',
-  accountno: '',
+  accountNo: '',
   amount: '',
   installments: 1,
 };
@@ -85,7 +85,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
 
   const handleAddInstallment = async () => {
     if (errors.installments || errors.name) return;
-    const fields = ['name', 'accountno', 'amount'];
+    const fields = ['name', 'accountNo', 'amount'];
     if (isNull(inputValue, fields)) return;
     if (inputValue.installments <= 0) return;
     setIsLoading(true);
@@ -94,13 +94,13 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
       const collection = await client.db('poaa').collection('installments');
       if (!isModifying) {
         const exists = await collection.findOne({
-          accountno: inputValue.accountno,
+          accountNo: inputValue.accountNo,
           status: INSTALLMENT_PENDING,
         });
         if (exists) throw new Error('Accoun already logged, Try to edit it!');
       }
       await collection.updateOne(
-        { accountno: inputValue.accountno },
+        { accountNo: inputValue.accountNo },
         {
           $set: {
             ...inputValue,
@@ -148,7 +148,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
               name: option.name,
               installments: 1,
               amount: option.amount,
-              accountno: option.accountno,
+              accountNo: option.accountNo,
             }))}
           getOptionLabel={option => option.name}
           renderInput={params => (
@@ -181,7 +181,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
         />
         <TextField
           label="Account No"
-          value={inputValue.accountno}
+          value={inputValue.accountNo}
           variant="outlined"
           fullWidth
           disabled={isModifying || isLoading}

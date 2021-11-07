@@ -18,7 +18,7 @@ const m = curDate.getMonth() + 1;
 const d = curDate.getDate();
 const initialValues = {
   name: '',
-  accountno: '',
+  accountNo: '',
   accountType: 'RD',
   amount: '',
   openingDate: `${y}-${m < 10 ? `0${m}` : m}-${d < 10 ? `0${d}` : d}`,
@@ -34,8 +34,11 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
     if ('name' in fieldValues) temp.name = fieldValues.name ? '' : 'Name is required';
-    if ('accountno' in fieldValues)
-      temp.accountno = fieldValues.accountno.length >= 10 ? '' : 'Incorrect Account Number';
+    if ('accountNo' in fieldValues)
+      temp.accountNo =
+        fieldValues.accountNo.length === 12 || fieldValues.accountNo.length === 10
+          ? ''
+          : 'Incorrect Account Number';
     if ('amount' in fieldValues)
       temp.amount = Number.isInteger(+fieldValues.amount) ? '' : 'Incorrect Amount';
     if ('mobile' in fieldValues)
@@ -75,10 +78,11 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
       const collection = await client.db('poaa').collection('accounts');
       console.log(d, typeof d);
       await collection.updateOne(
-        { accountno: values.accountno },
+        { accountNo: values.accountNo },
         {
           $set: {
             ...values,
+            amount: +values.amount,
             openingDate: new Date(values.openingDate),
             maturityDate: new Date(values.maturityDate),
             agentId1: user.id,
@@ -110,11 +114,12 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
           />
           <Controls.Input
             label="Account Number"
-            name="accountno"
-            value={values.accountno}
+            name="accountNo"
+            disabled={recordForEdit}
+            value={values.accountNo}
             onChange={handleInputChange}
             required
-            error={errors.accountno}
+            error={errors.accountNo}
           />
           <Controls.Input
             label="Opening Date"
