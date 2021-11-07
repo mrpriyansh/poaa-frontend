@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Paper, Toolbar, InputAdornment, IconButton } from '@material-ui/core';
 import useSWR from 'swr';
 import Search from '@material-ui/icons/Search';
@@ -7,17 +7,19 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 
 import Controls from '../common/controls/Controls';
-import Popup from '../common/Popup';
-import AddAccount from '../components/AddAccount';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
 import { allAccountStyles } from '../styles/view/home';
-import CustomTable from '../common/Table';
 import { formatDateReverse, formatDate } from '../services/utils';
 import Offline from './Offline';
-import AddInstallment from '../components/AddInstallment';
 import { useAuth } from '../services/Auth';
+
+import CustomTable from '../common/Table';
+
+const AddInstallment = lazy(() => import('../components/AddInstallment'));
+const AddAccount = lazy(() => import('../components/AddAccount'));
+const Popup = lazy(() => import('../common/Popup'));
 
 const searchTypeList = [
   { title: 'Name' },
@@ -116,48 +118,50 @@ function Home() {
 
   return (
     <>
-      <Paper className={classes.pageContent} m={6}>
-        <Controls.Button
-          text="Add Installment"
-          startIcon={<PostAddIcon />}
-          classes={{ root: classes.addInstButton }}
-          onClick={handleAddInstallment}
-        />
-        <Toolbar classes={{ root: classes.toolbarRoot }}>
-          <Controls.Select
-            label="Type"
-            name="accountType"
-            value={searchType}
-            onChange={event => changeSearchType(event.target.value)}
-            options={searchTypeList}
-            required
-            classes={{ root: classes.typeField }}
+      <Suspense fallback={<LoaderSVG />}>
+        <Paper className={classes.pageContent} m={6}>
+          <Controls.Button
+            text="Add Installment"
+            startIcon={<PostAddIcon />}
+            classes={{ root: classes.addInstButton }}
+            onClick={handleAddInstallment}
           />
-          <Controls.Input
-            label="Search"
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-            onChange={event => changeSearchValue(event.target.value)}
-          />
-        </Toolbar>
-        <CustomTable rows={rows} columns={columns} pagination />
-      </Paper>
-      <Popup
-        openPopup={Boolean(openPopupType?.length)}
-        setOpenPopup={setOpenPopupType}
-        title={openPopupType}
-      >
-        {openPopupType === EDIT_ACCOUNT ? (
-          <AddAccount setOpenPopup={setOpenPopupType} recordForEdit={recordForEdit} />
-        ) : (
-          <AddInstallment setOpenPopup={setOpenPopupType} />
-        )}
-      </Popup>
+          <Toolbar classes={{ root: classes.toolbarRoot }}>
+            <Controls.Select
+              label="Type"
+              name="accountType"
+              value={searchType}
+              onChange={event => changeSearchType(event.target.value)}
+              options={searchTypeList}
+              required
+              classes={{ root: classes.typeField }}
+            />
+            <Controls.Input
+              label="Search"
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              onChange={event => changeSearchValue(event.target.value)}
+            />
+          </Toolbar>
+          <CustomTable rows={rows} columns={columns} pagination />
+        </Paper>
+        <Popup
+          openPopup={Boolean(openPopupType?.length)}
+          setOpenPopup={setOpenPopupType}
+          title={openPopupType}
+        >
+          {openPopupType === EDIT_ACCOUNT ? (
+            <AddAccount setOpenPopup={setOpenPopupType} recordForEdit={recordForEdit} />
+          ) : (
+            <AddInstallment setOpenPopup={setOpenPopupType} />
+          )}
+        </Popup>
+      </Suspense>
     </>
   );
 }

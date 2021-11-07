@@ -12,6 +12,7 @@ import { theme } from './styles/customTheme';
 import ConfirmUser from './view/ConfirmUser';
 import UserDetailsForm from './view/UserDetailsForm';
 import { INSTALLMENT_PENDING } from './services/constants';
+import { ReactComponent as LoaderSVG } from './assets/icons/spinner.svg';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -91,7 +92,7 @@ function App() {
   }, []);
 
   return (
-    <Suspense fallback={<div> Loading ... </div>}>
+    <Suspense fallback={<LoaderSVG />}>
       <ThemeProvider theme={theme}>
         <AuthContext.Provider
           value={{

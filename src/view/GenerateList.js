@@ -1,5 +1,5 @@
 import { Paper, IconButton, Typography, Box } from '@material-ui/core';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, lazy } from 'react';
 import useSWR, { mutate } from 'swr';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -13,8 +13,6 @@ import { formatDate } from '../services/utils';
 import { generateListStyles } from '../styles/view/generateList';
 import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
-import Popup from '../common/Popup';
-import AddInstallment from '../components/AddInstallment';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import Offline from './Offline';
 import { useAuth } from '../services/Auth';
@@ -25,6 +23,9 @@ import {
   INSTALLMENT_PENDING,
   LIST_LIMIT,
 } from '../services/constants';
+
+const Popup = lazy(() => import('../common/Popup'));
+const AddInstallment = lazy(() => import('../components/AddInstallment'));
 
 const EDIT_INSTALLMENT = 'Edit Installment';
 const ADD_INSTALLMENT = 'Add Installment';

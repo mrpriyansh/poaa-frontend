@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, lazy } from 'react';
 import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
@@ -9,12 +9,13 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@material-ui/icons/History';
 
-import UsingExcel from './UsingExcel';
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
-import Popup from '../common/Popup';
-import AddAccount from './AddAccount';
-import AddInstallment from './AddInstallment';
+
+const UsingExcel = lazy(() => import('./UsingExcel'));
+const Popup = lazy(() => import('../common/Popup'));
+const AddAccount = lazy(() => import('./AddAccount'));
+const AddInstallment = lazy(() => import('./AddInstallment'));
 
 const ADD_ACCOUNT = 'Add Account';
 const ADD_BATCH = 'Add Using Excel';
@@ -133,12 +134,12 @@ function Header({ isOnline }) {
                 </IconButton>{' '}
                 Add Account
               </MenuItem>
-              <MenuItem onClick={handleAddBatchAccounts}>
+              {/* <MenuItem onClick={handleAddBatchAccounts}>
                 <IconButton>
                   <LibraryAddIcon />
                 </IconButton>
                 Add In Batch
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem onClick={handleLogout}>
                 <IconButton>
                   <PowerSettingsNewIcon />
