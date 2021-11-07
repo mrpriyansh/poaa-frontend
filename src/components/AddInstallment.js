@@ -31,7 +31,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const [inputValue, setInputValue] = React.useState({ ...initialValues });
   const [errors, setErrors] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
-  const { client, user } = useAuth();
+  const { client, user, fetchInstallments } = useAuth();
 
   // const { data, error } = useSWR('allaccounts', axiosUtil.get);
 
@@ -115,6 +115,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
       setOpenPopup(false);
       history.push('/generate-list');
       setInputValue({ ...initialValues });
+      fetchInstallments();
     } catch (err) {
       console.log(err);
       handleError(err, triggerAlert);

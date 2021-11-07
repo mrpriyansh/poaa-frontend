@@ -33,15 +33,8 @@ export default function GenerateList() {
   const classes = generateListStyles();
   const [openPopupType, setOpenPopupType] = useState('');
   const [currentRecord, setCurrentRecord] = useState({});
-  const [installments, setInstallments] = useState();
-  const { client, user } = useAuth();
+  const { client, user, fetchInstallments, installments } = useAuth();
   // const { data: response, error } = useSWR('getAllInstallments', axiosUtil.get);
-
-  const fetchInstallments = async () => {
-    const collection = await client.db('poaa').collection('installments');
-    const data = await collection.find({ status: INSTALLMENT_PENDING });
-    setInstallments(data);
-  };
 
   useEffect(() => {
     fetchInstallments();
@@ -226,6 +219,10 @@ export default function GenerateList() {
       />
       {rows.length ? (
         <Box mt={2} mb={2}>
+          <div className={classes.row}>
+            <b>Total Accounts : </b>
+            <span> {installments.length} </span>
+          </div>
           <div className={classes.row}>
             <b>Total Amount : </b>
             <span> {totalAmount()} </span>

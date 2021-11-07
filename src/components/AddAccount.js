@@ -29,7 +29,7 @@ const convertDate = date =>
   `${date.split('-')[0]}-${date.split('-')[1]}-${date.split('-')[2][0]}${date.split('-')[2][1]}`;
 function AddAccount({ setOpenPopup, recordForEdit }) {
   const classes = addAccountStyles();
-  const { user, client } = useAuth();
+  const { user, client, fetchAllAccounts } = useAuth();
   const [loading, setLoading] = useState(false);
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
@@ -88,6 +88,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
       );
       triggerAlert({ icon: 'success', title: 'Account Saved!' });
       setOpenPopup(false);
+      fetchAllAccounts();
     } catch (error) {
       handleError(error, triggerAlert);
     } finally {

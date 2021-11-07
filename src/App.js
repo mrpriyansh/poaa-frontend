@@ -11,6 +11,7 @@ import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 import ConfirmUser from './view/ConfirmUser';
 import UserDetailsForm from './view/UserDetailsForm';
+import { INSTALLMENT_PENDING } from './services/constants';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -36,6 +37,25 @@ function App() {
   const [app, setApp] = useState(new Realm.App({ id: process.env.REACT_APP_REALM_ID }));
   const [user, setUser] = useState(null);
   const [client, setClient] = useState(null);
+
+  const [installments, setInstallments] = useState();
+  const [allAccounts, setAllAccounts] = useState();
+
+  const fetchAllAccounts = async () => {
+    try {
+      const collection = await client.db('poaa').collection('accounts');
+      const data = await collection.aggregate([{ $sort: { maturityDate: 1 } }]);
+      setAllAccounts(data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const fetchInstallments = async () => {
+    const collection = await client.db('poaa').collection('installments');
+    const data = await collection.aggregate([{ $match: { status: INSTALLMENT_PENDING } }]);
+    setInstallments(data);
+  };
 
   useEffect(() => {
     async function initClientsUser() {
@@ -85,6 +105,10 @@ function App() {
             setClient,
             user,
             setUser,
+            installments,
+            fetchInstallments,
+            allAccounts,
+            fetchAllAccounts,
           }}
         >
           <>

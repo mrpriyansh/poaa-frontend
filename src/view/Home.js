@@ -31,26 +31,16 @@ const ADD_INSTALLMENT = 'Add Installment';
 
 function Home() {
   const classes = allAccountStyles();
-  const { client } = useAuth();
+  const { client, fetchAllAccounts, allAccounts } = useAuth();
 
   // const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
 
   const [accounts, setAccounts] = useState([]);
-  const [response, setResponse] = useState(null);
   const [searchValue, changeSearchValue] = useState('');
   const [openPopupType, setOpenPopupType] = useState('');
   const [searchType, changeSearchType] = useState('Name');
   const [recordForEdit, setRecordForEdit] = useState();
 
-  const fetchAllAccounts = async () => {
-    try {
-      const collection = await client.db('poaa').collection('accounts');
-      const data = await collection.aggregate([{ $sort: { maturityDate: 1 } }]);
-      setResponse(data);
-    } catch (err) {
-      console.log(err);
-    }
-  };
   useEffect(() => {
     fetchAllAccounts();
   }, []);
@@ -65,8 +55,8 @@ function Home() {
   };
 
   useEffect(() => {
-    if (response?.length) {
-      const filterAccounts = response.filter(account => {
+    if (allAccounts?.length) {
+      const filterAccounts = allAccounts.filter(account => {
         if (searchType === 'Name')
           return account.name.toLowerCase().includes(searchValue.toLowerCase());
         if (searchType === 'Account Number')
@@ -81,7 +71,7 @@ function Home() {
       });
       setAccounts(filterAccounts);
     }
-  }, [response, searchValue, searchType]);
+  }, [allAccounts, searchValue, searchType]);
 
   const handleDelete = async item => {
     const collection = await client.db('poaa').collection('accounts');
@@ -123,7 +113,7 @@ function Home() {
   });
 
   // if (error) return <Offline />;
-  if (!response) return <LoaderSVG />;
+  if (!allAccounts) return <LoaderSVG />;
 
   return (
     <>
