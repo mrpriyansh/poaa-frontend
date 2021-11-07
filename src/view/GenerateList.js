@@ -124,6 +124,7 @@ export default function GenerateList() {
         LIST_LIMIT,
         installments
       );
+      triggerAlert({ icon: 'success', title: 'List Generated!' });
       history.push('/previous-lists');
     } catch (err) {
       handleError(err, triggerAlert);

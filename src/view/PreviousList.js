@@ -12,21 +12,32 @@ import CustomTable from '../common/Table';
 import { previousListsStyles } from '../styles/view/previousLists';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import Offline from './Offline';
+import { useAuth } from '../services/Auth';
 
 export default function PreviousList() {
   const classes = previousListsStyles();
-  const { data: response, error } = useSWR('/getAllLists', axiosUtil.get);
+  // const { data: response, error } = useSWR('/getAllLists', axiosUtil.get);
   const [selectedListIndex, setSelectedListIndex] = useState(0);
   const [selectedRecord, setSelectedRecord] = useState({});
   const [selectedList, setSelectedList] = useState({});
+  const [lists, setLists] = useState();
+  const { client } = useAuth();
 
+  const fetchList = async () => {
+    const collection = await client.db('poaa').collection('lists');
+    const data = await collection.aggregate([{ $sort: { _id: -1 } }, { $limit: 2 }]);
+    setLists(data);
+  };
   useEffect(() => {
-    if (response?.data?.length > 0) {
-      setSelectedRecord(response.data[0]);
-      setSelectedList(response.data[0].list[0]);
+    fetchList();
+  }, []);
+  useEffect(() => {
+    if (lists?.length > 0) {
+      setSelectedRecord(lists[0]);
+      setSelectedList(lists[0].list[0]);
       setSelectedListIndex(0);
     }
-  }, [response?.data]);
+  }, [lists]);
 
   const handleChangeList = e => {
     const { value } = e.target;
@@ -52,8 +63,8 @@ export default function PreviousList() {
     { id: 'accountno', label: 'Account No.', minWidth: '8em', align: 'center' },
   ];
 
-  if (error) return <Offline />;
-  if (!response) return <LoaderSVG />;
+  // if (error) return <Offline />;
+  if (!lists) return <LoaderSVG />;
 
   const rows = selectedList?.accounts
     ?.sort((a, b) => {
@@ -65,6 +76,7 @@ export default function PreviousList() {
       <Typography variant="h5" className={classes.heading}>
         Previous Lists
       </Typography>
+
       {rows?.length ? (
         <>
           <TextField
@@ -74,13 +86,14 @@ export default function PreviousList() {
             onChange={handleChangeList}
             variant="outlined"
           >
-            {response.data.map((list, ind) => (
+            {lists.map((list, ind) => (
               <MenuItem key={list.createdAt} value={list} selected={ind === 0}>
                 {' '}
                 {formatDateTime(list.createdAt)}
               </MenuItem>
             ))}
           </TextField>
+
           <Box mt={2} mb={2} className={classes.listTitleWrapper}>
             <IconButton
               fontSize="medium"
@@ -90,7 +103,7 @@ export default function PreviousList() {
               <ArrowLeftIcon />
             </IconButton>
             <Typography component="span" align="center" className={classes.listTitle}>
-              {`List ${selectedListIndex + 1}`}
+              {`${selectedListIndex + 1} / ${selectedRecord.list.length}`}
             </Typography>
             <IconButton
               fontSize="medium"
