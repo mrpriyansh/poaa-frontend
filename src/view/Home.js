@@ -83,8 +83,9 @@ function Home() {
     }
   }, [response, searchValue, searchType]);
 
-  const handleDelete = item => {
-    deleteTrigger(item.accountno);
+  const handleDelete = async item => {
+    const collection = await client.db('poaa').collection('accounts');
+    deleteTrigger(collection, fetchAllAccounts, item.accountno);
   };
 
   const createData = (name, accountno, accountType, amount, opening, maturityDate, actions) => {

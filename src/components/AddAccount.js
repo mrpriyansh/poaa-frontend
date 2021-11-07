@@ -7,7 +7,7 @@ import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import accountTypeList from '../assets/data/accountType';
 import { axiosUtil } from '../services/axiosinstance';
-import { formatDateReverse } from '../services/utils';
+import { formatDate } from '../services/utils';
 import { addAccountStyles } from '../styles/components/addAcount';
 import handleError from '../services/handleError';
 import { useAuth } from '../services/Auth';
@@ -53,8 +53,8 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
     if (recordForEdit) {
       setValues(() => ({
         ...recordForEdit,
-        openingDate: formatDateReverse(recordForEdit.openingDate),
-        maturityDate: formatDateReverse(recordForEdit.maturityDate),
+        openingDate: formatDate(recordForEdit.openingDate),
+        maturityDate: formatDate(recordForEdit.maturityDate),
       }));
     }
   }, [setValues, recordForEdit]);

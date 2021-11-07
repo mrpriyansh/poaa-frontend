@@ -26,7 +26,7 @@ export const triggerAlert = data => {
   toast.fire(data);
 };
 
-export const deleteTrigger = accountno => {
+export const deleteTrigger = (Account, fetchAllAccounts, accountno) => {
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -36,10 +36,10 @@ export const deleteTrigger = accountno => {
     confirmButtonColor: '#d33',
     cancelButtonColor: '#3363dd',
     confirmButtonText: 'Yes, delete it!',
-  }).then(result => {
+  }).then(async result => {
     if (result.value) {
-      axiosUtil.delete('deleteaccount', { data: { accountno } }).then(() => {
-        mutate(`allaccounts`);
+      try {
+        await Account.deleteOne({ accountno });
         Swal.fire({
           title: 'Deleted!',
           text: 'Your file has been deleted.',
@@ -47,7 +47,14 @@ export const deleteTrigger = accountno => {
           background: '#000',
           confirmButtonColor: '#3363dd',
         });
-      });
+        fetchAllAccounts();
+        // axiosUtil.delete('deleteaccount', { data: { accountno } }).then(() => {
+        // mutate(`allaccounts`);
+
+        // }
+      } catch (err) {
+        console.log(err);
+      }
     }
   });
 };
