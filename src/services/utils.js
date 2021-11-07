@@ -14,3 +14,13 @@ export const formatDateReverse = date => {
     .split('-');
   return splits[2] + '-' + splits[1] + '-' + splits[0];
 };
+
+export const isNull = (obj, fields) => {
+  let empty = false;
+  fields.forEach(prop => {
+    if (obj[prop]?.length === 0) {
+      empty = true;
+    }
+  });
+  return empty;
+};

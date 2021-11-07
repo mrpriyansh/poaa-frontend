@@ -14,6 +14,7 @@ import Offline from '../view/Offline';
 import { useAuth } from '../services/Auth';
 import { INSTALLMENT_PENDING } from '../services/constants';
 import handleError from '../services/handleError';
+import { isNull } from '../services/utils';
 
 const initialValues = {
   name: '',
@@ -57,7 +58,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
     const { value } = e.target;
     const errorMessage = value > 0 ? '' : 'Invalid Installments Number';
     setErrors({ installments: errorMessage });
-    setInputValue(prevState => ({ ...prevState, installments: value }));
+    setInputValue(prevState => ({ ...prevState, installments: +value }));
   };
   const handleChangeInputText = value => {
     const errorMessage = value ? '' : 'Name is required';
@@ -84,6 +85,8 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
 
   const handleAddInstallment = async () => {
     if (errors.installments || errors.name) return;
+    const fields = ['name', 'accountno', 'amount'];
+    if (isNull(inputValue, fields)) return;
     if (inputValue.installments <= 0) return;
     setIsLoading(true);
 
@@ -94,7 +97,6 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           accountno: inputValue.accountno,
           status: INSTALLMENT_PENDING,
         });
-        console.log(exists);
         if (exists) throw new Error('Accoun already logged, Try to edit it!');
       }
       await collection.updateOne(
@@ -104,6 +106,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
             ...inputValue,
             status: INSTALLMENT_PENDING,
             agentId1: user.id,
+            createdAt: new Date(Date.now()),
           },
         },
         { upsert: true }
@@ -129,6 +132,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           value={inputValue}
           className={classes.autoCompleteRoot}
           fullWidth
+          disabled={isModifying || isLoading}
           onChange={(_, newValue) => {
             if (newValue) setInputValue(newValue);
             else setInputValue({ ...initialValues });
@@ -167,11 +171,24 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
             );
           }}
         />
-        <TextField label="Amount" value={inputValue.amount} variant="outlined" fullWidth />
-        <TextField label="Account No" value={inputValue.accountno} variant="outlined" fullWidth />
+        <TextField
+          label="Amount"
+          value={inputValue.amount}
+          variant="outlined"
+          fullWidth
+          disabled={isModifying || isLoading}
+        />
+        <TextField
+          label="Account No"
+          value={inputValue.accountno}
+          variant="outlined"
+          fullWidth
+          disabled={isModifying || isLoading}
+        />
         <TextField
           label="Installments"
           type="number"
+          disabled={isLoading}
           inputProps={{ min: 1 }}
           value={inputValue.installments}
           onChange={handleChangeInstallments}

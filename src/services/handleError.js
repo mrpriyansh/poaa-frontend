@@ -1,5 +1,4 @@
 const handleError = (error, function1) => {
-  console.log(error.message, error);
   if (error?.response?.status === 498) {
     localStorage.removeItem('token');
     window.location.reload();

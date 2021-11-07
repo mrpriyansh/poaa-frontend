@@ -1,5 +1,5 @@
 import { Paper, IconButton, Typography, Box } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import useSWR, { mutate } from 'swr';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -17,6 +17,14 @@ import Popup from '../common/Popup';
 import AddInstallment from '../components/AddInstallment';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import Offline from './Offline';
+import { useAuth } from '../services/Auth';
+import handleError from '../services/handleError';
+import {
+  INSTALLMENT_LOGGED,
+  LIST_CREATED,
+  INSTALLMENT_PENDING,
+  LIST_LIMIT,
+} from '../services/constants';
 
 const EDIT_INSTALLMENT = 'Edit Installment';
 const ADD_INSTALLMENT = 'Add Installment';
@@ -25,9 +33,22 @@ export default function GenerateList() {
   const classes = generateListStyles();
   const [openPopupType, setOpenPopupType] = useState('');
   const [currentRecord, setCurrentRecord] = useState({});
-  const { data: response, error } = useSWR('getAllInstallments', axiosUtil.get);
-  if (error) return <Offline />;
-  if (!response) return <LoaderSVG />;
+  const [installments, setInstallments] = useState();
+  const { client, user } = useAuth();
+  // const { data: response, error } = useSWR('getAllInstallments', axiosUtil.get);
+
+  const fetchInstallments = async () => {
+    const collection = await client.db('poaa').collection('installments');
+    const data = await collection.find({ status: INSTALLMENT_PENDING });
+    setInstallments(data);
+  };
+
+  useEffect(() => {
+    fetchInstallments();
+  }, []);
+
+  // if (error) return <Offline />;
+  if (!installments) return <LoaderSVG />;
 
   const columns = [
     { id: 'name', label: 'Name', minWidth: '15em' },
@@ -45,20 +66,122 @@ export default function GenerateList() {
   const handleAddInstallment = () => {
     setOpenPopupType(ADD_INSTALLMENT);
   };
-  const handleDelete = item => {
-    axiosUtil.delete('/deleteInstallment', { data: { accountno: item.accountno } }).then(res => {
-      triggerAlert({ icon: 'success', title: res.data });
-      mutate('getAllInstallments');
-    });
+  const handleDelete = async item => {
+    // axiosUtil.delete('/deleteInstallment', { data: { accountno: item.accountno } }).then(res => {
+    // triggerAlert({ icon: 'success', title: res.data });
+    // mutate('getAllInstallments');
+    // });
+    try {
+      const collection = await client.db('poaa').collection('installments');
+      await collection.deleteOne({ accountno: item.accountno });
+      triggerAlert({ icon: 'success', title: 'Installment deleted!' });
+      fetchInstallments();
+    } catch (err) {
+      handleError(err, triggerAlert);
+    }
   };
 
-  const handleGenerateList = () => {
-    axiosUtil.post('/generateList').then(res => {
-      triggerAlert({ icon: 'success', title: res.data });
+  const handleGenerateList = async () => {
+    // axiosUtil.post('/generateList').then(res => {
+    //   triggerAlert({ icon: 'success', title: res.data });
+    //   history.push('/previous-lists');
+    // });
+
+    try {
+      const Installment = client.db('poaa').collection('installments');
+
+      const installments = await Installment.aggregate([
+        {
+          $match: {
+            status: INSTALLMENT_PENDING,
+            agentId1: user.id,
+          },
+        },
+        {
+          $project: {
+            status: 0,
+          },
+        },
+        {
+          $addFields: {
+            total: {
+              $multiply: ['$installments', '$amount'],
+            },
+          },
+        },
+        {
+          $sort: {
+            total: -1,
+            amount: -1,
+          },
+        },
+      ]);
+      console.log(installments);
+      await user.functions.generateList(
+        INSTALLMENT_PENDING,
+        INSTALLMENT_LOGGED,
+        LIST_CREATED,
+        LIST_LIMIT,
+        installments
+      );
       history.push('/previous-lists');
-    });
+    } catch (err) {
+      handleError(err, triggerAlert);
+    }
+    // const session = await Installment.startSession();
+    // session.startTransaction();
+    // try {
+    //   if (installments.length === 0) {
+    //     throw new Error('No installments found');
+    //   }
+    //   const list = [];
+    //   let cur = 0;
+    //   let listNo = 0;
+    //   installments.forEach(inst => {
+    //     let remaining = inst.total;
+    //     let currentInst = inst.installments;
+    //     while (remaining > 0) {
+    //       if (cur < inst.amount) {
+    //         listNo += 1;
+    //         cur = LIST_LIMIT;
+    //       }
+    //       const payableInst = Math.min(Math.floor(cur / inst.amount), currentInst);
+    //       if (list.length < listNo) {
+    //         list.push({ accounts: [], totalAmount: 0, count: 0 });
+    //       }
+    //       list[listNo - 1].accounts.push({
+    //         paidInstallments: payableInst,
+    //         accountno: inst.accountno,
+    //         name: inst.name,
+    //         amount: inst.amount,
+    //         totalAmount: inst.amount * payableInst,
+    //       });
+    //       list[listNo - 1].totalAmount += inst.amount * payableInst;
+    //       list[listNo - 1].count += 1;
+    //       cur -= payableInst * inst.amount;
+    //       remaining -= payableInst * inst.amount;
+    //       currentInst -= payableInst;
+    //     }
+    //   });
+    //   await Installment.updateMany(
+    //     {
+    //       status: INSTALLMENT_PENDING,
+    //       agentId1: user.id,
+    //     },
+    //     { status: INSTALLMENT_LIST_CREATED }
+    //   ).session(session);
+    //   const List = client.db('poaa').collection('lists');
+    //   await List.create([{ list }], { session });
+    //   await session.commitTransaction();
+    //   triggerAlert({ icon: 'success', title: 'List Generated!' });
+    // } catch (err) {
+    //   await session.abortTransaction();
+    //   handleError(err);
+    // } finally {
+    //   session.endSessien();
+    // }
   };
-  const rows = response.data.map(inst => {
+  const rows = installments.map(inst => {
     return {
       ...inst,
       createdAt: formatDate(inst.createdAt),
@@ -77,7 +200,7 @@ export default function GenerateList() {
   });
   const totalAmount = () => {
     let sum = 0;
-    response.data.forEach(item => {
+    installments.forEach(item => {
       sum += item.amount * item.installments;
     });
     return sum;
