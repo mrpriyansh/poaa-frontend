@@ -1,9 +1,7 @@
 import Swal from 'sweetalert2/src/sweetalert2';
 import '@sweetalert2/theme-dark/dark.css';
-import { mutate } from 'swr';
 
 import './styles.css';
-import { axiosUtil } from '../axiosinstance';
 
 const getAlert = () => {
   const Toast = Swal.mixin({
@@ -53,6 +51,7 @@ export const deleteTrigger = (Account, fetchAllAccounts, accountNo) => {
 
         // }
       } catch (err) {
+        // eslint-disable-next-line no-console
         console.log(err);
       }
     }

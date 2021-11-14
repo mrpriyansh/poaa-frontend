@@ -8,6 +8,11 @@ export const theme = createTheme({
     secondary: {
       main: '#fff',
     },
+    success: {
+      main: '#66bb6a',
+      dark: '#388e3c',
+      light: '#81c784',
+    },
   },
   typography: {
     fontFamily: ['Noto Serif', 'serif'],

@@ -9,6 +9,7 @@
     "react/no-array-index-key": "off",
     "consistent-return": "off",
     "no-shadow": "off",
+    "no-underscore-dangle": "off",
     "no-unused-vars": "warn",
     "no-unneeded-ternary": "off",
     "no-use-before-define": "off",

@@ -6,7 +6,6 @@ import { useHistory } from 'react-router-dom';
 import { Form, useForm } from '../common/useForm';
 import Controls from '../common/controls/Controls';
 import { useAuth } from '../services/Auth';
-import { axiosUtil } from '../services/axiosinstance';
 import { loginStyles } from '../styles/view/login';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import handleError from '../services/handleError';
@@ -21,7 +20,7 @@ const SIGN_UP = 'SignUp';
 
 function Login() {
   const classes = loginStyles();
-  const { setAuthToken, app, setUser } = useAuth();
+  const { app, setUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
 
@@ -59,6 +58,7 @@ function Login() {
           values.password
         );
         const temp = await app.logIn(credentials);
+        window.localStorage.setItem('token', temp.accessToken);
         setUser(temp);
         history.push('/');
       } else {
@@ -93,6 +93,7 @@ function Login() {
               onChange={handleInputChange}
               error={errors.email}
               classes={{ root: classes.inputRoot }}
+              required
             />
             <Controls.Input
               variant="outlined"
@@ -102,6 +103,7 @@ function Login() {
               value={values.password}
               onChange={handleInputChange}
               classes={{ root: classes.inputRoot }}
+              required
             />
             <Controls.Button
               type="submit"

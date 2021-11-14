@@ -16,8 +16,21 @@ export const previousListsStyles = makeStyles(theme => ({
   row: {
     display: 'flex',
     alignItems: 'center',
-    '& > span': {
-      margin: theme.spacing(0, 1),
+  },
+  lightGreenText: {
+    color: theme.palette.success.main,
+  },
+  greenText: {
+    color: theme.palette.success.dark,
+  },
+
+  gridItem: {},
+  [theme.breakpoints.down('xs')]: {
+    gridItem: {
+      alignItems: 'flex-start',
+      borderTop: '0.75px solid #888',
+      marginBottom: theme.spacing(2),
+      paddingTop: theme.spacing(1),
     },
   },
 }));

@@ -1,5 +1,4 @@
-// eslint-disable no-shadow
-
+/*eslint-disable*/
 import { Grid } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 
@@ -12,6 +11,7 @@ import config from '../services/config';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { useAuth } from '../services/Auth';
 import { usingExcelStyles } from '../styles/components/usingExcel';
+import { axiosUtil } from '../services/axiosinstance';
 
 function UsingExcel() {
   const classes = usingExcelStyles();
@@ -37,7 +37,7 @@ function UsingExcel() {
             ...prev,
             {
               name: account['Account Name'],
-              accountno: account['Account No'],
+              accountNo: account['Account No'],
               accountType: 'RD',
             },
           ]);
@@ -46,28 +46,27 @@ function UsingExcel() {
             ...prev,
             {
               name: account['Account Name'],
-              accountno: account['Account No'],
+              accountNo: account['Account No'],
               accountType: 'RD',
-              amount: account.Denomination.split('.')[0].replace(',', ''),
+              amount: account.Denomination,
             },
           ]);
-        const date = new Date(account.Date);
+        const date = new Date(excelDateToJSDate(account.Date));
         const openingDate = new Date(date.setMonth(date.getMonth() - account['Month Paid Upto']));
         const maturityDate = new Date(
           date.setFullYear(date.getFullYear() + 5 * Math.ceil(account['Month Paid Upto'] / 60))
         );
-        fetch(`${config.apiUrl}/api/addaccount`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', authorization: `Bearer ${authToken}` },
-          body: JSON.stringify({
-            name: account['Account Name'],
-            accountno: account['Account No'],
-            accountType: 'RD',
-            amount: account.Denomination.split('.')[0].replace(',', ''),
-            openingDate,
-            maturityDate,
-          }),
-        })
+        const payload = {
+          name: account['Account Name'],
+          accountNo: account['Account No'],
+          accountType: 'RD',
+          amount: account.Denomination,
+          openingDate,
+          maturityDate,
+        };
+
+        axiosUtil
+          .post(`/addaccount`, { ...payload })
           .then(response =>
             response.json().then(data => ({ status: response.status, body: data }))
           )
@@ -77,9 +76,9 @@ function UsingExcel() {
                 ...prev,
                 {
                   name: account['Account Name'],
-                  accountno: account['Account No'],
+                  accountNo: account['Account No'],
                   accountType: 'RD',
-                  amount: account.Denomination.split('.')[0].replace(',', ''),
+                  amount: account.Denomination,
                   openingDate,
                   maturityDate,
                 },
@@ -89,9 +88,9 @@ function UsingExcel() {
                 ...prev,
                 {
                   name: account['Account Name'],
-                  accountno: account['Account No'],
+                  accountNo: account['Account No'],
                   accountType: 'RD',
-                  amount: account.Denomination.split('.')[0].replace(',', ''),
+                  amount: account.Denomination,
                   openingDate,
                   maturityDate,
                 },
@@ -103,9 +102,9 @@ function UsingExcel() {
               ...prev,
               {
                 name: account['Account Name'],
-                accountno: account['Account No'],
+                accountNo: account['Account No'],
                 accountType: 'RD',
-                amount: account.Denomination.split('.')[0].replace(',', ''),
+                amount: account.Denomination,
                 openingDate,
                 maturityDate,
               },
@@ -114,6 +113,13 @@ function UsingExcel() {
       });
     }
   }, [data, authToken]);
+
+  // function to convert excel date to normal js date
+  function excelDateToJSDate(excelDate) {
+    const date = new Date(Math.round((excelDate - (25567 + 2)) * 86400 * 1000));
+    const convertedDate = date.toISOString().split('T')[0];
+    return convertedDate;
+  }
   useEffect(() => {
     if (
       data.length &&
@@ -130,7 +136,7 @@ function UsingExcel() {
   const handleConvert = () => {
     if (!file) return triggerAlert({ icon: 'error', title: 'Insert File' });
     if (!type.length) return triggerAlert({ icon: 'error', title: 'Select valid Type' });
-    setLoading(true);
+    // setLoading(true);
     setAddedCount([]);
     setAlreadyCount([]);
     setFailedCount([]);
@@ -166,7 +172,7 @@ function UsingExcel() {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid items xs={6}>
+        <Grid item xs={12}>
           <Controls.Input
             type="file"
             accept=".xlsx, .xlx"
@@ -189,16 +195,7 @@ function UsingExcel() {
             onClick={() => handleRoute(matureCount)}
           />
         </Grid>
-        <Grid items xs={6}>
-          <Controls.Select
-            label="Type"
-            name="accountType"
-            value={type}
-            onChange={e => setType(e.target.value)}
-            options={accountTypeList}
-            required
-            error={!type.length}
-          />
+        <Grid item xs={12}>
           <Controls.Button
             variant="outlined"
             text={`Already Added - ${alreadyCount.length}`}

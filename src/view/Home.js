@@ -1,6 +1,5 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { Paper, Toolbar, InputAdornment, IconButton } from '@material-ui/core';
-import useSWR from 'swr';
 import Search from '@material-ui/icons/Search';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -9,10 +8,8 @@ import PostAddIcon from '@material-ui/icons/PostAdd';
 import Controls from '../common/controls/Controls';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
-import { axiosUtil } from '../services/axiosinstance';
 import { allAccountStyles } from '../styles/view/home';
 import { formatDateReverse, formatDate } from '../services/utils';
-import Offline from './Offline';
 import { useAuth } from '../services/Auth';
 
 import CustomTable from '../common/Table';
@@ -45,7 +42,7 @@ function Home() {
 
   useEffect(() => {
     fetchAllAccounts();
-  }, []);
+  }, [fetchAllAccounts]);
 
   const handleEdit = item => {
     setRecordForEdit(item);

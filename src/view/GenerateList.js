@@ -1,6 +1,5 @@
 import { Paper, IconButton, Typography, Box } from '@material-ui/core';
 import React, { useEffect, useState, lazy } from 'react';
-import useSWR, { mutate } from 'swr';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PostAddIcon from '@material-ui/icons/PostAdd';
@@ -8,13 +7,11 @@ import SettingsIcon from '@material-ui/icons/Settings';
 import { useHistory } from 'react-router-dom';
 
 import CustomTable from '../common/Table';
-import { axiosUtil } from '../services/axiosinstance';
 import { formatDate } from '../services/utils';
 import { generateListStyles } from '../styles/view/generateList';
 import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
-import Offline from './Offline';
 import { useAuth } from '../services/Auth';
 import handleError from '../services/handleError';
 import {
@@ -39,7 +36,7 @@ export default function GenerateList() {
 
   useEffect(() => {
     fetchInstallments();
-  }, []);
+  }, [fetchInstallments]);
 
   // if (error) return <Offline />;
   if (!installments) return <LoaderSVG />;
@@ -83,7 +80,6 @@ export default function GenerateList() {
 
     try {
       const Installment = client.db('poaa').collection('installments');
-
       const installments = await Installment.aggregate([
         {
           $match: {
@@ -110,7 +106,56 @@ export default function GenerateList() {
           },
         },
       ]);
-      console.log(installments);
+      // const list = [];
+      // let cur = 0;
+      // let listNo = 0;
+      // installments.forEach(inst => {
+      //   let remaining = inst.total;
+      //   let currentInst = inst.installments;
+      //   let ind = 0;
+      //   while (ind < listNo && remaining > 0) {
+      //     const available = LIST_LIMIT - list[ind].totalAmount;
+      //     if (available >= inst.amount) {
+      //       const payableInst = Math.min(Math.floor(available / inst.amount), currentInst);
+      //       list[ind].accounts.push({
+      //         paidInstallments: payableInst,
+      //         accountNo: inst.accountNo,
+      //         name: inst.name,
+      //         amount: inst.amount,
+      //         totalAmount: inst.amount * payableInst,
+      //       });
+      //       list[ind].totalAmount += inst.amount * payableInst;
+      //       list[ind].count += 1;
+      //       remaining -= payableInst * inst.amount;
+      //       currentInst -= payableInst;
+      //       if (ind === listNo - 1) cur -= payableInst * inst.amount;
+      //     }
+      //     ind += 1;
+      //   }
+      //   while (remaining > 0) {
+      //     if (cur < inst.amount) {
+      //       listNo += 1;
+      //       cur = LIST_LIMIT;
+      //     }
+      //     const payableInst = Math.min(Math.floor(cur / inst.amount), currentInst);
+      //     if (list.length < listNo) {
+      //       list.push({ accounts: [], totalAmount: 0, count: 0 });
+      //     }
+      //     list[listNo - 1].accounts.push({
+      //       paidInstallments: payableInst,
+      //       accountNo: inst.accountNo,
+      //       name: inst.name,
+      //       amount: inst.amount,
+      //       totalAmount: inst.amount * payableInst,
+      //     });
+      //     list[listNo - 1].totalAmount += inst.amount * payableInst;
+      //     list[listNo - 1].count += 1;
+      //     cur -= payableInst * inst.amount;
+      //     remaining -= payableInst * inst.amount;
+      //     currentInst -= payableInst;
+      //   }
+      // });
+      // console.log(list);
       await user.functions.generateList(
         INSTALLMENT_PENDING,
         INSTALLMENT_LOGGED,
@@ -123,58 +168,6 @@ export default function GenerateList() {
     } catch (err) {
       handleError(err, triggerAlert);
     }
-    // const session = await Installment.startSession();
-    // session.startTransaction();
-    // try {
-    //   if (installments.length === 0) {
-    //     throw new Error('No installments found');
-    //   }
-    //   const list = [];
-    //   let cur = 0;
-    //   let listNo = 0;
-    //   installments.forEach(inst => {
-    //     let remaining = inst.total;
-    //     let currentInst = inst.installments;
-    //     while (remaining > 0) {
-    //       if (cur < inst.amount) {
-    //         listNo += 1;
-    //         cur = LIST_LIMIT;
-    //       }
-    //       const payableInst = Math.min(Math.floor(cur / inst.amount), currentInst);
-    //       if (list.length < listNo) {
-    //         list.push({ accounts: [], totalAmount: 0, count: 0 });
-    //       }
-    //       list[listNo - 1].accounts.push({
-    //         paidInstallments: payableInst,
-    //         accountNo: inst.accountNo,
-    //         name: inst.name,
-    //         amount: inst.amount,
-    //         totalAmount: inst.amount * payableInst,
-    //       });
-    //       list[listNo - 1].totalAmount += inst.amount * payableInst;
-    //       list[listNo - 1].count += 1;
-    //       cur -= payableInst * inst.amount;
-    //       remaining -= payableInst * inst.amount;
-    //       currentInst -= payableInst;
-    //     }
-    //   });
-    //   await Installment.updateMany(
-    //     {
-    //       status: INSTALLMENT_PENDING,
-    //       agentId1: user.id,
-    //     },
-    //     { status: INSTALLMENT_LIST_CREATED }
-    //   ).session(session);
-    //   const List = client.db('poaa').collection('lists');
-    //   await List.create([{ list }], { session });
-    //   await session.commitTransaction();
-    //   triggerAlert({ icon: 'success', title: 'List Generated!' });
-    // } catch (err) {
-    //   await session.abortTransaction();
-    //   handleError(err);
-    // } finally {
-    //   session.endSessien();
-    // }
   };
   const rows = installments.map(inst => {
     return {
@@ -215,7 +208,7 @@ export default function GenerateList() {
       <CustomTable
         rows={rows}
         columns={columns}
-        pagination
+        // pagination
         emptyMessage="No Insatallments Found! Click Below to Add"
       />
       {rows.length ? (

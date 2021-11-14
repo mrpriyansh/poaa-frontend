@@ -5,12 +5,11 @@ import { useAuth } from '../services/Auth';
 const ProtectedRoute = ({ children, ...rest }) => {
   const { user } = useAuth();
   const location = useLocation();
-  const authToken = window.localStorage.getItem('token');
 
   return (
     <Route {...rest}>
       {user ? (
-        Object.keys(user.customData)?.length || location.pathname === '/user-details' ? (
+        user.customData?.pPassword?.length || location.pathname === '/user-details' ? (
           children
         ) : (
           <Redirect to={{ pathname: '/user-details', state: { referer: location.pathname } }} />

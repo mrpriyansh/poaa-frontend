@@ -1,10 +1,10 @@
 import React, { useState, lazy } from 'react';
+import { Online } from 'react-detect-offline';
 import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import PostAddIcon from '@material-ui/icons/PostAdd';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@material-ui/icons/History';
@@ -21,9 +21,9 @@ const ADD_ACCOUNT = 'Add Account';
 const ADD_BATCH = 'Add Using Excel';
 const ADD_INSTALLMENT = 'Add Installment';
 
-function Header({ isOnline }) {
+function Header() {
   const classes = headerStyles();
-  const { setAuthToken, authToken, setUser, user } = useAuth();
+  const { setUser, user } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [popupType, setPopupType] = useState('');
   const history = useHistory();
@@ -47,9 +47,6 @@ function Header({ isOnline }) {
     setAnchorEl(null);
   };
   const handleLogout = async () => {
-    // event.preventDefault();
-    // window.localStorage.removeItem('token');
-    // setAuthToken();
     await user.logOut();
     setUser(null);
     handleClose();
@@ -60,10 +57,10 @@ function Header({ isOnline }) {
     handleClose();
   };
 
-  const handleAddBatchAccounts = () => {
-    setPopupType(ADD_BATCH);
-    handleClose();
-  };
+  // const handleAddBatchAccounts = () => {
+  //   setPopupType(ADD_BATCH);
+  //   handleClose();
+  // };
 
   const handleAddInstallment = () => {
     setPopupType(ADD_INSTALLMENT);
@@ -75,6 +72,8 @@ function Header({ isOnline }) {
     history.push(endpoint);
   };
 
+  const isPortalDetails = user?.customData?.pPassword?.length;
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -85,9 +84,9 @@ function Header({ isOnline }) {
         >
           Post Office Agent Assistant
         </Typography>
-        {user && (
-          <>
-            {isOnline ? (
+        <Online>
+          {user && (
+            <>
               <IconButton
                 aria-controls="menu"
                 aria-haspopup="true"
@@ -96,59 +95,65 @@ function Header({ isOnline }) {
               >
                 <MenuIcon />
               </IconButton>
-            ) : null}
-            <Menu
-              id="menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              anchorOrigin={{
-                vertical: 'bottom',
-                horizontal: 'left',
-              }}
-              getContentAnchorEl={null}
-            >
-              <MenuItem onClick={handleAddInstallment}>
-                <IconButton>
-                  <PostAddIcon />
-                </IconButton>
-                Add Installment
-              </MenuItem>
-              <MenuItem onClick={() => redirectsTo('/generate-list')}>
-                <IconButton>
-                  {' '}
-                  <SettingsIcon />
-                </IconButton>
-                Generate List
-              </MenuItem>
-              <MenuItem onClick={() => redirectsTo('/previous-lists')}>
-                <IconButton>
-                  <HistoryIcon />
-                </IconButton>
-                Previous Lists
-              </MenuItem>
-              <MenuItem onClick={handleAddAccount}>
-                <IconButton>
-                  <NoteAddIcon />
-                </IconButton>{' '}
-                Add Account
-              </MenuItem>
-              {/* <MenuItem onClick={handleAddBatchAccounts}>
+              <Menu
+                id="menu"
+                anchorEl={anchorEl}
+                keepMounted
+                open={Boolean(anchorEl)}
+                onClose={handleClose}
+                anchorOrigin={{
+                  vertical: 'bottom',
+                  horizontal: 'left',
+                }}
+                getContentAnchorEl={null}
+              >
+                <MenuItem onClick={handleAddInstallment} disabled={!isPortalDetails}>
+                  <IconButton>
+                    <PostAddIcon />
+                  </IconButton>
+                  Add Installment
+                </MenuItem>
+                <MenuItem
+                  onClick={() => redirectsTo('/generate-list')}
+                  disabled={!isPortalDetails}
+                >
+                  <IconButton>
+                    {' '}
+                    <SettingsIcon />
+                  </IconButton>
+                  Generate List
+                </MenuItem>
+                <MenuItem
+                  onClick={() => redirectsTo('/previous-lists')}
+                  disabled={!isPortalDetails}
+                >
+                  <IconButton>
+                    <HistoryIcon />
+                  </IconButton>
+                  Previous Lists
+                </MenuItem>
+                <MenuItem onClick={handleAddAccount} disabled={!isPortalDetails}>
+                  <IconButton>
+                    <NoteAddIcon />
+                  </IconButton>{' '}
+                  Add Account
+                </MenuItem>
+                {/* <MenuItem onClick={handleAddBatchAccounts}>
                 <IconButton>
                   <LibraryAddIcon />
                 </IconButton>
                 Add In Batch
               </MenuItem> */}
-              <MenuItem onClick={handleLogout}>
-                <IconButton>
-                  <PowerSettingsNewIcon />
-                </IconButton>
-                Logout
-              </MenuItem>
-            </Menu>
-          </>
-        )}
+                <MenuItem onClick={handleLogout}>
+                  <IconButton>
+                    <PowerSettingsNewIcon />
+                  </IconButton>
+                  Logout
+                </MenuItem>
+              </Menu>
+            </>
+          )}{' '}
+        </Online>
       </Toolbar>
       <Popup openPopup={Boolean(popupType?.length)} setOpenPopup={setPopupType} title={popupType}>
         {popupComponent()}

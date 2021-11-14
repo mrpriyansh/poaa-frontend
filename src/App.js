@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy } from 'react';
+import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
 import { Offline, Online } from 'react-detect-offline';
 import { Route } from 'react-router-dom';
 import * as Realm from 'realm-web';
@@ -33,7 +33,6 @@ function App() {
   const classes = useStyles();
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
-  const [isOnline, setIsOnline] = useState(true);
 
   const [app, setApp] = useState(new Realm.App({ id: process.env.REACT_APP_REALM_ID }));
   const [user, setUser] = useState(null);
@@ -42,25 +41,33 @@ function App() {
   const [installments, setInstallments] = useState();
   const [allAccounts, setAllAccounts] = useState();
 
-  const fetchAllAccounts = async () => {
+  const fetchAllAccounts = useCallback(async () => {
     try {
       const collection = await client.db('poaa').collection('accounts');
       const data = await collection.aggregate([{ $sort: { maturityDate: 1 } }]);
       setAllAccounts(data);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
     }
-  };
+  }, [client]);
 
-  const fetchInstallments = async () => {
-    const collection = await client.db('poaa').collection('installments');
-    const data = await collection.aggregate([{ $match: { status: INSTALLMENT_PENDING } }]);
-    setInstallments(data);
-  };
+  const fetchInstallments = useCallback(async () => {
+    try {
+      const collection = await client.db('poaa').collection('installments');
+      const data = await collection.aggregate([
+        { $match: { status: INSTALLMENT_PENDING } },
+        { $sort: { name: 1 } },
+      ]);
+      setInstallments(data);
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(error);
+    }
+  }, [client]);
 
   useEffect(() => {
     async function initClientsUser() {
-      console.log('hello', user, app.currentUser);
       if (!user && app.currentUser) {
         setUser(app.currentUser);
       }
@@ -77,20 +84,6 @@ function App() {
     const token = window.localStorage.getItem('token');
     setAuthToken(token);
   };
-  useEffect(() => {
-    window.addEventListener('online', () => {
-      setIsOnline(true);
-    });
-    return () => window.removeEventListener('online', () => {});
-  }, []);
-
-  useEffect(() => {
-    window.addEventListener('offline', () => {
-      setIsOnline(false);
-    });
-    return () => window.removeEventListener('offline', () => {});
-  }, []);
-
   return (
     <Suspense fallback={<LoaderSVG />}>
       <ThemeProvider theme={theme}>
@@ -113,30 +106,35 @@ function App() {
           }}
         >
           <>
-            <Header isOnline />
+            <Header />
             <div className={classes.container}>
-              <ProtectedRoute exact path="/">
-                <Home />
-              </ProtectedRoute>
-              <Route exact path="/login">
-                {' '}
-                <Login />{' '}
-              </Route>
-              <ProtectedRoute exact path="/user-details">
-                <UserDetailsForm />
-              </ProtectedRoute>
-              <Route exact path="/confirm-user">
-                <ConfirmUser />{' '}
-              </Route>
-              <ProtectedRoute exact path="/generate-list">
-                <GenerateList />
-              </ProtectedRoute>
-              <ProtectedRoute exact path="/previous-lists">
-                <PreviousList />
-              </ProtectedRoute>
-              <ProtectedRoute exact path="/stats">
-                <StatisticList />
-              </ProtectedRoute>{' '}
+              <Online>
+                <ProtectedRoute exact path="/">
+                  <Home />
+                </ProtectedRoute>
+                <Route exact path="/login">
+                  {' '}
+                  <Login />{' '}
+                </Route>
+                <ProtectedRoute exact path="/user-details">
+                  <UserDetailsForm />
+                </ProtectedRoute>
+                <Route exact path="/confirm-user">
+                  <ConfirmUser />{' '}
+                </Route>
+                <ProtectedRoute exact path="/generate-list">
+                  <GenerateList />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/previous-lists">
+                  <PreviousList />
+                </ProtectedRoute>
+                <ProtectedRoute exact path="/stats">
+                  <StatisticList />
+                </ProtectedRoute>{' '}
+              </Online>
+              <Offline>
+                <OfflineView />
+              </Offline>
             </div>
           </>
           <CssBaseline />

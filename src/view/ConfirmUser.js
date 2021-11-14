@@ -23,7 +23,7 @@ export default function ConfirmUser() {
       }
     }
     confirmUser();
-  }, []);
+  }, [app, history, token, tokenId]);
 
   return (
     <Typography variant="h6" align="center">

@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Grid, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useHistory } from 'react-router-dom';
-import useSWR, { mutate } from 'swr';
 
 import Control from '../common/controls/Controls';
 import { Form } from '../common/useForm';
-import { axiosUtil } from '../services/axiosinstance';
 import { addInstallmentsStyles } from '../styles/components/addInstallments';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
-import Offline from '../view/Offline';
 import { useAuth } from '../services/Auth';
 import { INSTALLMENT_PENDING } from '../services/constants';
 import handleError from '../services/handleError';
@@ -35,21 +32,27 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
 
   // const { data, error } = useSWR('allaccounts', axiosUtil.get);
 
-  const fetchRDAccounts = async () => {
+  const fetchRDAccounts = useCallback(async () => {
     try {
+      const todaysDate = new Date();
+      todaysDate.setDate(todaysDate.getDate() - 1);
+
       const collection = await client.db('poaa').collection('accounts');
       const data = await collection.aggregate([
-        { $match: { accountType: 'RD' } },
-        { $sort: { maturityDate: 1 } },
+        { $match: { accountType: 'RD', maturityDate: { $gt: new Date(todaysDate) } } },
+        { $sort: { name: 1 } },
       ]);
       setRdAccounts(data);
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
     }
-  };
+  }, [client]);
+
   useEffect(() => {
     fetchRDAccounts();
-  }, []);
+  }, [fetchRDAccounts]);
+
   useEffect(() => {
     if (isModifying) setInputValue(record);
   }, [isModifying, record]);
@@ -64,23 +67,6 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
     const errorMessage = value ? '' : 'Name is required';
     setErrors({ name: errorMessage });
     setInputText(value);
-  };
-
-  const handleAddInstallment1 = () => {
-    if (errors.installments || errors.name) return;
-    setIsLoading(true);
-    axiosUtil[isModifying ? 'put' : 'post'](
-      isModifying ? 'editInstallment' : '/addInstallment',
-      inputValue
-    )
-      .then(res => {
-        mutate('getAllInstallments');
-        setOpenPopup(false);
-        history.push('/generate-list');
-        setInputValue({ ...initialValues });
-        triggerAlert({ icon: 'success', title: res.data });
-      })
-      .finally(() => setIsLoading(false));
   };
 
   const handleAddInstallment = async () => {
@@ -117,6 +103,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
       setInputValue({ ...initialValues });
       fetchInstallments();
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err);
       handleError(err, triggerAlert);
     } finally {

@@ -8,6 +8,7 @@ export const generateListStyles = makeStyles(theme => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    marginBottom: theme.spacing(2),
   },
   generateButtonWrapper: {
     padding: theme.spacing(2, 0),

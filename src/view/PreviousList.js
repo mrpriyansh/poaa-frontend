@@ -1,49 +1,78 @@
-import { Box, IconButton, MenuItem, Paper, TextField, Typography } from '@material-ui/core';
-import React, { useState, useEffect } from 'react';
-import useSWR from 'swr';
+import { Box, IconButton, MenuItem, Grid, Paper, TextField, Typography } from '@material-ui/core';
+import React, { useState, useEffect, useCallback } from 'react';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
+import CancelIcon from '@material-ui/icons/Cancel';
+import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import copy from 'copy-to-clipboard';
 
+import { ReactComponent as RunningSvg } from '../assets/icons/running.svg';
 import { axiosUtil } from '../services/axiosinstance';
 import { formatDateTime } from '../services/utils';
 import CustomTable from '../common/Table';
 import { previousListsStyles } from '../styles/view/previousLists';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
-import Offline from './Offline';
 import { useAuth } from '../services/Auth';
+import Controls from '../common/controls/Controls';
+import config from '../services/config';
+
+const useEventSource = taskId => {
+  const [data, updateData] = useState(null);
+  const url = `${config.apiUrl}/api/status/?id=${taskId}`;
+  useEffect(() => {
+    if (taskId) {
+      const source = new EventSource(url);
+
+      // source.onmessage = function logEvents(event) {
+      //   updateData(JSON.parse(event.data));
+      // };
+      source.addEventListener('update', e => {
+        updateData(JSON.parse(e.data));
+      });
+      source.addEventListener('close', e => {
+        updateData(JSON.parse(e.data));
+        source.close();
+      });
+      return () => source.close();
+    }
+  }, [url, taskId]);
+
+  return taskId ? data : null;
+};
 
 export default function PreviousList() {
   const classes = previousListsStyles();
-  // const { data: response, error } = useSWR('/getAllLists', axiosUtil.get);
-  const [selectedListIndex, setSelectedListIndex] = useState(0);
-  const [selectedRecord, setSelectedRecord] = useState({});
-  const [selectedList, setSelectedList] = useState({});
   const [lists, setLists] = useState();
+  const [selectedRecordIndex, setSelectedRecordIndex] = useState(0);
+  const [selectedListIndex, setSelectedListIndex] = useState(0);
   const { client } = useAuth();
 
-  const fetchList = async () => {
+  const fetchList = useCallback(async () => {
     const collection = await client.db('poaa').collection('lists');
-    const data = await collection.aggregate([{ $sort: { _id: -1 } }, { $limit: 2 }]);
+    const data = await collection.aggregate([{ $sort: { _id: -1 } }, { $limit: 5 }]);
     setLists(data);
-  };
+  }, [client]);
+
   useEffect(() => {
     fetchList();
-  }, []);
-  useEffect(() => {
-    if (lists?.length > 0) {
-      setSelectedRecord(lists[0]);
-      setSelectedList(lists[0].list[0]);
-      setSelectedListIndex(0);
-    }
-  }, [lists]);
+  }, [fetchList]);
+  // useEffect(() => {
+  // fetchList();
+  // }, [fetchList]);
+
+  const selectedRecord = lists?.length > 0 ? lists[selectedRecordIndex] : {};
+  const selectedList =
+    selectedRecord?.list?.length > 0 ? selectedRecord?.list[selectedListIndex] : {};
+
+  const taskStats = useEventSource(selectedRecord?.taskId);
 
   const handleChangeList = e => {
     const { value } = e.target;
-    setSelectedRecord(value);
+    setSelectedRecordIndex(value);
+    // setSelectedRecord(value);
     setSelectedListIndex(0);
-    setSelectedList(value.list[0]);
+    // setSelectedList(value.list[0]);
   };
 
   const copyToClipboard = () => {
@@ -51,7 +80,7 @@ export default function PreviousList() {
   };
 
   const changeListNo = change => {
-    setSelectedList(selectedRecord.list[selectedListIndex + change]);
+    // setSelectedList(selectedRecord.list[selectedListIndex + change]);
     setSelectedListIndex(prevState => prevState + change);
   };
 
@@ -63,7 +92,6 @@ export default function PreviousList() {
     { id: 'accountNo', label: 'Account No.', minWidth: '8em', align: 'center' },
   ];
 
-  // if (error) return <Offline />;
   if (!lists) return <LoaderSVG />;
 
   const rows = selectedList?.accounts
@@ -71,6 +99,18 @@ export default function PreviousList() {
       return b.paidInstallments - a.paidInstallments;
     })
     .map(acc => acc);
+
+  const handleGenerateList = e => {
+    e.preventDefault();
+    axiosUtil.post('/schedule/create-list', { id: selectedRecord._id }).then(res => {
+      setLists(prevState =>
+        prevState.map(ele => {
+          if (ele._id === selectedRecord._id) return { ...ele, taskId: res.data.taskId };
+          return ele;
+        })
+      );
+    });
+  };
   return (
     <Paper classes={{ root: classes.root }}>
       <Typography variant="h5" className={classes.heading}>
@@ -81,13 +121,13 @@ export default function PreviousList() {
         <>
           <TextField
             select
-            value={selectedRecord}
+            value={selectedRecordIndex}
             label="Select List"
             onChange={handleChangeList}
             variant="outlined"
           >
             {lists.map((list, ind) => (
-              <MenuItem key={list.createdAt} value={list} selected={ind === 0}>
+              <MenuItem key={list.createdAt} value={ind} selected={ind === 0}>
                 {' '}
                 {formatDateTime(list.createdAt)}
               </MenuItem>
@@ -115,24 +155,104 @@ export default function PreviousList() {
           </Box>
           <CustomTable rows={rows || []} columns={columns} />
 
-          <Box mt={2} mb={2}>
-            <div className={classes.row}>
+          <Grid container>
+            <Grid item xs={12} md={6}>
+              <Box mt={2} mb={1}>
+                <div className={classes.row}>
+                  {' '}
+                  <b>Total Amount : &nbsp; </b>
+                  <span> {selectedList?.totalAmount} </span>
+                </div>
+                <div className={classes.row}>
+                  {' '}
+                  <b> Number of Accounts :&nbsp; </b>
+                  <span>
+                    {selectedList?.accounts?.length}&nbsp; {'   '}
+                  </span>
+                  <IconButton color="primary" onClick={copyToClipboard}>
+                    <FileCopyIcon />
+                  </IconButton>
+                </div>
+              </Box>
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              md={6}
+              container
+              direction="column"
+              alignItems="flex-end"
+              justifyContent="center"
+              className={classes.gridItem}
+            >
               {' '}
-              <b>Total Amount : </b>
-              <span> {selectedList?.totalAmount} </span>
-              {/* <span>{selectedRecord.list[selectedListIndex].totalAmount}</span> */}
-            </div>
-            <div className={classes.row}>
-              {' '}
-              <b> Number of Accounts : </b>
-              <span>
-                {selectedList?.accounts?.length} {'   '}
-              </span>
-              <IconButton color="primary" onClick={copyToClipboard}>
-                <FileCopyIcon />
-              </IconButton>
-            </div>
-          </Box>
+              {taskStats?.status === 'Failed' ? (
+                <>
+                  <div className={classes.row}>
+                    <CancelIcon color="error" size="small" /> &nbsp;{' '}
+                    <Typography color="error" variant="subtitle1">
+                      {' '}
+                      <b> Failed!</b>
+                    </Typography>
+                  </div>
+                  <div className={classes.row}>
+                    <Typography variant="caption" color="error" align="center">
+                      {' '}
+                      {taskStats.error}
+                    </Typography>
+                  </div>
+                  <div className={classes.row}>
+                    <Typography variant="caption" align="center">
+                      {' '}
+                      {taskStats.progress}
+                    </Typography>
+                  </div>
+                </>
+              ) : taskStats?.status === 'Done' ? (
+                <>
+                  <div className={classes.row}>
+                    <CheckCircleIcon classes={{ root: classes.greenText }} size="small" /> &nbsp;{' '}
+                    <Typography classes={{ root: classes.greenText }} variant="subtitle1">
+                      {' '}
+                      <b> Completed!</b>
+                    </Typography>
+                  </div>
+                  <div className={classes.row}>
+                    <Typography variant="caption" classes={{ root: classes.greenText }}>
+                      {' '}
+                      {taskStats.misc[selectedListIndex]}
+                    </Typography>
+                  </div>
+                </>
+              ) : ['Running', 'Initiated'].includes(taskStats?.status) ? (
+                <>
+                  <div className={classes.row}>
+                    <RunningSvg width="2.5em" height="2.5em" color="success" size="small" /> &nbsp;{' '}
+                    <Typography classes={{ root: classes.greenText }} variant="subtitle1">
+                      {' '}
+                      <b> Running!</b>
+                    </Typography>
+                  </div>
+                  <div className={classes.row}>
+                    <Typography variant="caption" classes={{ root: classes.lightGreenText }}>
+                      {' '}
+                      {taskStats.progress}
+                    </Typography>
+                  </div>
+                </>
+              ) : null}
+            </Grid>
+            <Grid item xs={12} container justifyContent="center">
+              <Controls.Button
+                text="Generate All lists"
+                onClick={handleGenerateList}
+                disabled={
+                  (selectedRecord?.taskId && !taskStats) ||
+                  ['Running', 'Initiated', 'DonE'].includes(taskStats?.status)
+                }
+              />
+            </Grid>
+          </Grid>
         </>
       ) : (
         <Typography variant="h6" align="center">
