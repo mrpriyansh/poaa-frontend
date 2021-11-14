@@ -272,7 +272,7 @@ export default function PreviousList() {
                 </>
               ) : null}
             </Grid>
-            <Grid item xs={12} container justifyContent="center">
+            <Grid item xs={12} container justifyContent="center" alignItems="center">
               <TextField
                 select
                 value={timeout}
