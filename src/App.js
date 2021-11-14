@@ -5,14 +5,16 @@ import * as Realm from 'realm-web';
 
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider } from '@material-ui/core';
+import { Snackbar, ThemeProvider } from '@material-ui/core';
 
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 import ConfirmUser from './view/ConfirmUser';
 import UserDetailsForm from './view/UserDetailsForm';
 import { INSTALLMENT_PENDING } from './services/constants';
 import { ReactComponent as LoaderSVG } from './assets/icons/spinner.svg';
+import Button from './common/controls/Button';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -41,6 +43,9 @@ function App() {
   const [installments, setInstallments] = useState();
   const [allAccounts, setAllAccounts] = useState();
 
+  const [showReload, setShowReload] = useState(false);
+  const [waitingWorker, setWaitingWorker] = useState(null);
+
   const fetchAllAccounts = useCallback(async () => {
     try {
       const collection = await client.db('poaa').collection('accounts');
@@ -65,6 +70,21 @@ function App() {
       console.log(error);
     }
   }, [client]);
+
+  const onSWUpdate = registration => {
+    setShowReload(true);
+    setWaitingWorker(registration.waiting);
+  };
+
+  const reloadPage = () => {
+    waitingWorker?.postMessage({ type: 'SKIP_WAITING' });
+    setShowReload(false);
+    window.location.reload(true);
+  };
+
+  useEffect(() => {
+    serviceWorkerRegistration.register({ onUpdate: onSWUpdate });
+  }, []);
 
   useEffect(() => {
     async function initClientsUser() {
@@ -139,6 +159,12 @@ function App() {
           </>
           <CssBaseline />
         </AuthContext.Provider>
+        <Snackbar
+          open={showReload}
+          message="A new version is available!"
+          onClick={reloadPage}
+          action={<Button color="secondary" size="small" onClick={reloadPage} text="Reload" />}
+        />
       </ThemeProvider>
     </Suspense>
   );
