@@ -44,6 +44,7 @@ const useEventSource = taskId => {
 export default function PreviousList() {
   const classes = previousListsStyles();
   const [lists, setLists] = useState();
+  const [isLoading, setIsLoading] = useState(false);
   const [selectedRecordIndex, setSelectedRecordIndex] = useState(0);
   const [selectedListIndex, setSelectedListIndex] = useState(0);
   const { client } = useAuth();
@@ -53,6 +54,14 @@ export default function PreviousList() {
     const data = await collection.aggregate([{ $sort: { _id: -1 } }, { $limit: 5 }]);
     setLists(data);
   }, [client]);
+
+  const formatErrorMessage = message => {
+    console.log(message);
+    const regexTemp = /(waiting for selector) .*/;
+    const match = message.match(regexTemp);
+    if (match[1] === 'waiting for selector') return 'DOP server is slow. Please try again!';
+    return message;
+  };
 
   useEffect(() => {
     fetchList();
@@ -102,14 +111,20 @@ export default function PreviousList() {
 
   const handleGenerateList = e => {
     e.preventDefault();
-    axiosUtil.post('/schedule/create-list', { id: selectedRecord._id }).then(res => {
-      setLists(prevState =>
-        prevState.map(ele => {
-          if (ele._id === selectedRecord._id) return { ...ele, taskId: res.data.taskId };
-          return ele;
-        })
-      );
-    });
+    setIsLoading(true);
+    axiosUtil
+      .post('/schedule/create-list', { id: selectedRecord._id })
+      .then(res => {
+        setLists(prevState =>
+          prevState.map(ele => {
+            if (ele._id === selectedRecord._id) return { ...ele, taskId: res.data.taskId };
+            return ele;
+          })
+        );
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
   };
   return (
     <Paper classes={{ root: classes.root }}>
@@ -156,7 +171,7 @@ export default function PreviousList() {
           <CustomTable rows={rows || []} columns={columns} />
 
           <Grid container>
-            <Grid item xs={12} md={6}>
+            <Grid item xs={12} sm={6}>
               <Box mt={2} mb={1}>
                 <div className={classes.row}>
                   {' '}
@@ -178,7 +193,7 @@ export default function PreviousList() {
             <Grid
               item
               xs={12}
-              md={6}
+              sm={6}
               container
               direction="column"
               alignItems="flex-end"
@@ -198,7 +213,7 @@ export default function PreviousList() {
                   <div className={classes.row}>
                     <Typography variant="caption" color="error" align="center">
                       {' '}
-                      {taskStats.error}
+                      {formatErrorMessage(taskStats.error)}
                     </Typography>
                   </div>
                   <div className={classes.row}>
@@ -248,7 +263,8 @@ export default function PreviousList() {
                 onClick={handleGenerateList}
                 disabled={
                   (selectedRecord?.taskId && !taskStats) ||
-                  ['Running', 'Initiated', 'DonE'].includes(taskStats?.status)
+                  ['Running', 'Initiated', 'Done'].includes(taskStats?.status) ||
+                  isLoading
                 }
               />
             </Grid>
