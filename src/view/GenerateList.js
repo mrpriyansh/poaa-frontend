@@ -106,56 +106,6 @@ export default function GenerateList() {
           },
         },
       ]);
-      // const list = [];
-      // let cur = 0;
-      // let listNo = 0;
-      // installments.forEach(inst => {
-      //   let remaining = inst.total;
-      //   let currentInst = inst.installments;
-      //   let ind = 0;
-      //   while (ind < listNo && remaining > 0) {
-      //     const available = LIST_LIMIT - list[ind].totalAmount;
-      //     if (available >= inst.amount) {
-      //       const payableInst = Math.min(Math.floor(available / inst.amount), currentInst);
-      //       list[ind].accounts.push({
-      //         paidInstallments: payableInst,
-      //         accountNo: inst.accountNo,
-      //         name: inst.name,
-      //         amount: inst.amount,
-      //         totalAmount: inst.amount * payableInst,
-      //       });
-      //       list[ind].totalAmount += inst.amount * payableInst;
-      //       list[ind].count += 1;
-      //       remaining -= payableInst * inst.amount;
-      //       currentInst -= payableInst;
-      //       if (ind === listNo - 1) cur -= payableInst * inst.amount;
-      //     }
-      //     ind += 1;
-      //   }
-      //   while (remaining > 0) {
-      //     if (cur < inst.amount) {
-      //       listNo += 1;
-      //       cur = LIST_LIMIT;
-      //     }
-      //     const payableInst = Math.min(Math.floor(cur / inst.amount), currentInst);
-      //     if (list.length < listNo) {
-      //       list.push({ accounts: [], totalAmount: 0, count: 0 });
-      //     }
-      //     list[listNo - 1].accounts.push({
-      //       paidInstallments: payableInst,
-      //       accountNo: inst.accountNo,
-      //       name: inst.name,
-      //       amount: inst.amount,
-      //       totalAmount: inst.amount * payableInst,
-      //     });
-      //     list[listNo - 1].totalAmount += inst.amount * payableInst;
-      //     list[listNo - 1].count += 1;
-      //     cur -= payableInst * inst.amount;
-      //     remaining -= payableInst * inst.amount;
-      //     currentInst -= payableInst;
-      //   }
-      // });
-      // console.log(list);
       await user.functions.generateList(
         INSTALLMENT_PENDING,
         INSTALLMENT_LOGGED,

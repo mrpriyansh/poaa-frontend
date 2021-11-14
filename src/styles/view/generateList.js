@@ -15,4 +15,10 @@ export const generateListStyles = makeStyles(theme => ({
     display: 'flex',
     justifyContent: 'center',
   },
+
+  [theme.breakpoints.down('xs')]: {
+    header: {
+      flexDirection: 'column',
+    },
+  },
 }));
