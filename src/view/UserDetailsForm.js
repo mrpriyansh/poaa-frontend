@@ -1,5 +1,5 @@
 import { Grid, Paper, Typography } from '@material-ui/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 import { useHistory } from 'react-router-dom';
 
@@ -32,7 +32,19 @@ export default function UserDetailsForm() {
       temp.pPassword = fieldValues.pPassword.length > 0 ? '' : 'Enter your Portal Password';
     setErrors({ ...temp });
   };
-  const { values, errors, setErrors, handleInputChange } = useForm(initialValues, true, validate);
+  const { values, setValues, errors, setErrors, handleInputChange } = useForm(
+    initialValues,
+    true,
+    validate
+  );
+
+  useEffect(() => {
+    setValues({
+      name: user?.customData?.name,
+      pAccountNo: user?.customData?.pAccountNo,
+      pPassword: user?.customData?.pPassword,
+    });
+  }, [user, setValues]);
 
   const handleSubmit = async e => {
     e.preventDefault();

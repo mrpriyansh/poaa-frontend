@@ -47,6 +47,7 @@ export default function PreviousList() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRecordIndex, setSelectedRecordIndex] = useState(0);
   const [selectedListIndex, setSelectedListIndex] = useState(0);
+  const [timeout, setTimeout] = useState(30000);
   const { client } = useAuth();
 
   const fetchList = useCallback(async () => {
@@ -58,7 +59,9 @@ export default function PreviousList() {
   const formatErrorMessage = message => {
     const regexTemp = /(waiting for selector) .*/;
     const match = message.match(regexTemp);
-    if (match[1] === 'waiting for selector') return 'DOP server is slow. Please try again!';
+    if (match?.length >= 2 && match[1] === 'waiting for selector')
+      return 'DOP server is slow. Please try again!';
+
     return message;
   };
 
@@ -92,12 +95,25 @@ export default function PreviousList() {
     setSelectedListIndex(prevState => prevState + change);
   };
 
+  const handleChangeTimeout = e => {
+    const { value } = e.target;
+    setTimeout(value);
+  };
+
   const columns = [
     { id: 'name', label: 'Name', minWidth: '15em' },
     { id: 'paidInstallments', label: 'Installments', align: 'center' },
     { id: 'amount', label: 'Amount', align: 'right' },
     { id: 'totalAmount', label: 'Total Amount', minWidth: '10em', align: 'right' },
     { id: 'accountNo', label: 'Account No.', minWidth: '8em', align: 'center' },
+  ];
+
+  const timeoutArray = [
+    { timeout: 30000, text: '30 Sec' },
+    { timeout: 45000, text: '45 Sec' },
+    { timeout: 60000, text: '1 min' },
+    { timeout: 75000, text: '1 min 15 sec' },
+    { timeout: 90000, text: '1 min 30 sec' },
   ];
 
   if (!lists) return <LoaderSVG />;
@@ -112,7 +128,7 @@ export default function PreviousList() {
     e.preventDefault();
     setIsLoading(true);
     axiosUtil
-      .post('/schedule/create-list', { id: selectedRecord._id })
+      .post('/schedule/create-list', { id: selectedRecord._id, timeout })
       .then(res => {
         setLists(prevState =>
           prevState.map(ele => {
@@ -257,6 +273,21 @@ export default function PreviousList() {
               ) : null}
             </Grid>
             <Grid item xs={12} container justifyContent="center">
+              <TextField
+                select
+                value={timeout}
+                label="Timeout"
+                onChange={handleChangeTimeout}
+                variant="outlined"
+                fullWidth={false}
+              >
+                {timeoutArray.map((elem, ind) => (
+                  <MenuItem key={elem.timeout} value={elem.timeout} selected={ind === 0}>
+                    {' '}
+                    {elem.text}
+                  </MenuItem>
+                ))}
+              </TextField>
               <Controls.Button
                 text="Generate All lists"
                 onClick={handleGenerateList}
