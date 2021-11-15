@@ -15,6 +15,7 @@ import UserDetailsForm from './view/UserDetailsForm';
 import { INSTALLMENT_PENDING } from './services/constants';
 import { ReactComponent as LoaderSVG } from './assets/icons/spinner.svg';
 import Button from './common/controls/Button';
+import { axiosUtil } from './services/axiosinstance';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -84,6 +85,10 @@ function App() {
 
   useEffect(() => {
     serviceWorkerRegistration.register({ onUpdate: onSWUpdate });
+  }, []);
+
+  useEffect(() => {
+    axiosUtil.get('https://poaa.herokuapp.com/');
   }, []);
 
   useEffect(() => {
