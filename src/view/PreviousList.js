@@ -109,11 +109,11 @@ export default function PreviousList() {
   ];
 
   const timeoutArray = [
-    { timeout: 30000, text: '30 Sec' },
-    { timeout: 45000, text: '45 Sec' },
-    { timeout: 60000, text: '1 min' },
-    { timeout: 75000, text: '1 min 15 sec' },
-    { timeout: 90000, text: '1 min 30 sec' },
+    { timeout: 30000, text: 'Server is very fast.' },
+    { timeout: 45000, text: 'Server is fast.' },
+    { timeout: 60000, text: 'Server is ok.' },
+    { timeout: 75000, text: 'Server is slow.' },
+    { timeout: 90000, text: 'Server is very slow.' },
   ];
 
   if (!lists) return <LoaderSVG />;
