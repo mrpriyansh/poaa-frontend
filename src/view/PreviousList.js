@@ -5,7 +5,9 @@ import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
+import EditIcon from '@material-ui/icons/Edit';
 import copy from 'copy-to-clipboard';
+import { useHistory } from 'react-router-dom';
 
 import { ReactComponent as RunningSvg } from '../assets/icons/running.svg';
 import { axiosUtil } from '../services/axiosinstance';
@@ -16,6 +18,9 @@ import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { useAuth } from '../services/Auth';
 import Controls from '../common/controls/Controls';
 import config from '../services/config';
+import { INSTALLMENT_PENDING } from '../services/constants';
+import handleError from '../services/handleError';
+import { triggerAlert } from '../services/getAlert/getAlert';
 
 const useEventSource = taskId => {
   const [data, updateData] = useState(null);
@@ -48,7 +53,10 @@ export default function PreviousList() {
   const [selectedRecordIndex, setSelectedRecordIndex] = useState(0);
   const [selectedListIndex, setSelectedListIndex] = useState(0);
   const [timeout, setTimeout] = useState(30000);
-  const { client } = useAuth();
+  const [revertLoading, setRevertLoading] = useState(false);
+  const { client, user } = useAuth();
+
+  const history = useHistory();
 
   const fetchList = useCallback(async () => {
     const collection = await client.db('poaa').collection('lists');
@@ -68,9 +76,6 @@ export default function PreviousList() {
   useEffect(() => {
     fetchList();
   }, [fetchList]);
-  // useEffect(() => {
-  // fetchList();
-  // }, [fetchList]);
 
   const selectedRecord = lists?.length > 0 ? lists[selectedRecordIndex] : {};
   const selectedList =
@@ -81,9 +86,7 @@ export default function PreviousList() {
   const handleChangeList = e => {
     const { value } = e.target;
     setSelectedRecordIndex(value);
-    // setSelectedRecord(value);
     setSelectedListIndex(0);
-    // setSelectedList(value.list[0]);
   };
 
   const copyToClipboard = () => {
@@ -91,7 +94,6 @@ export default function PreviousList() {
   };
 
   const changeListNo = change => {
-    // setSelectedList(selectedRecord.list[selectedListIndex + change]);
     setSelectedListIndex(prevState => prevState + change);
   };
 
@@ -141,11 +143,69 @@ export default function PreviousList() {
         setIsLoading(false);
       });
   };
+
+  const handleRevertList = async e => {
+    e.preventDefault();
+    try {
+      setRevertLoading(true);
+      const data = {};
+      selectedRecord.list.forEach(list => {
+        list.accounts.forEach(inst => {
+          data[inst.accountNo] = {
+            ...inst,
+            installments: (data[inst.accountNo]?.installments || 0) + inst.paidInstallments,
+          };
+        });
+      });
+
+      const bulk = Object.keys(data).map(ele => {
+        return {
+          updateOne: {
+            filter: { accountNo: data[ele].accountNo },
+            update: {
+              $set: {
+                accountNo: data[ele].accountNo,
+                amount: data[ele].amount,
+                agentId1: user.id,
+                createdAt: new Date(Date.now()),
+                installments: data[ele].installments,
+                name: data[ele].name,
+                status: INSTALLMENT_PENDING,
+              },
+            },
+            upsert: true,
+          },
+        };
+      });
+
+      await user.functions.revertList(bulk, selectedRecord._id);
+      history.push('/generate-list');
+    } catch (error) {
+      handleError(error, triggerAlert);
+      setRevertLoading(false);
+    }
+  };
+
   return (
     <Paper classes={{ root: classes.root }}>
-      <Typography variant="h5" className={classes.heading}>
-        Previous Lists
-      </Typography>
+      <header className={classes.headerWrapper}>
+        <Typography variant="h5" className={classes.heading}>
+          Previous Lists
+        </Typography>
+        {lists?.length ? (
+          <Controls.Button
+            text="Edit List"
+            startIcon={<EditIcon />}
+            disabled={
+              (selectedRecord?.taskId && !taskStats) ||
+              ['Running', 'Initiated', 'Done'].includes(taskStats?.status) ||
+              isLoading ||
+              revertLoading
+            }
+            onClick={handleRevertList}
+          />
+        ) : null}
+      </header>
 
       {rows?.length ? (
         <>
@@ -155,6 +215,7 @@ export default function PreviousList() {
             label="Select List"
             onChange={handleChangeList}
             variant="outlined"
+            disabled={revertLoading}
           >
             {lists.map((list, ind) => (
               <MenuItem key={list.createdAt} value={ind} selected={ind === 0}>
@@ -168,7 +229,7 @@ export default function PreviousList() {
             <IconButton
               fontSize="medium"
               onClick={() => changeListNo(-1)}
-              disabled={selectedListIndex === 0}
+              disabled={selectedListIndex === 0 || revertLoading}
             >
               <ArrowLeftIcon />
             </IconButton>
@@ -178,7 +239,7 @@ export default function PreviousList() {
             <IconButton
               fontSize="medium"
               onClick={() => changeListNo(1)}
-              disabled={selectedListIndex === selectedRecord?.list?.length - 1}
+              disabled={selectedListIndex === selectedRecord?.list?.length - 1 || revertLoading}
             >
               <ArrowRightIcon />
             </IconButton>
@@ -294,7 +355,8 @@ export default function PreviousList() {
                 disabled={
                   (selectedRecord?.taskId && !taskStats) ||
                   ['Running', 'Initiated', 'Done'].includes(taskStats?.status) ||
-                  isLoading
+                  isLoading ||
+                  revertLoading
                 }
               />
             </Grid>

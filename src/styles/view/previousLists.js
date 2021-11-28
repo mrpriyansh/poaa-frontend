@@ -5,7 +5,11 @@ export const previousListsStyles = makeStyles(theme => ({
     minWidth: '70vw',
     padding: theme.spacing(2),
   },
-  heading: {
+
+  headerWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: theme.spacing(2),
   },
   listTitleWrapper: {
