@@ -27,6 +27,7 @@ function UsingExcel() {
   useEffect(() => {
     if (data.length) {
       data.forEach(account => {
+        console.log(account);
         if (
           !account['Account No'] ||
           !account['Account Name'] ||
@@ -48,7 +49,7 @@ function UsingExcel() {
               name: account['Account Name'],
               accountNo: account['Account No'],
               accountType: 'RD',
-              amount: account.Denomination,
+              amount: account.Denomination.split('.')[0].replace(',', ''),
             },
           ]);
         const date = new Date(excelDateToJSDate(account.Date));
@@ -60,7 +61,7 @@ function UsingExcel() {
           name: account['Account Name'],
           accountNo: account['Account No'],
           accountType: 'RD',
-          amount: account.Denomination,
+          amount: account.Denomination.split('.')[0].replace(',', ''),
           openingDate,
           maturityDate,
         };
@@ -78,7 +79,7 @@ function UsingExcel() {
                   name: account['Account Name'],
                   accountNo: account['Account No'],
                   accountType: 'RD',
-                  amount: account.Denomination,
+                  amount: account.Denomination.split('.')[0].replace(',', ''),
                   openingDate,
                   maturityDate,
                 },
@@ -90,7 +91,7 @@ function UsingExcel() {
                   name: account['Account Name'],
                   accountNo: account['Account No'],
                   accountType: 'RD',
-                  amount: account.Denomination,
+                  amount: account.Denomination.split('.')[0].replace(',', ''),
                   openingDate,
                   maturityDate,
                 },
@@ -104,7 +105,7 @@ function UsingExcel() {
                 name: account['Account Name'],
                 accountNo: account['Account No'],
                 accountType: 'RD',
-                amount: account.Denomination,
+                amount: account.Denomination.split('.')[0].replace(',', ''),
                 openingDate,
                 maturityDate,
               },
@@ -183,7 +184,7 @@ function UsingExcel() {
           <Controls.Button
             variant="outlined"
             text={`Failed - ${failedCount.length}`}
-            color="secondary"
+            color="default"
             disabled={loading || !failedCount.length}
             onClick={() => handleRoute(failedCount)}
           />

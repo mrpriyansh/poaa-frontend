@@ -6,6 +6,7 @@ import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
+import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@material-ui/icons/History';
 
@@ -57,10 +58,10 @@ function Header() {
     handleClose();
   };
 
-  // const handleAddBatchAccounts = () => {
-  //   setPopupType(ADD_BATCH);
-  //   handleClose();
-  // };
+  const handleAddBatchAccounts = () => {
+    setPopupType(ADD_BATCH);
+    handleClose();
+  };
 
   const handleAddInstallment = () => {
     setPopupType(ADD_INSTALLMENT);
@@ -138,12 +139,12 @@ function Header() {
                   </IconButton>{' '}
                   Add Account
                 </MenuItem>
-                {/* <MenuItem onClick={handleAddBatchAccounts}>
-                <IconButton>
-                  <LibraryAddIcon />
-                </IconButton>
-                Add In Batch
-              </MenuItem> */}
+                <MenuItem onClick={handleAddBatchAccounts}>
+                  <IconButton>
+                    <LibraryAddIcon />
+                  </IconButton>
+                  Add In Batch
+                </MenuItem>
                 <MenuItem onClick={handleLogout}>
                   <IconButton>
                     <PowerSettingsNewIcon />
