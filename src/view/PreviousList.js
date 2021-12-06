@@ -190,7 +190,7 @@ export default function PreviousList() {
     <Paper classes={{ root: classes.root }}>
       <header className={classes.headerWrapper}>
         <Typography variant="h5" className={classes.heading}>
-          Previous Lists
+          All Lists
         </Typography>
         {lists?.length ? (
           <Controls.Button

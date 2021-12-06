@@ -1,13 +1,12 @@
 /*eslint-disable*/
-import { Grid } from '@material-ui/core';
+import { Grid, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
+import InfoIcon from '@material-ui/icons/Info';
 
 import NewWindow from 'react-new-window';
 import XLSX from 'xlsx';
 import StatisticList from './StatisticList';
 import Controls from '../common/controls/Controls'; // eslint-disable-line import/order
-import accountTypeList from '../assets/data/accountType';
-import config from '../services/config';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { useAuth } from '../services/Auth';
 import { usingExcelStyles } from '../styles/components/usingExcel';
@@ -27,7 +26,6 @@ function UsingExcel() {
   useEffect(() => {
     if (data.length) {
       data.forEach(account => {
-        console.log(account);
         if (
           !account['Account No'] ||
           !account['Account Name'] ||
@@ -68,23 +66,21 @@ function UsingExcel() {
 
         axiosUtil
           .post(`/addaccount`, { ...payload })
-          .then(response =>
-            response.json().then(data => ({ status: response.status, body: data }))
-          )
           .then(res => {
-            if (res.status === 200) {
-              setAddedCount(prev => [
-                ...prev,
-                {
-                  name: account['Account Name'],
-                  accountNo: account['Account No'],
-                  accountType: 'RD',
-                  amount: account.Denomination.split('.')[0].replace(',', ''),
-                  openingDate,
-                  maturityDate,
-                },
-              ]);
-            } else if (res.status === 409) {
+            setAddedCount(prev => [
+              ...prev,
+              {
+                name: account['Account Name'],
+                accountNo: account['Account No'],
+                accountType: 'RD',
+                amount: account.Denomination.split('.')[0].replace(',', ''),
+                openingDate,
+                maturityDate,
+              },
+            ]);
+          })
+          .catch(error => {
+            if (error.response.status === 409) {
               setAlreadyCount(prev => [
                 ...prev,
                 {
@@ -96,20 +92,19 @@ function UsingExcel() {
                   maturityDate,
                 },
               ]);
-            } else throw res;
-          })
-          .catch(() => {
-            setFailedCount(prev => [
-              ...prev,
-              {
-                name: account['Account Name'],
-                accountNo: account['Account No'],
-                accountType: 'RD',
-                amount: account.Denomination.split('.')[0].replace(',', ''),
-                openingDate,
-                maturityDate,
-              },
-            ]);
+            } else {
+              setFailedCount(prev => [
+                ...prev,
+                {
+                  name: account['Account Name'],
+                  accountNo: account['Account No'],
+                  accountType: 'RD',
+                  amount: account.Denomination.split('.')[0].replace(',', ''),
+                  openingDate,
+                  maturityDate,
+                },
+              ]);
+            }
           });
       });
     }
@@ -173,7 +168,14 @@ function UsingExcel() {
   return (
     <div className={classes.root}>
       <Grid container>
-        <Grid item xs={12}>
+        <Grid item xs={12} container>
+          <Grid item xs={12} container justifyContent="center" alignItems="center">
+            <InfoIcon />
+            <Typography variant="caption">
+              {' '}
+              "Account No", "Account Name", "Denomination", "Month Paid Upto", "Date"{' '}
+            </Typography>
+          </Grid>
           <Controls.Input
             type="file"
             accept=".xlsx, .xlx"
