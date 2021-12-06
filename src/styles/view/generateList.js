@@ -8,6 +8,7 @@ export const generateListStyles = makeStyles(theme => ({
   header: {
     display: 'flex',
     justifyContent: 'space-between',
+    alignItems: 'center',
   },
   generateButtonWrapper: {
     display: 'flex',
