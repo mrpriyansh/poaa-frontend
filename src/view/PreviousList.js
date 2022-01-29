@@ -52,7 +52,7 @@ export default function PreviousList() {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRecordIndex, setSelectedRecordIndex] = useState(0);
   const [selectedListIndex, setSelectedListIndex] = useState(0);
-  const [timeout, setTimeout] = useState(30000);
+  const [timeout, setTimeout] = useState(60000);
   const [revertLoading, setRevertLoading] = useState(false);
   const { client, user } = useAuth();
 
