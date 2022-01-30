@@ -7,6 +7,7 @@ import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
 import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
+import PersonOutline from '@material-ui/icons/PersonOutline';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@material-ui/icons/History';
 
@@ -48,7 +49,7 @@ function Header() {
     setAnchorEl(null);
   };
   const handleLogout = async () => {
-    await user.logOut();
+    await user?.logOut();
     setUser(null);
     handleClose();
   };
@@ -74,6 +75,45 @@ function Header() {
   };
 
   const isPortalDetails = user?.customData?.pPassword?.length;
+  const menuOptions = [
+    {
+      onClickFunc: handleAddInstallment,
+      isDisabled: !isPortalDetails,
+      icon: <PostAddIcon />,
+      text: 'Add Installment',
+    },
+    {
+      onClickFunc: () => redirectsTo('/generate-list'),
+      isDisabled: !isPortalDetails,
+      icon: <SettingsIcon />,
+      text: 'Generate List',
+    },
+    {
+      onClickFunc: () => redirectsTo('/previous-lists'),
+      isDisabled: !isPortalDetails,
+      icon: <HistoryIcon />,
+      text: 'Previuos Lists',
+    },
+
+    {
+      onClickFunc: handleAddAccount,
+      isDisabled: !isPortalDetails,
+      icon: <NoteAddIcon />,
+      text: 'Add Account',
+    },
+    {
+      onClickFunc: handleAddBatchAccounts,
+      isDisabled: !isPortalDetails,
+      icon: <LibraryAddIcon />,
+      text: 'Add In Batch',
+    },
+    {
+      onClickFunc: () => redirectsTo('/user-details'),
+      icon: <PersonOutline />,
+      text: 'Update Details',
+    },
+    { onClickFunc: handleLogout, icon: <PowerSettingsNewIcon />, text: 'Logout' },
+  ];
 
   return (
     <AppBar position="static">
@@ -108,49 +148,20 @@ function Header() {
                 }}
                 getContentAnchorEl={null}
               >
-                <MenuItem onClick={handleAddInstallment} disabled={!isPortalDetails}>
-                  <IconButton>
-                    <PostAddIcon />
-                  </IconButton>
-                  Add Installment
+                <MenuItem>
+                  <Typography variant="body1">Hi {user?.customData?.name}!</Typography>
                 </MenuItem>
-                <MenuItem
-                  onClick={() => redirectsTo('/generate-list')}
-                  disabled={!isPortalDetails}
-                >
-                  <IconButton>
-                    {' '}
-                    <SettingsIcon />
-                  </IconButton>
-                  Generate List
-                </MenuItem>
-                <MenuItem
-                  onClick={() => redirectsTo('/previous-lists')}
-                  disabled={!isPortalDetails}
-                >
-                  <IconButton>
-                    <HistoryIcon />
-                  </IconButton>
-                  Previous Lists
-                </MenuItem>
-                <MenuItem onClick={handleAddAccount} disabled={!isPortalDetails}>
-                  <IconButton>
-                    <NoteAddIcon />
-                  </IconButton>{' '}
-                  Add Account
-                </MenuItem>
-                <MenuItem onClick={handleAddBatchAccounts}>
-                  <IconButton>
-                    <LibraryAddIcon />
-                  </IconButton>
-                  Add In Batch
-                </MenuItem>
-                <MenuItem onClick={handleLogout}>
-                  <IconButton>
-                    <PowerSettingsNewIcon />
-                  </IconButton>
-                  Logout
-                </MenuItem>
+                {menuOptions.map(optionDetails => {
+                  return (
+                    <MenuItem
+                      onClick={optionDetails.onClickFunc}
+                      disabled={optionDetails.isDisabled}
+                    >
+                      <IconButton>{optionDetails.icon}</IconButton>
+                      {optionDetails.text}
+                    </MenuItem>
+                  );
+                })}
               </Menu>
             </>
           )}{' '}

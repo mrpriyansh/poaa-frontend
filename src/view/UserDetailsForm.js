@@ -2,6 +2,7 @@ import { Grid, Paper, Typography } from '@material-ui/core';
 import React, { useEffect, useState } from 'react';
 import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
 import { useHistory } from 'react-router-dom';
+import { Warning } from '@material-ui/icons';
 
 import Controls from '../common/controls/Controls';
 import { Form, useForm } from '../common/useForm';
@@ -39,11 +40,15 @@ export default function UserDetailsForm() {
   );
 
   useEffect(() => {
-    setValues({
-      name: user?.customData?.name,
-      pAccountNo: user?.customData?.pAccountNo,
-      pPassword: user?.customData?.pPassword,
-    });
+    const refreshUserData = async () => {
+      await user.refreshCustomData();
+      setValues({
+        name: user?.customData?.name,
+        pAccountNo: user?.customData?.pAccountNo,
+        pPassword: user?.customData?.pPassword,
+      });
+    };
+    refreshUserData();
   }, [user, setValues]);
 
   const handleSubmit = async e => {
@@ -83,6 +88,10 @@ export default function UserDetailsForm() {
     return mystr;
   };
 
+  const needToChange = () => {
+    return !user?.customData?.pPassword?.length;
+  };
+
   return (
     <Paper className={classes.pageContent}>
       <Form onSubmit={handleSubmit}>
@@ -100,6 +109,7 @@ export default function UserDetailsForm() {
               onChange={handleInputChange}
               error={errors.name}
               classes={{ root: classes.inputRoot }}
+              disabled={!needToChange()}
             />
 
             <Controls.Input
@@ -111,26 +121,37 @@ export default function UserDetailsForm() {
               onChange={handleInputChange}
               error={errors.pAccountNo}
               classes={{ root: classes.inputRoot }}
+              disabled={!needToChange()}
             />
 
             <Controls.Input
               variant="outlined"
-              label="Portal Password"
+              type="password"
+              label="Portal Current Password"
               name="pPassword"
               required
               value={values.pPassword}
               onChange={handleInputChange}
               error={errors.pPassword}
               classes={{ root: classes.inputRoot }}
+              disabled={!needToChange()}
             />
 
             <Controls.Button
               type="submit"
               text={<KeyboardArrowRightRoundedIcon />}
-              disabled={loading}
+              disabled={loading || !needToChange()}
               classes={{ root: classes.buttonRoot }}
             />
           </Grid>
+          {!needToChange() && (
+            <Grid container justifyContent="center" alignItems="center">
+              <Warning fontSize="small" />
+              <Typography variant="subtitle2" align="center">
+                No need to change details.
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </Form>
     </Paper>

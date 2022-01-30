@@ -65,10 +65,10 @@ export default function PreviousList() {
   }, [client]);
 
   const formatErrorMessage = message => {
-    const regexTemp = /(waiting for selector) .*/;
+    const regexTemp = /(waiting for) .*/;
     const match = message?.match(regexTemp);
-    if (match?.length >= 2 && match[1] === 'waiting for selector')
-      return 'DOP server is slow. Please try again!';
+    if (match?.length >= 2 && match[1] === 'waiting for')
+      return 'DOP server was slow. Please try again!';
 
     return message;
   };
