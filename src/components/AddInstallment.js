@@ -138,6 +138,14 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
               accountNo: option.accountNo,
             }))}
           getOptionLabel={option => option.name}
+          filterOptions={options => {
+            return options.filter(option => {
+              return (
+                option.name.toLowerCase().includes(inputText.toLowerCase()) ||
+                option.accountNo.includes(inputText)
+              );
+            });
+          }}
           renderInput={params => (
             <TextField
               name="name"

@@ -60,7 +60,7 @@ export default function PreviousList() {
 
   const fetchList = useCallback(async () => {
     const collection = await client.db('poaa').collection('lists');
-    const data = await collection.aggregate([{ $sort: { _id: -1 } }, { $limit: 5 }]);
+    const data = await collection.aggregate([{ $sort: { _id: -1 } }, { $limit: 20 }]);
     setLists(data);
   }, [client]);
 
