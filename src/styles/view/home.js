@@ -13,4 +13,7 @@ export const allAccountStyles = makeStyles(theme => ({
   addInstButton: {
     margin: theme.spacing(1, 3, 2, 3),
   },
+  maturityCheckboxWrapper: {
+    marginLeft: 'auto',
+  },
 }));

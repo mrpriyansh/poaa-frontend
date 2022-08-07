@@ -36,6 +36,7 @@ function App() {
   const classes = useStyles();
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
+  const [maturityState, setMaturityState] = useState(false);
 
   const [app, setApp] = useState(new Realm.App({ id: process.env.REACT_APP_REALM_ID }));
   const [user, setUser] = useState(null);
@@ -50,13 +51,31 @@ function App() {
   const fetchAllAccounts = useCallback(async () => {
     try {
       const collection = await client.db('poaa').collection('accounts');
-      const data = await collection.aggregate([{ $sort: { maturityDate: 1 } }]);
+      const data = await collection.aggregate([
+        {
+          $sort: { maturityDate: 1 },
+        },
+        {
+          $match: {
+            $or: [
+              {
+                $expr: !maturityState,
+              },
+              {
+                maturityDate: {
+                  $lte: new Date(),
+                },
+              },
+            ],
+          },
+        },
+      ]);
       setAllAccounts(data);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log(err);
     }
-  }, [client]);
+  }, [client, maturityState]);
 
   const fetchInstallments = useCallback(async () => {
     try {
@@ -135,7 +154,7 @@ function App() {
             <div className={classes.container}>
               <Online>
                 <ProtectedRoute exact path="/">
-                  <Home />
+                  <Home maturityState={maturityState} setMaturityState={setMaturityState} />
                 </ProtectedRoute>
                 <Route exact path="/login">
                   {' '}

@@ -1,5 +1,13 @@
 import React, { useState, useEffect, lazy, Suspense } from 'react';
-import { Paper, Toolbar, InputAdornment, IconButton } from '@material-ui/core';
+import {
+  Paper,
+  Toolbar,
+  InputAdornment,
+  IconButton,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+} from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
@@ -28,7 +36,7 @@ const searchTypeList = [
 const EDIT_ACCOUNT = 'Edit Account';
 const ADD_INSTALLMENT = 'Add Installment';
 
-function Home() {
+function Home({ maturityState, setMaturityState }) {
   const classes = allAccountStyles();
   const { client, fetchAllAccounts, allAccounts } = useAuth();
 
@@ -51,6 +59,10 @@ function Home() {
 
   const handleAddInstallment = () => {
     setOpenPopupType(ADD_INSTALLMENT);
+  };
+
+  const handleMaturityChange = (_, newValue) => {
+    setMaturityState(newValue);
   };
 
   useEffect(() => {
@@ -145,7 +157,26 @@ function Home() {
               onChange={event => changeSearchValue(event.target.value)}
             />
           </Toolbar>
-          <CustomTable rows={rows} columns={columns} pagination />
+          <CustomTable
+            rows={rows}
+            columns={columns}
+            pagination
+            paginationStartElement={
+              <FormGroup row className={classes.maturityCheckboxWrapper}>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      size="small"
+                      onChange={handleMaturityChange}
+                      checked={maturityState}
+                      style={{ color: 'black' }}
+                    />
+                  }
+                  label="Only Maturity"
+                />
+              </FormGroup>
+            }
+          />
         </Paper>
         <Popup
           openPopup={Boolean(openPopupType?.length)}
