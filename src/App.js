@@ -107,7 +107,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    axiosUtil.get('http://35.226.105.42:4000/');
+    axiosUtil.get('https://poaa-api.onrender.com');
   }, []);
 
   useEffect(() => {
