@@ -6,6 +6,7 @@ import ArrowRightIcon from '@material-ui/icons/ArrowRight';
 import CancelIcon from '@material-ui/icons/Cancel';
 import CheckCircleIcon from '@material-ui/icons/CheckCircle';
 import EditIcon from '@material-ui/icons/Edit';
+import WarningIcon from '@material-ui/icons/Warning';
 import copy from 'copy-to-clipboard';
 import { useHistory } from 'react-router-dom';
 
@@ -186,6 +187,17 @@ export default function PreviousList() {
     }
   };
 
+  const handleAbortListGeneration = () => {
+    const { pid, browserPid, _id: id } = taskStats;
+    const processIds = [];
+    if (pid) processIds.push(pid);
+    if (browserPid) processIds.push(browserPid);
+    axiosUtil.post('/abortProcesses', { id, processIds }).then(res => {
+      triggerAlert({ icon: 'success', title: res.data });
+    });
+  };
+  console.log(taskStats);
+
   return (
     <Paper classes={{ root: classes.root }}>
       <header className={classes.headerWrapper}>
@@ -277,13 +289,18 @@ export default function PreviousList() {
               className={classes.gridItem}
             >
               {' '}
-              {taskStats?.status === 'Failed' ? (
+              {['Failed', 'Aborted'].includes(taskStats?.status) ? (
                 <>
                   <div className={classes.row}>
-                    <CancelIcon color="error" size="small" /> &nbsp;{' '}
+                    {taskStats?.status === 'Failed' ? (
+                      <CancelIcon color="error" size="small" />
+                    ) : (
+                      <WarningIcon color="error" size="small" />
+                    )}
+                    &nbsp;{' '}
                     <Typography color="error" variant="subtitle1">
                       {' '}
-                      <b> Failed!</b>
+                      <b> {taskStats?.status}</b>
                     </Typography>
                   </div>
                   <div className={classes.row}>
@@ -334,31 +351,41 @@ export default function PreviousList() {
               ) : null}
             </Grid>
             <Grid item xs={12} container justifyContent="center" alignItems="center">
-              <TextField
-                select
-                value={timeout}
-                label="Timeout"
-                onChange={handleChangeTimeout}
-                variant="outlined"
-                fullWidth={false}
-              >
-                {timeoutArray.map((elem, ind) => (
-                  <MenuItem key={elem.timeout} value={elem.timeout} selected={ind === 0}>
-                    {' '}
-                    {elem.text}
-                  </MenuItem>
-                ))}
-              </TextField>
-              <Controls.Button
-                text="Generate All lists"
-                onClick={handleGenerateList}
-                disabled={
-                  (selectedRecord?.taskId && !taskStats) ||
-                  ['Running', 'Initiated', 'Done'].includes(taskStats?.status) ||
-                  isLoading ||
-                  revertLoading
-                }
-              />
+              {['Running'].includes(taskStats?.status) ? (
+                <Controls.Button
+                  text="Abort It!"
+                  onClick={handleAbortListGeneration}
+                  style={{ background: 'red' }}
+                />
+              ) : (
+                <>
+                  <TextField
+                    select
+                    value={timeout}
+                    label="Timeout"
+                    onChange={handleChangeTimeout}
+                    variant="outlined"
+                    fullWidth={false}
+                  >
+                    {timeoutArray.map((elem, ind) => (
+                      <MenuItem key={elem.timeout} value={elem.timeout} selected={ind === 0}>
+                        {' '}
+                        {elem.text}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                  <Controls.Button
+                    text="Generate All lists"
+                    onClick={handleGenerateList}
+                    disabled={
+                      (selectedRecord?.taskId && !taskStats) ||
+                      ['Done', 'Initiated'].includes(taskStats?.status) ||
+                      isLoading ||
+                      revertLoading
+                    }
+                  />
+                </>
+              )}
             </Grid>
           </Grid>
         </>

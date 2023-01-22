@@ -16,6 +16,7 @@ import { INSTALLMENT_PENDING } from './services/constants';
 import { ReactComponent as LoaderSVG } from './assets/icons/spinner.svg';
 import Button from './common/controls/Button';
 import { axiosUtil } from './services/axiosinstance';
+import config from './services/config';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -107,7 +108,7 @@ function App() {
   }, []);
 
   useEffect(() => {
-    axiosUtil.get('https://poaa-api.onrender.com');
+    axiosUtil.get(`${config.apiUrl}`);
   }, []);
 
   useEffect(() => {
