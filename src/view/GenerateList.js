@@ -84,7 +84,7 @@ export default function GenerateList() {
         {
           $match: {
             status: INSTALLMENT_PENDING,
-            agentId1: user.id,
+            agentId: user.id,
           },
         },
         {

@@ -91,7 +91,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           $set: {
             ...inputValue,
             status: INSTALLMENT_PENDING,
-            agentId1: user.id,
+            agentId: user.id,
             createdAt: new Date(Date.now()),
           },
         },

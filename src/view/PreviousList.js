@@ -167,7 +167,7 @@ export default function PreviousList() {
               $set: {
                 accountNo: data[ele].accountNo,
                 amount: data[ele].amount,
-                agentId1: user.id,
+                agentId: user.id,
                 createdAt: new Date(Date.now()),
                 installments: data[ele].installments,
                 name: data[ele].name,

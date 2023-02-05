@@ -80,7 +80,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             amount: +values.amount,
             openingDate: new Date(values.openingDate),
             maturityDate: new Date(values.maturityDate),
-            agentId1: user.id,
+            agentId: user.id,
           },
         },
         { upsert: true }
