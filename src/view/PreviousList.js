@@ -112,11 +112,11 @@ export default function PreviousList() {
   ];
 
   const timeoutArray = [
-    { timeout: 30000, text: 'Server is very fast.' },
-    { timeout: 45000, text: 'Server is fast.' },
-    { timeout: 60000, text: 'Server is ok.' },
-    { timeout: 75000, text: 'Server is slow.' },
-    { timeout: 90000, text: 'Server is very slow.' },
+    { timeout: 30000, text: 'DoP is very fast.' },
+    { timeout: 45000, text: 'DoP is fast.' },
+    { timeout: 60000, text: 'DoP is ok.' },
+    { timeout: 75000, text: 'DoP is slow.' },
+    { timeout: 90000, text: 'DoP is very slow.' },
   ];
 
   if (!lists) return <LoaderSVG />;
@@ -196,7 +196,6 @@ export default function PreviousList() {
       triggerAlert({ icon: 'success', title: res.data });
     });
   };
-  console.log(taskStats);
 
   return (
     <Paper classes={{ root: classes.root }}>
