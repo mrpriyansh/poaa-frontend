@@ -1,8 +1,6 @@
 // const apiUrl = 'http://localhost:4000';
 const apiUrl =
-  process.env.NODE_ENV === 'production'
-    ? 'https://poaa-api.onrender.com'
-    : 'http://localhost:4000';
+  process.env.NODE_ENV === 'production' ? 'https://poaa-api.poaa.tk' : 'http://localhost:4000';
 const config = {
   apiUrl,
 };
