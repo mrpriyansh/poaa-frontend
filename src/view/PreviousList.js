@@ -197,6 +197,11 @@ export default function PreviousList() {
     });
   };
 
+  const calcTime = (t1, t2) => {
+    const timeDiff = (new Date(t1) - new Date(t2)) / 60000;
+    return `${timeDiff.toFixed(2)} Sec`;
+  };
+
   return (
     <Paper classes={{ root: classes.root }}>
       <header className={classes.headerWrapper}>
@@ -321,7 +326,13 @@ export default function PreviousList() {
                     <CheckCircleIcon classes={{ root: classes.greenText }} size="small" /> &nbsp;{' '}
                     <Typography classes={{ root: classes.greenText }} variant="subtitle1">
                       {' '}
-                      <b> Completed!</b>
+                      <b>
+                        {' '}
+                        {`Completed in ${calcTime(
+                          taskStats.updatedAt,
+                          taskStats.createdAt
+                        )}!`}{' '}
+                      </b>
                     </Typography>
                   </div>
                   <div className={classes.row}>
