@@ -198,8 +198,10 @@ export default function PreviousList() {
   };
 
   const calcTime = (t1, t2) => {
-    const timeDiff = (new Date(t1) - new Date(t2)) / 60000;
-    return `${timeDiff.toFixed(2)} Min`;
+    const timeDiff = (new Date(t1) - new Date(t2)) / 1000;
+    const minutes = timeDiff / 60;
+    const seconds = timeDiff % 60;
+    return `${minutes.toFixed(0)} min ${seconds.toFixed(0)} sec `;
   };
 
   return (
