@@ -199,7 +199,7 @@ export default function PreviousList() {
 
   const calcTime = (t1, t2) => {
     const timeDiff = (new Date(t1) - new Date(t2)) / 60000;
-    return `${timeDiff.toFixed(2)} Sec`;
+    return `${timeDiff.toFixed(2)} Min`;
   };
 
   return (
