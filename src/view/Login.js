@@ -2,6 +2,7 @@ import { Grid, Paper, Typography } from '@material-ui/core';
 import React, { useState } from 'react';
 import * as Realm from 'realm-web';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { Form, useForm } from '../common/useForm';
 import Controls from '../common/controls/Controls';
@@ -20,6 +21,7 @@ const SIGN_UP = 'SignUp';
 
 function Login() {
   const classes = loginStyles();
+  const { t } = useTranslation();
   const { app, setUser } = useAuth();
   const [loading, setLoading] = useState(false);
   const [isLogin, setIsLogin] = useState(true);
@@ -82,7 +84,7 @@ function Login() {
       <Form onSubmit={handleSubmit1}>
         <Grid container justifyContent="center">
           <Typography variant="h5" classes={{ root: classes.titleRoot }}>
-            {isLogin ? LOGIN : SIGN_UP}
+            {isLogin ? t('login') : SIGN_UP}
           </Typography>
           <Grid container item xs={12} justifyContent="center">
             <Controls.Input

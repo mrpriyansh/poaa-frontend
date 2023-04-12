@@ -10,9 +10,11 @@ import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import PersonOutline from '@material-ui/icons/PersonOutline';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@material-ui/icons/History';
+import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
+import locales from '../assets/data/locales';
 
 const UsingExcel = lazy(() => import('./UsingExcel'));
 const Popup = lazy(() => import('../common/Popup'));
@@ -30,6 +32,7 @@ function Header() {
   const [popupType, setPopupType] = useState('');
   const history = useHistory();
 
+  const { i18n } = useTranslation();
   const popupComponent = () => {
     switch (popupType) {
       case ADD_ACCOUNT:
@@ -114,7 +117,6 @@ function Header() {
     },
     { onClickFunc: handleLogout, icon: <PowerSettingsNewIcon />, text: 'Logout' },
   ];
-
   return (
     <AppBar position="static">
       <Toolbar>
@@ -125,6 +127,11 @@ function Header() {
         >
           Post Office Agent Assistant
         </Typography>
+        {Object.keys(locales).map(lng => (
+          <button key={lng} onClick={() => i18n.changeLanguage(lng)} type="submit">
+            {locales[lng].nativeName}
+          </button>
+        ))}
         <Online>
           {user && (
             <>
