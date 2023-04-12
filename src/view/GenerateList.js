@@ -1,10 +1,11 @@
 import { Paper, IconButton, Typography, Box } from '@material-ui/core';
-import React, { useEffect, useState, lazy } from 'react';
+import React, { useEffect, useState, lazy, useMemo } from 'react';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import CustomTable from '../common/Table';
 import { formatDate } from '../services/utils';
@@ -24,11 +25,10 @@ import {
 const Popup = lazy(() => import('../common/Popup'));
 const AddInstallment = lazy(() => import('../components/AddInstallment'));
 
-const EDIT_INSTALLMENT = 'Edit Installment';
-const ADD_INSTALLMENT = 'Add Installment';
 export default function GenerateList() {
-  const history = useHistory();
   const classes = generateListStyles();
+  const { t } = useTranslation();
+  const history = useHistory();
   const [openPopupType, setOpenPopupType] = useState('');
   const [currentRecord, setCurrentRecord] = useState({});
   const { client, user, fetchInstallments, installments } = useAuth();
@@ -38,17 +38,19 @@ export default function GenerateList() {
     fetchInstallments();
   }, [fetchInstallments]);
 
-  // if (error) return <Offline />;
-  if (!installments) return <LoaderSVG />;
-
-  const columns = [
-    { id: 'name', label: 'Name', minWidth: '15em' },
-    { id: 'amount', label: 'Amount', align: 'right' },
-    { id: 'installments', label: 'Installments', align: 'center' },
-    { id: 'accountNo', label: 'Account No', align: 'center', minWidth: '8em' },
-    { id: 'createdAt', label: 'Logged On', minWidth: '8em', align: 'center' },
-    { id: 'actions', minWidth: '8em' },
-  ];
+  const EDIT_INSTALLMENT = useMemo(() => t('installment.edit'), [t]);
+  const ADD_INSTALLMENT = useMemo(() => t('installment.add'), [t]);
+  const columns = useMemo(
+    () => [
+      { id: 'name', label: t('pi.name'), minWidth: '15em' },
+      { id: 'amount', label: t('account.amount'), align: 'right' },
+      { id: 'installments', label: t('installment.number'), align: 'center' },
+      { id: 'accountNo', label: t('account.number'), align: 'center', minWidth: '8em' },
+      { id: 'createdAt', label: t('installment.loggedOn'), minWidth: '8em', align: 'center' },
+      { id: 'actions', minWidth: '8em' },
+    ],
+    [t]
+  );
 
   const handleEdit = item => {
     setCurrentRecord(item);
@@ -65,7 +67,7 @@ export default function GenerateList() {
     try {
       const collection = await client.db('poaa').collection('installments');
       await collection.deleteOne({ accountNo: item.accountNo });
-      triggerAlert({ icon: 'success', title: 'Installment deleted!' });
+      triggerAlert({ icon: 'success', title: t('prompt.installment.deleted') });
       fetchInstallments();
     } catch (err) {
       handleError(err, triggerAlert);
@@ -119,7 +121,7 @@ export default function GenerateList() {
       handleError(err, triggerAlert);
     }
   };
-  const rows = installments.map(inst => {
+  const rows = installments?.map(inst => {
     return {
       ...inst,
       createdAt: formatDate(inst.createdAt),
@@ -143,13 +145,16 @@ export default function GenerateList() {
     });
     return sum;
   };
+
+  // if (error) return <Offline />;
+  if (!installments) return <LoaderSVG />;
   return (
     <Paper className={classes.root}>
       <header className={classes.header}>
-        <Typography variant="h5">Logged Installments</Typography>
+        <Typography variant="h5">{t('installment.logged')}</Typography>
         {rows.length ? (
           <Controls.Button
-            text="Add Installment"
+            text={t('installment.add')}
             startIcon={<PostAddIcon />}
             onClick={handleAddInstallment}
           />
@@ -164,11 +169,11 @@ export default function GenerateList() {
       {rows.length ? (
         <Box mt={2} mb={2}>
           <div className={classes.row}>
-            <b>Total Accounts : </b>
+            <b>{t('total.accounts')} : </b>
             <span> {installments.length} </span>
           </div>
           <div className={classes.row}>
-            <b>Total Amount : </b>
+            <b>{t('total.amount')} : </b>
             <span> {totalAmount()} </span>
           </div>
         </Box>
@@ -176,13 +181,13 @@ export default function GenerateList() {
       <div className={classes.generateButtonWrapper}>
         {rows?.length ? (
           <Controls.Button
-            text="Generate List"
+            text={t('list.create')}
             startIcon={<SettingsIcon />}
             onClick={handleGenerateList}
           />
         ) : (
           <Controls.Button
-            text="Add Installment"
+            text={t('installment.add')}
             startIcon={<PostAddIcon />}
             onClick={handleAddInstallment}
           />

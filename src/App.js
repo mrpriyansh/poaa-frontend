@@ -174,7 +174,7 @@ function App() {
               <Route exact path="/confirm-user">
                 <ConfirmUser />{' '}
               </Route>
-              <ProtectedRoute exact path="/generate-list">
+              <ProtectedRoute exact path="/create-list">
                 <GenerateList />
               </ProtectedRoute>
               <ProtectedRoute exact path="/previous-lists">

@@ -1,4 +1,4 @@
-import React, { useState, lazy } from 'react';
+import React, { useState, lazy, useMemo } from 'react';
 import { Online } from 'react-detect-offline';
 import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -21,18 +21,19 @@ const Popup = lazy(() => import('../common/Popup'));
 const AddAccount = lazy(() => import('./AddAccount'));
 const AddInstallment = lazy(() => import('./AddInstallment'));
 
-const ADD_ACCOUNT = 'Add Account';
 const ADD_BATCH = 'Add Using Excel';
-const ADD_INSTALLMENT = 'Add Installment';
 
 function Header() {
   const classes = headerStyles();
+  const { t, i18n } = useTranslation();
   const { setUser, user } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [popupType, setPopupType] = useState('');
   const history = useHistory();
 
-  const { i18n } = useTranslation();
+  const ADD_ACCOUNT = useMemo(() => t('account.add'), [t]);
+  const ADD_INSTALLMENT = useMemo(() => t('installment.add'));
+
   const popupComponent = () => {
     switch (popupType) {
       case ADD_ACCOUNT:
@@ -83,39 +84,39 @@ function Header() {
       onClickFunc: handleAddInstallment,
       isDisabled: !isPortalDetails,
       icon: <PostAddIcon />,
-      text: 'Add Installment',
+      text: t('installment.add'),
     },
     {
-      onClickFunc: () => redirectsTo('/generate-list'),
+      onClickFunc: () => redirectsTo('/create-list'),
       isDisabled: !isPortalDetails,
       icon: <SettingsIcon />,
-      text: 'Generate List',
+      text: t('list.create'),
     },
     {
       onClickFunc: () => redirectsTo('/previous-lists'),
       isDisabled: !isPortalDetails,
       icon: <HistoryIcon />,
-      text: 'Previuos Lists',
+      text: t('list.previous'),
     },
 
     {
       onClickFunc: handleAddAccount,
       isDisabled: !isPortalDetails,
       icon: <NoteAddIcon />,
-      text: 'Add Account',
+      text: t('account.add'),
     },
-    {
-      onClickFunc: handleAddBatchAccounts,
-      isDisabled: !isPortalDetails,
-      icon: <LibraryAddIcon />,
-      text: 'Add In Batch',
-    },
+    // {
+    //   onClickFunc: handleAddBatchAccounts,
+    //   isDisabled: !isPortalDetails,
+    //   icon: <LibraryAddIcon />,
+    //   text: 'Add In Batch',
+    // },
     {
       onClickFunc: () => redirectsTo('/user-details'),
       icon: <PersonOutline />,
-      text: 'Update Details',
+      text: t('operation.updateDetails'),
     },
-    { onClickFunc: handleLogout, icon: <PowerSettingsNewIcon />, text: 'Logout' },
+    { onClickFunc: handleLogout, icon: <PowerSettingsNewIcon />, text: t('operation.logout') },
   ];
   return (
     <AppBar position="static">
@@ -165,7 +166,7 @@ function Header() {
                       disabled={optionDetails.isDisabled}
                     >
                       <IconButton>{optionDetails.icon}</IconButton>
-                      {optionDetails.text}
+                      &nbsp;{optionDetails.text}
                     </MenuItem>
                   );
                 })}

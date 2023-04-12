@@ -8,9 +8,9 @@ i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    lng: localStorage.getItem('i18nextLng') || 'hi',
+    lng: localStorage.getItem('i18nextLng') || 'hiIN',
     debug: true,
-    fallback: 'hi',
+    fallback: 'enUS',
     interpolation: {
       escapeValue: false,
     },

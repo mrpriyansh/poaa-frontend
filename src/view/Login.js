@@ -16,7 +16,6 @@ const initialValues = {
   password: '',
 };
 
-const LOGIN = 'Login';
 const SIGN_UP = 'SignUp';
 
 function Login() {
@@ -31,9 +30,9 @@ function Login() {
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
     if ('email' in fieldValues)
-      temp.email = /$^|.+@.+..+/.test(fieldValues.email) ? '' : 'Email is not valid.';
+      temp.email = /$^|.+@.+..+/.test(fieldValues.email) ? '' : t('error.email');
     if ('password' in fieldValues)
-      temp.password = fieldValues.password.length >= 6 ? '' : 'Enter minimum 6 characters';
+      temp.password = fieldValues.password.length >= 6 ? '' : t('error.password');
     setErrors({ ...temp });
   };
   const { values, errors, setErrors, handleInputChange } = useForm(initialValues, true, validate);
@@ -84,12 +83,12 @@ function Login() {
       <Form onSubmit={handleSubmit1}>
         <Grid container justifyContent="center">
           <Typography variant="h5" classes={{ root: classes.titleRoot }}>
-            {isLogin ? t('login') : SIGN_UP}
+            {isLogin ? t('creds.login') : t('creds.signup')}
           </Typography>
           <Grid container item xs={12} justifyContent="center">
             <Controls.Input
               variant="outlined"
-              label="Email"
+              label={t('pi.email')}
               name="email"
               value={values.email}
               onChange={handleInputChange}
@@ -99,40 +98,36 @@ function Login() {
             />
             <Controls.Input
               variant="outlined"
-              label="Password"
+              label={t('pi.password')}
               name="password"
               type="password"
               value={values.password}
               onChange={handleInputChange}
               classes={{ root: classes.inputRoot }}
+              error={errors.password}
               required
             />
             <Controls.Button
               type="submit"
-              text={isLogin ? LOGIN : SIGN_UP}
+              text={isLogin ? t('creds.login') : t('creds.signup')}
               disabled={loading}
               classes={{ root: classes.buttonRoot }}
             />
 
             <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
-              {isLogin ? 'Are you new?' : 'Already have an account?'}
+              {isLogin ? t('creds.newUser') : t('creds.alreadyUser')} &nbsp;
               <span
                 role="button"
                 tabIndex="0"
                 onClick={() => changeType(SIGN_UP)}
                 onKeyDown={() => changeType(SIGN_UP)}
               >
-                {isLogin ? SIGN_UP : LOGIN}
+                {isLogin ? t('creds.signup') : t('creds.login')}
               </span>
             </Grid>
             <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
-              <span
-                role="button"
-                tabIndex="0"
-                // onClick={() => changeType(SIGN_UP)}
-                // onKeyDown={() => changeType(SIGN_UP)}
-              >
-                Forgot Password?
+              <span role="button" tabIndex="0">
+                {t('creds.forgotPwd')}
               </span>
             </Grid>
           </Grid>

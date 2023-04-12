@@ -1,5 +1,5 @@
 import { Box, IconButton, MenuItem, Grid, Paper, TextField, Typography } from '@material-ui/core';
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
@@ -9,6 +9,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import WarningIcon from '@material-ui/icons/Warning';
 import copy from 'copy-to-clipboard';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import { ReactComponent as RunningSvg } from '../assets/icons/running.svg';
 import { axiosUtil } from '../services/axiosinstance';
@@ -49,6 +50,7 @@ const useEventSource = taskId => {
 
 export default function PreviousList() {
   const classes = previousListsStyles();
+  const { t } = useTranslation();
   const [lists, setLists] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRecordIndex, setSelectedRecordIndex] = useState(0);
@@ -103,13 +105,16 @@ export default function PreviousList() {
     setTimeout(value);
   };
 
-  const columns = [
-    { id: 'name', label: 'Name', minWidth: '15em' },
-    { id: 'paidInstallments', label: 'Installments', align: 'center' },
-    { id: 'amount', label: 'Amount', align: 'right' },
-    { id: 'totalAmount', label: 'Total Amount', minWidth: '10em', align: 'right' },
-    { id: 'accountNo', label: 'Account No.', minWidth: '8em', align: 'center' },
-  ];
+  const columns = useMemo(
+    () => [
+      { id: 'name', label: t('pi.name'), minWidth: '15em' },
+      { id: 'paidInstallments', label: t('installment.number'), align: 'center' },
+      { id: 'amount', label: t('account.amount'), align: 'right' },
+      { id: 'totalAmount', label: t('total.amount'), minWidth: '10em', align: 'right' },
+      { id: 'accountNo', label: t('account.number'), minWidth: '8em', align: 'center' },
+    ],
+    [t]
+  );
 
   const timeoutArray = [
     { timeout: 30000, text: 'DoP is very fast.' },
@@ -180,7 +185,7 @@ export default function PreviousList() {
       });
 
       await user.functions.revertList(bulk, selectedRecord._id);
-      history.push('/generate-list');
+      history.push('/create-list');
     } catch (error) {
       handleError(error, triggerAlert);
       setRevertLoading(false);
@@ -208,11 +213,11 @@ export default function PreviousList() {
     <Paper classes={{ root: classes.root }}>
       <header className={classes.headerWrapper}>
         <Typography variant="h5" className={classes.heading}>
-          All Lists
+          {t('list.all')}
         </Typography>
         {lists?.length ? (
           <Controls.Button
-            text="Edit List"
+            text={t('list.edit')}
             startIcon={<EditIcon />}
             disabled={
               (selectedRecord?.taskId && !taskStats) ||
@@ -230,7 +235,7 @@ export default function PreviousList() {
           <TextField
             select
             value={selectedRecordIndex}
-            label="Select List"
+            label={t('list.select')}
             onChange={handleChangeList}
             variant="outlined"
             disabled={revertLoading}
@@ -269,12 +274,12 @@ export default function PreviousList() {
               <Box mt={2} mb={1}>
                 <div className={classes.row}>
                   {' '}
-                  <b>Total Amount : &nbsp; </b>
+                  <b>{t('total.amount')}: &nbsp; </b>
                   <span> {selectedList?.totalAmount} </span>
                 </div>
                 <div className={classes.row}>
                   {' '}
-                  <b> Number of Accounts :&nbsp; </b>
+                  <b> {t('total.accounts')}:&nbsp; </b>
                   <span>
                     {selectedList?.accounts?.length}&nbsp; {'   '}
                   </span>
@@ -387,7 +392,7 @@ export default function PreviousList() {
                     ))}
                   </TextField>
                   <Controls.Button
-                    text="Generate All lists"
+                    text={t('operation.generateRefNo')}
                     onClick={handleGenerateList}
                     disabled={
                       (selectedRecord?.taskId && !taskStats) ||
