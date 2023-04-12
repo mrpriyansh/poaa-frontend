@@ -1,12 +1,10 @@
 import React, { useState, lazy, useMemo } from 'react';
-import { Online } from 'react-detect-offline';
 import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton } from '@material-ui/core';
 import MenuIcon from '@material-ui/icons/Menu';
 import NoteAddIcon from '@material-ui/icons/NoteAdd';
 import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
-import LibraryAddIcon from '@material-ui/icons/LibraryAdd';
 import PersonOutline from '@material-ui/icons/PersonOutline';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@material-ui/icons/History';
@@ -14,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
-import locales from '../assets/data/locales';
+import ChangeLanguage from './ChangeLanguage';
 
 const UsingExcel = lazy(() => import('./UsingExcel'));
 const Popup = lazy(() => import('../common/Popup'));
@@ -25,14 +23,14 @@ const ADD_BATCH = 'Add Using Excel';
 
 function Header() {
   const classes = headerStyles();
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const { setUser, user } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [popupType, setPopupType] = useState('');
   const history = useHistory();
 
   const ADD_ACCOUNT = useMemo(() => t('account.add'), [t]);
-  const ADD_INSTALLMENT = useMemo(() => t('installment.add'));
+  const ADD_INSTALLMENT = useMemo(() => t('installment.add'), [t]);
 
   const popupComponent = () => {
     switch (popupType) {
@@ -63,6 +61,7 @@ function Header() {
     handleClose();
   };
 
+  // eslint-disable-next-line
   const handleAddBatchAccounts = () => {
     setPopupType(ADD_BATCH);
     handleClose();
@@ -128,34 +127,30 @@ function Header() {
         >
           Post Office Agent Assistant
         </Typography>
-        {Object.keys(locales).map(lng => (
-          <button key={lng} onClick={() => i18n.changeLanguage(lng)} type="submit">
-            {locales[lng].nativeName}
-          </button>
-        ))}
-        <Online>
-          {user && (
-            <>
-              <IconButton
-                aria-controls="menu"
-                aria-haspopup="true"
-                onClick={handleOpenMenu}
-                color="secondary"
-              >
-                <MenuIcon />
-              </IconButton>
-              <Menu
-                id="menu"
-                anchorEl={anchorEl}
-                keepMounted
-                open={Boolean(anchorEl)}
-                onClose={handleClose}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'left',
-                }}
-                getContentAnchorEl={null}
-              >
+        <>
+          <IconButton
+            aria-controls="menu"
+            aria-haspopup="true"
+            onClick={handleOpenMenu}
+            color="secondary"
+          >
+            <MenuIcon />
+          </IconButton>
+          <Menu
+            id="menu"
+            classes={{ paper: classes.menuPaper }}
+            anchorEl={anchorEl}
+            keepMounted
+            open={Boolean(anchorEl)}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: 'bottom',
+              horizontal: 'left',
+            }}
+            getContentAnchorEl={null}
+          >
+            {user ? (
+              <>
                 <MenuItem>
                   <Typography variant="body1">Hi {user?.customData?.name}!</Typography>
                 </MenuItem>
@@ -170,10 +165,11 @@ function Header() {
                     </MenuItem>
                   );
                 })}
-              </Menu>
-            </>
-          )}{' '}
-        </Online>
+              </>
+            ) : null}
+            <ChangeLanguage handleCloseParent={handleClose} />
+          </Menu>
+        </>
       </Toolbar>
       <Popup openPopup={Boolean(popupType?.length)} setOpenPopup={setPopupType} title={popupType}>
         {popupComponent()}

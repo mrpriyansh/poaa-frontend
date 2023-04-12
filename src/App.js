@@ -1,4 +1,4 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, lazy, useCallback, useMemo } from 'react';
 import { Offline, Online } from 'react-detect-offline';
 import { Route } from 'react-router-dom';
 import * as Realm from 'realm-web';
@@ -134,7 +134,6 @@ function App() {
   };
   const themeWithLocale = useMemo(() => createTheme(theme, locales[i18n.language]), [
     i18n.language,
-    theme,
   ]);
 
   return (
