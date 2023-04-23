@@ -1,0 +1,57 @@
+{
+  "creds": {
+    "login": "Login",
+    "signup": "Sign Up",
+    "newUser": "Are you new?",
+    "alreadyUser": "Already have an account?",
+    "forgotPwd": "Forgot Password"
+  },
+  "pi": {
+    "email": "Email",
+    "password": "Password",
+    "name": "Name",
+    "phone": "Phone No"
+  },
+  "error": {
+    "email": "Email is not valid!",
+    "password": "Enter minimum 6 characters",
+    "name": "Name is Required",
+    "account": "Incorrect Account Number",
+    "amount": "Incorrect Amount",
+    "mobile": "Incorrect Mobile Number"
+  },
+  "account": {
+    "type": "Account Type",
+    "number": "Account Number",
+    "maturity": "Maturity Date",
+    "open": "Opening Date",
+    "amount": "Amount",
+    "add": "Add Account"
+  },
+  "installment": {
+    "add": "Add Installment",
+    "edit": "Edit Installment",
+    "number": "Number of Installments",
+    "loggedOn": "Logged On",
+    "logged": "Logged Installments"
+  },
+  "operation": {
+    "search": "Search",
+    "searchOn": "Search On",
+    "updateDetails": "Update Details",
+    "logout": "Logout",
+    "save": "Save",
+    "generateRefNo": "Generate Reference No."
+  },
+  "list": {
+    "all": "All List",
+    "edit": "Edit List",
+    "select": "Select List",
+    "create": "Create List",
+    "previous": "Previous Lists"
+  },
+  "total": {
+    "accounts": "Total Accounts",
+    "amount": "Total Amount"
+  }
+}

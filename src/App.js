@@ -1,11 +1,13 @@
-import React, { useState, useEffect, Suspense, lazy, useCallback } from 'react';
+import React, { useState, useEffect, lazy, useCallback, useMemo } from 'react';
 import { Offline, Online } from 'react-detect-offline';
 import { Route } from 'react-router-dom';
 import * as Realm from 'realm-web';
+import * as locales from '@material-ui/core/locale';
+import { useTranslation } from 'react-i18next';
 
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { Snackbar, ThemeProvider } from '@material-ui/core';
+import { Snackbar, ThemeProvider, createTheme } from '@material-ui/core';
 
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { AuthContext } from './services/Auth';
@@ -13,10 +15,10 @@ import { theme } from './styles/customTheme';
 import ConfirmUser from './view/ConfirmUser';
 import UserDetailsForm from './view/UserDetailsForm';
 import { INSTALLMENT_PENDING } from './services/constants';
-import { ReactComponent as LoaderSVG } from './assets/icons/spinner.svg';
 import Button from './common/controls/Button';
 import { axiosUtil } from './services/axiosinstance';
 import config from './services/config';
+import './i18n';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -35,6 +37,7 @@ const useStyles = makeStyles({
 
 function App() {
   const classes = useStyles();
+  const { i18n } = useTranslation();
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
   const [maturityState, setMaturityState] = useState(false);
@@ -129,69 +132,71 @@ function App() {
     const token = window.localStorage.getItem('token');
     setAuthToken(token);
   };
+  const themeWithLocale = useMemo(() => createTheme(theme, locales[i18n.language]), [
+    i18n.language,
+  ]);
+
   return (
-    <Suspense fallback={<LoaderSVG />}>
-      <ThemeProvider theme={theme}>
-        <AuthContext.Provider
-          value={{
-            authToken,
-            setAuthToken,
-            statsData,
-            setStatsData,
-            app,
-            setApp,
-            client,
-            setClient,
-            user,
-            setUser,
-            installments,
-            fetchInstallments,
-            allAccounts,
-            fetchAllAccounts,
-          }}
-        >
-          <>
-            <Header />
-            <div className={classes.container}>
-              <Online>
-                <ProtectedRoute exact path="/">
-                  <Home maturityState={maturityState} setMaturityState={setMaturityState} />
-                </ProtectedRoute>
-                <Route exact path="/login">
-                  {' '}
-                  <Login />{' '}
-                </Route>
-                <ProtectedRoute exact path="/user-details">
-                  <UserDetailsForm />
-                </ProtectedRoute>
-                <Route exact path="/confirm-user">
-                  <ConfirmUser />{' '}
-                </Route>
-                <ProtectedRoute exact path="/generate-list">
-                  <GenerateList />
-                </ProtectedRoute>
-                <ProtectedRoute exact path="/previous-lists">
-                  <PreviousList />
-                </ProtectedRoute>
-                <ProtectedRoute exact path="/stats">
-                  <StatisticList />
-                </ProtectedRoute>{' '}
-              </Online>
-              <Offline>
-                <OfflineView />
-              </Offline>
-            </div>
-          </>
-          <CssBaseline />
-        </AuthContext.Provider>
-        <Snackbar
-          open={showReload}
-          message="A new version is available!"
-          onClick={reloadPage}
-          action={<Button color="secondary" size="small" onClick={reloadPage} text="Reload" />}
-        />
-      </ThemeProvider>
-    </Suspense>
+    <ThemeProvider theme={themeWithLocale}>
+      <AuthContext.Provider
+        value={{
+          authToken,
+          setAuthToken,
+          statsData,
+          setStatsData,
+          app,
+          setApp,
+          client,
+          setClient,
+          user,
+          setUser,
+          installments,
+          fetchInstallments,
+          allAccounts,
+          fetchAllAccounts,
+        }}
+      >
+        <>
+          <Header />
+          <div className={classes.container}>
+            <Online>
+              <ProtectedRoute exact path="/">
+                <Home maturityState={maturityState} setMaturityState={setMaturityState} />
+              </ProtectedRoute>
+              <Route exact path="/login">
+                {' '}
+                <Login />{' '}
+              </Route>
+              <ProtectedRoute exact path="/user-details">
+                <UserDetailsForm />
+              </ProtectedRoute>
+              <Route exact path="/confirm-user">
+                <ConfirmUser />{' '}
+              </Route>
+              <ProtectedRoute exact path="/create-list">
+                <GenerateList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/previous-lists">
+                <PreviousList />
+              </ProtectedRoute>
+              <ProtectedRoute exact path="/stats">
+                <StatisticList />
+              </ProtectedRoute>{' '}
+            </Online>
+            <Offline>
+              <OfflineView />
+            </Offline>
+          </div>
+        </>
+        <CssBaseline />
+      </AuthContext.Provider>
+      <Snackbar
+        open={showReload}
+        message="A new version is available!"
+        onClick={reloadPage}
+        action={<Button color="secondary" size="small" onClick={reloadPage} text="Reload" />}
+      />
+    </ThemeProvider>
   );
 }
 

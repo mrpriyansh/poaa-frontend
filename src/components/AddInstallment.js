@@ -2,6 +2,7 @@ import React, { useEffect, useState, useCallback } from 'react';
 import { Grid, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useHistory } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 import Control from '../common/controls/Controls';
 import { Form } from '../common/useForm';
@@ -22,6 +23,7 @@ const initialValues = {
 
 export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const classes = addInstallmentsStyles();
+  const { t } = useTranslation();
   const history = useHistory();
   const [rdAccounts, setRdAccounts] = useState();
   const [inputText, setInputText] = React.useState('');
@@ -99,7 +101,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
       );
       triggerAlert({ icon: 'success', title: 'Installment Saved!' });
       setOpenPopup(false);
-      history.push('/generate-list');
+      history.push('/create-list');
       setInputValue({ ...initialValues });
       fetchInstallments();
     } catch (err) {
@@ -150,7 +152,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
             <TextField
               name="name"
               {...params}
-              label="Name"
+              label={t('pi.name')}
               required
               variant="outlined"
               {...(errors.name && { error: true, helperText: errors.name })}
@@ -168,21 +170,21 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           }}
         />
         <TextField
-          label="Amount"
+          label={t('account.amount')}
           value={inputValue.amount}
           variant="outlined"
           fullWidth
           disabled={isModifying || isLoading}
         />
         <TextField
-          label="Account No"
+          label={t('account.number')}
           value={inputValue.accountNo}
           variant="outlined"
           fullWidth
           disabled={isModifying || isLoading}
         />
         <TextField
-          label="Installments"
+          label={t('installment.number')}
           type="number"
           disabled={isLoading}
           inputProps={{ min: 1 }}
@@ -194,7 +196,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           {...(errors.installments && { error: true, helperText: errors.installments })}
         />
         <Control.Button
-          text="Save"
+          text={t('operation.save')}
           onClick={handleAddInstallment}
           classes={{ root: classes.saveButton }}
           disabled={isLoading}
