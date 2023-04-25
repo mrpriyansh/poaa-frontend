@@ -23,10 +23,8 @@ export default function ChangeLanguage({ handleCloseParent }) {
   };
 
   const handleMenuClick = e => {
-    const { dataset } = e.target;
-    if (dataset?.elemId === 'lng_selector') {
-      i18n.changeLanguage(dataset?.lngCode);
-    }
+    const { dataset } = e.currentTarget;
+    i18n.changeLanguage(dataset?.lngCode);
     handleClose();
     handleCloseParent();
   };
@@ -46,11 +44,10 @@ export default function ChangeLanguage({ handleCloseParent }) {
           horizontal: 'right',
         }}
         getContentAnchorEl={null}
-        onClick={handleMenuClick}
       >
         {Object.keys(locales).map(lng => {
           return (
-            <MenuItem data-elem-Id="lng_selector" data-lng-code={lng}>
+            <MenuItem onClick={handleMenuClick} data-lng-code={lng}>
               <IconButton> {lngIcon[lng]}</IconButton>
               {locales[lng].nativeName}
             </MenuItem>
