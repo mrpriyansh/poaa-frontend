@@ -159,7 +159,7 @@ function App() {
         <>
           <Header />
           <div className={classes.container}>
-            <Online>
+            <Online polling={{ url: 'https://ipv4.icanhazip.com/' }}>
               <ProtectedRoute exact path="/">
                 <Home maturityState={maturityState} setMaturityState={setMaturityState} />
               </ProtectedRoute>
