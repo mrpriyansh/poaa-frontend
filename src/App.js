@@ -1,5 +1,5 @@
 import React, { useState, useEffect, lazy, useCallback, useMemo } from 'react';
-import { Offline, Online } from 'react-detect-offline';
+import { Detector } from 'react-detect-offline';
 import { Route } from 'react-router-dom';
 import * as Realm from 'realm-web';
 import * as locales from '@material-ui/core/locale';
@@ -159,33 +159,39 @@ function App() {
         <>
           <Header />
           <div className={classes.container}>
-            <Online polling={{ url: 'https://ipv4.icanhazip.com/' }}>
-              <ProtectedRoute exact path="/">
-                <Home maturityState={maturityState} setMaturityState={setMaturityState} />
-              </ProtectedRoute>
-              <Route exact path="/login">
-                {' '}
-                <Login />{' '}
-              </Route>
-              <ProtectedRoute exact path="/user-details">
-                <UserDetailsForm />
-              </ProtectedRoute>
-              <Route exact path="/confirm-user">
-                <ConfirmUser />{' '}
-              </Route>
-              <ProtectedRoute exact path="/create-list">
-                <GenerateList />
-              </ProtectedRoute>
-              <ProtectedRoute exact path="/previous-lists">
-                <PreviousList />
-              </ProtectedRoute>
-              <ProtectedRoute exact path="/stats">
-                <StatisticList />
-              </ProtectedRoute>{' '}
-            </Online>
-            <Offline>
-              <OfflineView />
-            </Offline>
+            <Detector
+              polling={{ url: 'https://ipv4.icanhazip.com/' }}
+              render={({ online }) =>
+                online ? (
+                  <>
+                    <ProtectedRoute exact path="/">
+                      <Home maturityState={maturityState} setMaturityState={setMaturityState} />
+                    </ProtectedRoute>
+                    <Route exact path="/login">
+                      {' '}
+                      <Login />{' '}
+                    </Route>
+                    <ProtectedRoute exact path="/user-details">
+                      <UserDetailsForm />
+                    </ProtectedRoute>
+                    <Route exact path="/confirm-user">
+                      <ConfirmUser />{' '}
+                    </Route>
+                    <ProtectedRoute exact path="/create-list">
+                      <GenerateList />
+                    </ProtectedRoute>
+                    <ProtectedRoute exact path="/previous-lists">
+                      <PreviousList />
+                    </ProtectedRoute>
+                    <ProtectedRoute exact path="/stats">
+                      <StatisticList />
+                    </ProtectedRoute>{' '}
+                  </>
+                ) : (
+                  <OfflineView />
+                )
+              }
+            />
           </div>
         </>
         <CssBaseline />
