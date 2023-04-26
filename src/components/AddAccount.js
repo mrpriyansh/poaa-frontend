@@ -162,11 +162,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             required
             error={errors.maturityDate}
           />
-          <Controls.Button
-            type="submit"
-            text={recordForEdit ? t('account.edit') : t('account.add')}
-            disabled={loading}
-          />
+          <Controls.Button type="submit" text={t('operation.save')} disabled={loading} />
         </Grid>
       </Grid>
     </Form>
