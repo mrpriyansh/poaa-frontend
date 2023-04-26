@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid } from '@material-ui/core';
+import { useTranslation } from 'react-i18next';
 
 import { useForm, Form } from '../common/useForm';
 import Controls from '../common/controls/Controls';
@@ -25,20 +26,21 @@ const initialValues = {
 };
 function AddAccount({ setOpenPopup, recordForEdit }) {
   const classes = addAccountStyles();
+  const { t } = useTranslation();
   const { user, client, fetchAllAccounts } = useAuth();
   const [loading, setLoading] = useState(false);
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
-    if ('name' in fieldValues) temp.name = fieldValues.name ? '' : 'Name is required';
+    if ('name' in fieldValues) temp.name = fieldValues.name ? '' : t('error.name');
     if ('accountNo' in fieldValues)
       temp.accountNo =
         fieldValues.accountNo.length === 12 || fieldValues.accountNo.length === 10
           ? ''
-          : 'Incorrect Account Number';
+          : t('error.account');
     if ('amount' in fieldValues)
-      temp.amount = Number.isInteger(+fieldValues.amount) ? '' : 'Incorrect Amount';
+      temp.amount = Number.isInteger(+fieldValues.amount) ? '' : t('error.amount');
     if ('mobile' in fieldValues)
-      temp.mobile = Number.isInteger(+fieldValues.mobile) ? '' : 'Confirm Mobile Number.';
+      temp.mobile = Number.isInteger(+fieldValues.mobile) ? '' : t('error.mobile');
 
     setErrors({ ...temp });
   };
@@ -100,7 +102,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
       <Grid container justifyContent="center">
         <Grid item xs={12}>
           <Controls.Input
-            label="Name"
+            label={t('pi.name')}
             name="name"
             value={values.name}
             onChange={handleInputChange}
@@ -108,7 +110,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             required
           />
           <Controls.Input
-            label="Account Number"
+            label={t('account.number')}
             name="accountNo"
             disabled={recordForEdit}
             value={values.accountNo}
@@ -117,7 +119,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             error={errors.accountNo}
           />
           <Controls.Input
-            label="Opening Date"
+            label={t('account.open')}
             name="openingDate"
             type="date"
             value={values.openingDate}
@@ -126,8 +128,8 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             error={errors.openingDate}
           />
           <Controls.Select
-            label="Type"
-            name="accountType"
+            label={t('account.type')}
+            name="type"
             value={values.accountType}
             onChange={handleInputChange}
             options={accountTypeList}
@@ -137,7 +139,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
         </Grid>
         <Grid item xs={12}>
           <Controls.Input
-            label="Amount"
+            label={t('account.amount')}
             name="amount"
             value={values.amount}
             onChange={handleInputChange}
@@ -145,14 +147,14 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             error={errors.amount}
           />
           <Controls.Input
-            label="Phone"
+            label={t('pi.phone')}
             name="phone"
             value={values.phone}
             onChange={handleInputChange}
             error={errors.phone}
           />
           <Controls.Input
-            label="Maturity Date"
+            label={t('account.maturity')}
             name="maturityDate"
             type="date"
             value={values.maturityDate}
@@ -160,11 +162,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             required
             error={errors.maturityDate}
           />
-          <Controls.Button
-            type="submit"
-            text={recordForEdit ? `Edit Account` : 'Add Account'}
-            disabled={loading}
-          />
+          <Controls.Button type="submit" text={t('operation.save')} disabled={loading} />
         </Grid>
       </Grid>
     </Form>
