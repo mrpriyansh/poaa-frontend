@@ -1,4 +1,9 @@
 export const formatDate = date => {
+  return date.split('T')[0];
+};
+
+// TODO: Need to remove this dependency
+export const formatISODate = date => {
   return date.toISOString().split('T')[0];
 };
 
@@ -8,10 +13,7 @@ export const formatDateTime = date => {
 };
 
 export const formatDateReverse = date => {
-  const splits = date
-    .toISOString()
-    .split('T')[0]
-    .split('-');
+  const splits = date.split('T')[0].split('-');
   return splits[2] + '-' + splits[1] + '-' + splits[0];
 };
 

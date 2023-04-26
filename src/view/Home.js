@@ -1,27 +1,20 @@
-import React, { useState, useEffect, lazy, Suspense, useMemo } from 'react';
-import {
-  Paper,
-  Toolbar,
-  InputAdornment,
-  IconButton,
-  FormGroup,
-  FormControlLabel,
-  Checkbox,
-} from '@material-ui/core';
+import React, { useState, lazy, Suspense, useMemo } from 'react';
+import { Paper, Toolbar, InputAdornment, IconButton } from '@material-ui/core';
 import Search from '@material-ui/icons/Search';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import { useTranslation } from 'react-i18next';
+import useSWR from 'swr';
 
 import Controls from '../common/controls/Controls';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
 import { allAccountStyles } from '../styles/view/home';
 import { formatDateReverse, formatDate } from '../services/utils';
-import { useAuth } from '../services/Auth';
 
 import CustomTable from '../common/Table';
+import { axiosUtil } from '../services/axiosinstance';
 
 const AddInstallment = lazy(() => import('../components/AddInstallment'));
 const AddAccount = lazy(() => import('../components/AddAccount'));
@@ -30,14 +23,12 @@ const Popup = lazy(() => import('../common/Popup'));
 const EDIT_ACCOUNT = 'Edit Account';
 const ADD_INSTALLMENT = 'Add Installment';
 
-function Home({ maturityState, setMaturityState }) {
+function Home() {
   const classes = allAccountStyles();
   const { t } = useTranslation();
-  const { client, fetchAllAccounts, allAccounts } = useAuth();
 
-  // const { data: response, error } = useSWR(`allaccounts`, axiosUtil.get);
+  const { data: response, mutate } = useSWR(`allaccounts`, axiosUtil.get);
 
-  const [accounts, setAccounts] = useState([]);
   const [searchValue, changeSearchValue] = useState('');
   const [openPopupType, setOpenPopupType] = useState('');
   const [searchType, changeSearchType] = useState('name');
@@ -52,9 +43,6 @@ function Home({ maturityState, setMaturityState }) {
     ],
     [t]
   );
-  useEffect(() => {
-    fetchAllAccounts();
-  }, [fetchAllAccounts]);
 
   const handleEdit = item => {
     setRecordForEdit(item);
@@ -65,31 +53,23 @@ function Home({ maturityState, setMaturityState }) {
     setOpenPopupType(ADD_INSTALLMENT);
   };
 
-  const handleMaturityChange = (_, newValue) => {
-    setMaturityState(newValue);
-  };
-
-  useEffect(() => {
-    if (allAccounts?.length) {
-      const filterAccounts = allAccounts.filter(account => {
-        if (searchType === 'name')
-          return account.name.toLowerCase().includes(searchValue.toLowerCase());
-        if (searchType === 'accountNumber') return account.accountNo?.includes(searchValue);
-        if (searchType === 'accountType')
-          return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
-        if (searchType === 'maturityDate')
-          return formatDate(account.maturityDate)
-            .toLowerCase()
-            .includes(searchValue.toLowerCase());
-        return true;
-      });
-      setAccounts(filterAccounts);
-    }
-  }, [allAccounts, searchValue, searchType]);
+  const filteredAccounts = useMemo(() => {
+    return response?.data?.filter(account => {
+      if (searchType === 'name')
+        return account.name.toLowerCase().includes(searchValue.toLowerCase());
+      if (searchType === 'accountNumber') return account.accountNo?.includes(searchValue);
+      if (searchType === 'accountType')
+        return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
+      if (searchType === 'maturityDate')
+        return formatDate(account.maturityDate)
+          .toLowerCase()
+          .includes(searchValue.toLowerCase());
+      return true;
+    });
+  }, [response, searchType, searchValue]);
 
   const handleDelete = async item => {
-    const collection = await client.db('poaa').collection('accounts');
-    deleteTrigger(collection, fetchAllAccounts, item.accountNo);
+    deleteTrigger(mutate, item.accountNo);
   };
 
   const createData = (name, accountNo, accountType, amount, opening, maturityDate, actions) => {
@@ -109,7 +89,7 @@ function Home({ maturityState, setMaturityState }) {
     [t]
   );
 
-  const rows = accounts.map(acc => {
+  const rows = filteredAccounts?.map(acc => {
     return createData(
       acc.name,
       acc.accountNo,
@@ -129,8 +109,7 @@ function Home({ maturityState, setMaturityState }) {
     );
   });
 
-  // if (error) return <Offline />;
-  if (!allAccounts) return <LoaderSVG />;
+  if (!filteredAccounts) return <LoaderSVG />;
 
   return (
     <>
@@ -164,26 +143,7 @@ function Home({ maturityState, setMaturityState }) {
               onChange={event => changeSearchValue(event.target.value)}
             />
           </Toolbar>
-          <CustomTable
-            rows={rows}
-            columns={columns}
-            pagination
-            paginationStartElement={
-              <FormGroup row className={classes.maturityCheckboxWrapper}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      size="small"
-                      onChange={handleMaturityChange}
-                      checked={maturityState}
-                      style={{ color: 'black' }}
-                    />
-                  }
-                  label="Only Maturity"
-                />
-              </FormGroup>
-            }
-          />
+          <CustomTable rows={rows} columns={columns} pagination emptyMessage="No Account Found!" />
         </Paper>
         <Popup
           openPopup={Boolean(openPopupType?.length)}

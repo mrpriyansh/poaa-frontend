@@ -8,7 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
 import CustomTable from '../common/Table';
-import { formatDate } from '../services/utils';
+import { formatISODate } from '../services/utils';
 import { generateListStyles } from '../styles/view/generateList';
 import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
@@ -124,7 +124,7 @@ export default function GenerateList() {
   const rows = installments?.map(inst => {
     return {
       ...inst,
-      createdAt: formatDate(inst.createdAt),
+      createdAt: formatISODate(inst.createdAt),
       actions: (
         <>
           <IconButton onClick={() => handleEdit(inst)}>

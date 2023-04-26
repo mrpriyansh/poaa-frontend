@@ -2,6 +2,7 @@ import Swal from 'sweetalert2/src/sweetalert2';
 import '@sweetalert2/theme-dark/dark.css';
 
 import './styles.css';
+import { axiosUtil } from '../axiosinstance';
 
 const getAlert = () => {
   const Toast = Swal.mixin({
@@ -24,7 +25,7 @@ export const triggerAlert = data => {
   toast.fire(data);
 };
 
-export const deleteTrigger = (Account, fetchAllAccounts, accountNo) => {
+export const deleteTrigger = (mutate, accountNo) => {
   Swal.fire({
     title: 'Are you sure?',
     text: "You won't be able to revert this!",
@@ -34,26 +35,24 @@ export const deleteTrigger = (Account, fetchAllAccounts, accountNo) => {
     confirmButtonColor: '#d33',
     cancelButtonColor: '#3363dd',
     confirmButtonText: 'Yes, delete it!',
-  }).then(async result => {
+  }).then(result => {
     if (result.value) {
-      try {
-        await Account.deleteOne({ accountNo });
-        Swal.fire({
-          title: 'Deleted!',
-          text: 'Your file has been deleted.',
-          icon: 'success',
-          background: '#000',
-          confirmButtonColor: '#3363dd',
+      Swal.fire({
+        title: 'Deleted!',
+        text: 'Your account has been removed.',
+        icon: 'success',
+        background: '#000',
+        confirmButtonColor: '#3363dd',
+      });
+      axiosUtil
+        .delete('deleteaccount', { data: { accountNo } })
+        .then(() => {
+          mutate();
+        })
+        .catch(err => {
+          // eslint-disable-next-line no-console
+          console.log(err);
         });
-        fetchAllAccounts();
-        // axiosUtil.delete('deleteaccount', { data: { accountNo } }).then(() => {
-        // mutate(`allaccounts`);
-
-        // }
-      } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log(err);
-      }
     }
   });
 };

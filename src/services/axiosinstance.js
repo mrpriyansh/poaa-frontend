@@ -8,7 +8,8 @@ const createInstance = method => {
     baseURL: `${config.apiUrl}/api`,
   });
 
-  const token = window.localStorage.getItem('token');
+  // TODO : NEED TO change token1
+  const token = window.localStorage.getItem('token1');
   if (token?.length) instance.defaults.headers.Authorization = `Bearer ${token}`;
   instance.interceptors.response.use(
     response => {

@@ -40,7 +40,6 @@ function App() {
   const { i18n } = useTranslation();
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
-  const [maturityState, setMaturityState] = useState(false);
 
   const [app, setApp] = useState(new Realm.App({ id: process.env.REACT_APP_REALM_ID }));
   const [user, setUser] = useState(null);
@@ -63,9 +62,6 @@ function App() {
           $match: {
             $or: [
               {
-                $expr: !maturityState,
-              },
-              {
                 maturityDate: {
                   $lte: new Date(),
                 },
@@ -79,7 +75,7 @@ function App() {
       // eslint-disable-next-line no-console
       console.log(err);
     }
-  }, [client, maturityState]);
+  }, [client]);
 
   const fetchInstallments = useCallback(async () => {
     try {
@@ -165,7 +161,7 @@ function App() {
                 online ? (
                   <>
                     <ProtectedRoute exact path="/">
-                      <Home maturityState={maturityState} setMaturityState={setMaturityState} />
+                      <Home />
                     </ProtectedRoute>
                     <Route exact path="/login">
                       {' '}
