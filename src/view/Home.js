@@ -40,15 +40,15 @@ function Home({ maturityState, setMaturityState }) {
   const [accounts, setAccounts] = useState([]);
   const [searchValue, changeSearchValue] = useState('');
   const [openPopupType, setOpenPopupType] = useState('');
-  const [searchType, changeSearchType] = useState(t('pi.name'));
+  const [searchType, changeSearchType] = useState('name');
   const [recordForEdit, setRecordForEdit] = useState();
 
   const searchTypeList = useMemo(
     () => [
-      { title: t('pi.name') },
-      { title: t('account.number') },
-      { title: t('account.type') },
-      { title: t('account.maturity') },
+      { title: t('pi.name'), value: 'name' },
+      { title: t('account.number'), value: 'accountNumber' },
+      { title: t('account.type'), value: 'accountType' },
+      { title: t('account.maturity'), value: 'maturityDate' },
     ],
     [t]
   );
@@ -72,12 +72,12 @@ function Home({ maturityState, setMaturityState }) {
   useEffect(() => {
     if (allAccounts?.length) {
       const filterAccounts = allAccounts.filter(account => {
-        if (searchType === 'Name')
+        if (searchType === 'name')
           return account.name.toLowerCase().includes(searchValue.toLowerCase());
-        if (searchType === 'Account Number') return account.accountNo?.includes(searchValue);
-        if (searchType === 'Account Type')
+        if (searchType === 'accountNumber') return account.accountNo?.includes(searchValue);
+        if (searchType === 'accountType')
           return account.accountType.toLowerCase().includes(searchValue.toLowerCase());
-        if (searchType === 'Maturity Date')
+        if (searchType === 'maturityDate')
           return formatDate(account.maturityDate)
             .toLowerCase()
             .includes(searchValue.toLowerCase());

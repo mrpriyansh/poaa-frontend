@@ -16,7 +16,7 @@ export default function Select(props) {
       {...(error && { error: true, helperText: error })}
     >
       {options.map(item => (
-        <MenuItem key={item.key || item.title} value={item.value || item.title}>
+        <MenuItem key={item.key || item.value || item.title} value={item.value || item.title}>
           {item.title}
         </MenuItem>
       ))}
