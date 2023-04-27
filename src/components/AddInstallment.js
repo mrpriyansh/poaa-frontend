@@ -1,18 +1,16 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { Grid, TextField } from '@material-ui/core';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useSWR, { useSWRConfig } from 'swr';
 
 import Control from '../common/controls/Controls';
 import { Form } from '../common/useForm';
 import { addInstallmentsStyles } from '../styles/components/addInstallments';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
-import { useAuth } from '../services/Auth';
-import { INSTALLMENT_PENDING } from '../services/constants';
-import handleError from '../services/handleError';
-import { isNull } from '../services/utils';
+import { axiosUtil } from '../services/axiosinstance';
 
 const initialValues = {
   name: '',
@@ -24,36 +22,14 @@ const initialValues = {
 export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const classes = addInstallmentsStyles();
   const { t } = useTranslation();
+  const { mutate } = useSWRConfig();
   const history = useHistory();
-  const [rdAccounts, setRdAccounts] = useState();
   const [inputText, setInputText] = React.useState('');
   const [inputValue, setInputValue] = React.useState({ ...initialValues });
   const [errors, setErrors] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
-  const { client, user, fetchInstallments } = useAuth();
 
-  // const { data, error } = useSWR('allaccounts', axiosUtil.get);
-
-  const fetchRDAccounts = useCallback(async () => {
-    try {
-      const todaysDate = new Date();
-      todaysDate.setDate(todaysDate.getDate() - 1);
-
-      const collection = await client.db('poaa').collection('accounts');
-      const data = await collection.aggregate([
-        { $match: { accountType: 'RD', maturityDate: { $gt: new Date(todaysDate) } } },
-        { $sort: { name: 1 } },
-      ]);
-      setRdAccounts(data);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
-    }
-  }, [client]);
-
-  useEffect(() => {
-    fetchRDAccounts();
-  }, [fetchRDAccounts]);
+  const { data: response } = useSWR('allaccounts', axiosUtil.get);
 
   useEffect(() => {
     if (isModifying) setInputValue(record);
@@ -71,49 +47,31 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
     setInputText(value);
   };
 
-  const handleAddInstallment = async () => {
+  const handleAddInstallment = () => {
     if (errors.installments || errors.name) return;
-    const fields = ['name', 'accountNo', 'amount'];
-    if (isNull(inputValue, fields)) return;
-    if (inputValue.installments <= 0) return;
     setIsLoading(true);
-
-    try {
-      const collection = await client.db('poaa').collection('installments');
-      if (!isModifying) {
-        const exists = await collection.findOne({
-          accountNo: inputValue.accountNo,
-          status: INSTALLMENT_PENDING,
-        });
-        if (exists) throw new Error('Accoun already logged, Try to edit it!');
-      }
-      await collection.updateOne(
-        { accountNo: inputValue.accountNo },
-        {
-          $set: {
-            ...inputValue,
-            status: INSTALLMENT_PENDING,
-            agentId: user.id,
-            createdAt: new Date(Date.now()),
-          },
-        },
-        { upsert: true }
-      );
-      triggerAlert({ icon: 'success', title: 'Installment Saved!' });
-      setOpenPopup(false);
-      history.push('/create-list');
-      setInputValue({ ...initialValues });
-      fetchInstallments();
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      handleError(err, triggerAlert);
-    } finally {
-      setIsLoading(false);
-    }
+    axiosUtil[isModifying ? 'put' : 'post'](
+      isModifying ? 'editInstallment' : '/addInstallment',
+      inputValue
+    )
+      .then(res => {
+        mutate('getAllInstallments');
+        setOpenPopup(false);
+        history.push('/create-list');
+        setInputValue({ ...initialValues });
+        triggerAlert({ icon: 'success', title: res.data });
+      })
+      .finally(() => setIsLoading(false));
   };
 
-  // if () return <Offline />;
+  const rdAccounts = useMemo(
+    () =>
+      response?.data
+        ?.filter(item => item.accountType === 'RD')
+        ?.sort((a, b) => a.name.localeCompare(b.name)),
+    [response]
+  );
+
   if (!rdAccounts) return <LoaderSVG />;
   return (
     <Form onSubmit={handleAddInstallment} className={classes.root}>
