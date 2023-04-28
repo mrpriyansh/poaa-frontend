@@ -63,7 +63,7 @@ function App() {
     if (user && !user?.pPassword?.length) {
       history.push('/user-details');
     }
-  }, [user]);
+  }, [user, history]);
 
   useEffect(() => {
     async function fetchUser() {

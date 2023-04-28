@@ -8,6 +8,7 @@ import Controls from '../common/controls/Controls';
 import { useAuth } from '../services/Auth';
 import { loginStyles } from '../styles/view/login';
 import { axiosUtil } from '../services/axiosinstance';
+import { triggerAlert } from '../services/getAlert/getAlert';
 
 const initialValues = {
   email: '',
@@ -37,6 +38,7 @@ function Login() {
 
   const handleSubmit = event => {
     event.preventDefault();
+    if (!isLogin) return triggerAlert({ icon: 'info', title: 'Contact administration!' });
     setLoading(true);
     axiosUtil
       .post('signin', values)
