@@ -25,6 +25,7 @@ const GenerateList = lazy(() => import('./view/GenerateList'));
 const PreviousList = lazy(() => import('./view/PreviousList'));
 const OfflineView = lazy(() => import('./view/Offline'));
 const ProtectedRoute = lazy(() => import('./common/ProtectedRoute'));
+const Banner = lazy(() => import('./components/Banner'));
 
 const useStyles = makeStyles({
   container: {
@@ -139,6 +140,7 @@ function App() {
         </>
         <CssBaseline />
       </AuthContext.Provider>
+      <Banner />
       <Snackbar
         open={showReload}
         message="A new version is available!"
