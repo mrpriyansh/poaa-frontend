@@ -24,7 +24,7 @@ const ADD_BATCH = 'Add Using Excel';
 function Header() {
   const classes = headerStyles();
   const { t } = useTranslation();
-  const { setUser, user } = useAuth();
+  const { user, setAuthToken } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
   const [popupType, setPopupType] = useState('');
   const history = useHistory();
@@ -51,8 +51,7 @@ function Header() {
     setAnchorEl(null);
   };
   const handleLogout = async () => {
-    await user?.logOut();
-    setUser(null);
+    setAuthToken(null);
     handleClose();
   };
 
@@ -77,7 +76,7 @@ function Header() {
     history.push(endpoint);
   };
 
-  const isPortalDetails = user?.customData?.pPassword?.length;
+  const isPortalDetails = user?.pPassword?.length;
   const menuOptions = [
     {
       onClickFunc: handleAddInstallment,
@@ -152,7 +151,7 @@ function Header() {
             {user ? (
               <>
                 <MenuItem>
-                  <Typography variant="body1">Hi {user?.customData?.name}!</Typography>
+                  <Typography variant="body1">Hi {user?.name}!</Typography>
                 </MenuItem>
                 {menuOptions.map(optionDetails => {
                   return (

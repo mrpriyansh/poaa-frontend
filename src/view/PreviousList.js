@@ -1,5 +1,5 @@
 import { Box, IconButton, MenuItem, Grid, Paper, TextField, Typography } from '@material-ui/core';
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import ArrowLeftIcon from '@material-ui/icons/ArrowLeft';
 import FileCopyIcon from '@material-ui/icons/FileCopy';
 import ArrowRightIcon from '@material-ui/icons/ArrowRight';
@@ -10,6 +10,7 @@ import WarningIcon from '@material-ui/icons/Warning';
 import copy from 'copy-to-clipboard';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useSWR from 'swr';
 
 import { ReactComponent as RunningSvg } from '../assets/icons/running.svg';
 import { axiosUtil } from '../services/axiosinstance';
@@ -17,11 +18,8 @@ import { formatDateTime } from '../services/utils';
 import CustomTable from '../common/Table';
 import { previousListsStyles } from '../styles/view/previousLists';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
-import { useAuth } from '../services/Auth';
 import Controls from '../common/controls/Controls';
 import config from '../services/config';
-import { INSTALLMENT_PENDING } from '../services/constants';
-import handleError from '../services/handleError';
 import { triggerAlert } from '../services/getAlert/getAlert';
 
 const useEventSource = taskId => {
@@ -51,21 +49,15 @@ const useEventSource = taskId => {
 export default function PreviousList() {
   const classes = previousListsStyles();
   const { t } = useTranslation();
-  const [lists, setLists] = useState();
   const [isLoading, setIsLoading] = useState(false);
   const [selectedRecordIndex, setSelectedRecordIndex] = useState(0);
   const [selectedListIndex, setSelectedListIndex] = useState(0);
   const [timeout, setTimeout] = useState(60000);
   const [revertLoading, setRevertLoading] = useState(false);
-  const { client, user } = useAuth();
 
   const history = useHistory();
 
-  const fetchList = useCallback(async () => {
-    const collection = await client.db('poaa').collection('lists');
-    const data = await collection.aggregate([{ $sort: { _id: -1 } }, { $limit: 20 }]);
-    setLists(data);
-  }, [client]);
+  const { data: response, isLoading: dataLoading } = useSWR('getAllLists', axiosUtil.get);
 
   const formatErrorMessage = message => {
     const regexTemp = /(waiting for) .*/;
@@ -76,11 +68,7 @@ export default function PreviousList() {
     return message;
   };
 
-  useEffect(() => {
-    fetchList();
-  }, [fetchList]);
-
-  const selectedRecord = lists?.length > 0 ? lists[selectedRecordIndex] : {};
+  const selectedRecord = response?.data?.length > 0 ? response?.data?.[selectedRecordIndex] : {};
   const selectedList =
     selectedRecord?.list?.length > 0 ? selectedRecord?.list[selectedListIndex] : {};
 
@@ -124,7 +112,7 @@ export default function PreviousList() {
     { timeout: 90000, text: 'DoP is very slow.' },
   ];
 
-  if (!lists) return <LoaderSVG />;
+  if (dataLoading) return <LoaderSVG />;
 
   const rows = selectedList?.accounts
     ?.sort((a, b) => {
@@ -138,12 +126,11 @@ export default function PreviousList() {
     axiosUtil
       .post('/schedule/create-list', { id: selectedRecord._id, timeout })
       .then(res => {
-        setLists(prevState =>
-          prevState.map(ele => {
-            if (ele._id === selectedRecord._id) return { ...ele, taskId: res.data.taskId };
-            return ele;
-          })
-        );
+        const updatedData = response?.data?.map(ele => {
+          if (ele._id === selectedRecord._id) return { ...ele, taskId: res.data.taskId };
+          return ele;
+        });
+        response.data = [...updatedData];
       })
       .finally(() => {
         setIsLoading(false);
@@ -154,40 +141,12 @@ export default function PreviousList() {
     e.preventDefault();
     try {
       setRevertLoading(true);
-      const data = {};
-      selectedRecord.list.forEach(list => {
-        list.accounts.forEach(inst => {
-          data[inst.accountNo] = {
-            ...inst,
-            installments: (data[inst.accountNo]?.installments || 0) + inst.paidInstallments,
-          };
-        });
+      await axiosUtil.delete(`/revertList/${selectedRecord._id}`, {
+        listId: selectedRecord._id,
       });
 
-      const bulk = Object.keys(data).map(ele => {
-        return {
-          updateOne: {
-            filter: { accountNo: data[ele].accountNo },
-            update: {
-              $set: {
-                accountNo: data[ele].accountNo,
-                amount: data[ele].amount,
-                agentId: user.id,
-                createdAt: new Date(Date.now()),
-                installments: data[ele].installments,
-                name: data[ele].name,
-                status: INSTALLMENT_PENDING,
-              },
-            },
-            upsert: true,
-          },
-        };
-      });
-
-      await user.functions.revertList(bulk, selectedRecord._id);
       history.push('/create-list');
-    } catch (error) {
-      handleError(error, triggerAlert);
+    } finally {
       setRevertLoading(false);
     }
   };
@@ -215,7 +174,7 @@ export default function PreviousList() {
         <Typography variant="h5" className={classes.heading}>
           {t('list.all')}
         </Typography>
-        {lists?.length ? (
+        {response?.data?.length ? (
           <Controls.Button
             text={t('list.edit')}
             startIcon={<EditIcon />}
@@ -240,7 +199,7 @@ export default function PreviousList() {
             variant="outlined"
             disabled={revertLoading}
           >
-            {lists.map((list, ind) => (
+            {response?.data?.map((list, ind) => (
               <MenuItem key={list.createdAt} value={ind} selected={ind === 0}>
                 {' '}
                 {formatDateTime(list.createdAt)}

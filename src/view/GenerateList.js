@@ -1,26 +1,20 @@
 import { Paper, IconButton, Typography, Box } from '@material-ui/core';
-import React, { useEffect, useState, lazy, useMemo } from 'react';
+import React, { useState, lazy, useMemo } from 'react';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PostAddIcon from '@material-ui/icons/PostAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import useSWR, { useSWRConfig } from 'swr';
 
 import CustomTable from '../common/Table';
-import { formatDate } from '../services/utils';
+import { formatDateReverse } from '../services/utils';
 import { generateListStyles } from '../styles/view/generateList';
 import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
-import { useAuth } from '../services/Auth';
-import handleError from '../services/handleError';
-import {
-  INSTALLMENT_LOGGED,
-  LIST_CREATED,
-  INSTALLMENT_PENDING,
-  LIST_LIMIT,
-} from '../services/constants';
+import { axiosUtil } from '../services/axiosinstance';
 
 const Popup = lazy(() => import('../common/Popup'));
 const AddInstallment = lazy(() => import('../components/AddInstallment'));
@@ -28,15 +22,11 @@ const AddInstallment = lazy(() => import('../components/AddInstallment'));
 export default function GenerateList() {
   const classes = generateListStyles();
   const { t } = useTranslation();
+  const { mutate } = useSWRConfig();
   const history = useHistory();
   const [openPopupType, setOpenPopupType] = useState('');
   const [currentRecord, setCurrentRecord] = useState({});
-  const { client, user, fetchInstallments, installments } = useAuth();
-  // const { data: response, error } = useSWR('getAllInstallments', axiosUtil.get);
-
-  useEffect(() => {
-    fetchInstallments();
-  }, [fetchInstallments]);
+  const { data: response } = useSWR('getAllInstallments', axiosUtil.get);
 
   const EDIT_INSTALLMENT = useMemo(() => t('installment.edit'), [t]);
   const ADD_INSTALLMENT = useMemo(() => t('installment.add'), [t]);
@@ -60,71 +50,22 @@ export default function GenerateList() {
     setOpenPopupType(ADD_INSTALLMENT);
   };
   const handleDelete = async item => {
-    // axiosUtil.delete('/deleteInstallment', { data: { accountNo: item.accountNo } }).then(res => {
-    // triggerAlert({ icon: 'success', title: res.data });
-    // mutate('getAllInstallments');
-    // });
-    try {
-      const collection = await client.db('poaa').collection('installments');
-      await collection.deleteOne({ accountNo: item.accountNo });
-      triggerAlert({ icon: 'success', title: t('prompt.installment.deleted') });
-      fetchInstallments();
-    } catch (err) {
-      handleError(err, triggerAlert);
-    }
+    axiosUtil.delete('/deleteInstallment', { data: { accountNo: item.accountNo } }).then(res => {
+      triggerAlert({ icon: 'success', title: res.data });
+      mutate('getAllInstallments');
+    });
   };
 
   const handleGenerateList = async () => {
-    // axiosUtil.post('/generateList').then(res => {
-    //   triggerAlert({ icon: 'success', title: res.data });
-    //   history.push('/previous-lists');
-    // });
-
-    try {
-      const Installment = client.db('poaa').collection('installments');
-      const installments = await Installment.aggregate([
-        {
-          $match: {
-            status: INSTALLMENT_PENDING,
-            agentId: user.id,
-          },
-        },
-        {
-          $project: {
-            status: 0,
-          },
-        },
-        {
-          $addFields: {
-            total: {
-              $multiply: ['$installments', '$amount'],
-            },
-          },
-        },
-        {
-          $sort: {
-            total: -1,
-            amount: -1,
-          },
-        },
-      ]);
-      await user.functions.generateList(
-        INSTALLMENT_PENDING,
-        INSTALLMENT_LOGGED,
-        LIST_CREATED,
-        LIST_LIMIT,
-        installments
-      );
-      triggerAlert({ icon: 'success', title: 'List Generated!' });
+    axiosUtil.post('/generateList').then(res => {
+      triggerAlert({ icon: 'success', title: res.data });
       history.push('/previous-lists');
-    } catch (err) {
-      handleError(err, triggerAlert);
-    }
+    });
   };
-  const rows = installments?.map(inst => {
+  const rows = response?.data?.map(inst => {
     return {
       ...inst,
-      createdAt: formatDate(inst.createdAt),
+      createdAt: formatDateReverse(inst.createdAt),
       actions: (
         <>
           <IconButton onClick={() => handleEdit(inst)}>
@@ -140,14 +81,14 @@ export default function GenerateList() {
   });
   const totalAmount = () => {
     let sum = 0;
-    installments.forEach(item => {
+    response?.data?.forEach(item => {
       sum += item.amount * item.installments;
     });
     return sum;
   };
 
   // if (error) return <Offline />;
-  if (!installments) return <LoaderSVG />;
+  if (!response?.data) return <LoaderSVG />;
   return (
     <Paper className={classes.root}>
       <header className={classes.header}>
@@ -170,7 +111,7 @@ export default function GenerateList() {
         <Box mt={2} mb={2}>
           <div className={classes.row}>
             <b>{t('total.accounts')} : </b>
-            <span> {installments.length} </span>
+            <span> {response?.data?.length} </span>
           </div>
           <div className={classes.row}>
             <b>{t('total.amount')} : </b>

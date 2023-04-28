@@ -8,8 +8,9 @@ import Controls from '../common/controls/Controls';
 import { Form, useForm } from '../common/useForm';
 import { loginStyles } from '../styles/view/login';
 import { useAuth } from '../services/Auth';
-import handleError from '../services/handleError';
 import { triggerAlert } from '../services/getAlert/getAlert';
+import { axiosUtil } from '../services/axiosinstance';
+import { isNull } from '../services/utils';
 
 const crypto = require('crypto');
 
@@ -21,7 +22,7 @@ const initialValues = {
 
 export default function UserDetailsForm() {
   const classes = loginStyles();
-  const { client, user } = useAuth();
+  const { user, setUser } = useAuth();
   const history = useHistory();
   const [loading, setLoading] = useState();
   const validate = (fieldValues = values) => {
@@ -40,42 +41,29 @@ export default function UserDetailsForm() {
   );
 
   useEffect(() => {
-    const refreshUserData = async () => {
-      await user.refreshCustomData();
-      setValues({
-        name: user?.customData?.name,
-        pAccountNo: user?.customData?.pAccountNo,
-        pPassword: user?.customData?.pPassword,
-      });
-    };
-    refreshUserData();
+    if (user)
+      setValues({ name: user.name, pAccountNo: user.pAccountNo, pPassword: user.pPassword });
   }, [user, setValues]);
 
   const handleSubmit = async e => {
     e.preventDefault();
-    try {
-      setLoading(true);
-      const collection = await client.db('poaa').collection('users');
-      await collection.updateOne(
-        { userId: user.id },
-        {
-          $set: {
-            ...values,
-            ...user.profile,
-            pPassword: encrypt(values.pPassword),
-            userId: user.id,
-          },
-        },
-        { upsert: true }
-      );
-      await user.refreshCustomData();
 
-      window.localStorage.setItem('token', user.accessToken);
-      history.push('/');
-    } catch (error) {
-      handleError(error, triggerAlert);
-      setLoading(false);
-    }
+    const notValidInput = isNull(values, ['name', 'pAccountNo', 'pPassword']);
+    if (notValidInput)
+      return triggerAlert({ icon: 'error', title: 'Please check all the values' });
+
+    setLoading(true);
+    axiosUtil
+      .patch('update-user-details', {
+        name: values.name,
+        pAccountNo: values.pAccountNo,
+        pPassword: encrypt(values.pPassword),
+      })
+      .then(res => {
+        setUser(res.data);
+        history.push('/');
+      })
+      .finally(() => setLoading(false));
   };
 
   const encrypt = data => {
@@ -89,7 +77,7 @@ export default function UserDetailsForm() {
   };
 
   const needToChange = () => {
-    return !user?.customData?.pPassword?.length;
+    return !user?.pPassword?.length;
   };
 
   return (

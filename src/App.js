@@ -1,7 +1,6 @@
-import React, { useState, useEffect, lazy, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, lazy, useMemo } from 'react';
 import { Detector } from 'react-detect-offline';
-import { Route } from 'react-router-dom';
-import * as Realm from 'realm-web';
+import { Route, useHistory } from 'react-router-dom';
 import * as locales from '@material-ui/core/locale';
 import { useTranslation } from 'react-i18next';
 
@@ -14,10 +13,8 @@ import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 import ConfirmUser from './view/ConfirmUser';
 import UserDetailsForm from './view/UserDetailsForm';
-import { INSTALLMENT_PENDING } from './services/constants';
 import Button from './common/controls/Button';
 import { axiosUtil } from './services/axiosinstance';
-import config from './services/config';
 import './i18n';
 
 const Header = lazy(() => import('./components/Header'));
@@ -38,62 +35,14 @@ const useStyles = makeStyles({
 function App() {
   const classes = useStyles();
   const { i18n } = useTranslation();
+  const history = useHistory();
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
-  const [maturityState, setMaturityState] = useState(false);
 
-  const [app, setApp] = useState(new Realm.App({ id: process.env.REACT_APP_REALM_ID }));
   const [user, setUser] = useState(null);
-  const [client, setClient] = useState(null);
-
-  const [installments, setInstallments] = useState();
-  const [allAccounts, setAllAccounts] = useState();
 
   const [showReload, setShowReload] = useState(false);
   const [waitingWorker, setWaitingWorker] = useState(null);
-
-  const fetchAllAccounts = useCallback(async () => {
-    try {
-      const collection = await client.db('poaa').collection('accounts');
-      const data = await collection.aggregate([
-        {
-          $sort: { maturityDate: 1 },
-        },
-        {
-          $match: {
-            $or: [
-              {
-                $expr: !maturityState,
-              },
-              {
-                maturityDate: {
-                  $lte: new Date(),
-                },
-              },
-            ],
-          },
-        },
-      ]);
-      setAllAccounts(data);
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err);
-    }
-  }, [client, maturityState]);
-
-  const fetchInstallments = useCallback(async () => {
-    try {
-      const collection = await client.db('poaa').collection('installments');
-      const data = await collection.aggregate([
-        { $match: { status: INSTALLMENT_PENDING } },
-        { $sort: { name: 1 } },
-      ]);
-      setInstallments(data);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.log(error);
-    }
-  }, [client]);
 
   const onSWUpdate = registration => {
     setShowReload(true);
@@ -111,25 +60,27 @@ function App() {
   }, []);
 
   useEffect(() => {
-    axiosUtil.get(`${config.apiUrl}`);
-  }, []);
-
-  useEffect(() => {
-    async function initClientsUser() {
-      if (!user && app.currentUser) {
-        setUser(app.currentUser);
-      }
-      if (!client && user) setClient(user.mongoClient('mongodb-atlas'));
+    if (user && !user?.pPassword?.length) {
+      history.push('/user-details');
     }
-    initClientsUser();
-  }, [user, client, app]);
+  }, [user, history]);
 
   useEffect(() => {
-    const token = window.localStorage.getItem('token');
+    async function fetchUser() {
+      const response = await axiosUtil.get('userdetails');
+      setUser(response.data);
+    }
+
+    if (authToken) fetchUser();
+    else setUser(null);
+  }, [authToken]);
+
+  useEffect(() => {
+    const token = window.localStorage.getItem('token1');
     if (token) setAuthToken(token);
   }, []);
   window.onstorage = () => {
-    const token = window.localStorage.getItem('token');
+    const token = window.localStorage.getItem('token1');
     setAuthToken(token);
   };
   const themeWithLocale = useMemo(() => createTheme(theme, locales[i18n.language]), [
@@ -144,16 +95,8 @@ function App() {
           setAuthToken,
           statsData,
           setStatsData,
-          app,
-          setApp,
-          client,
-          setClient,
           user,
           setUser,
-          installments,
-          fetchInstallments,
-          allAccounts,
-          fetchAllAccounts,
         }}
       >
         <>
@@ -165,7 +108,7 @@ function App() {
                 online ? (
                   <>
                     <ProtectedRoute exact path="/">
-                      <Home maturityState={maturityState} setMaturityState={setMaturityState} />
+                      <Home />
                     </ProtectedRoute>
                     <Route exact path="/login">
                       {' '}

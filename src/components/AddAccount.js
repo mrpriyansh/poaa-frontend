@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Grid } from '@material-ui/core';
+import { useSWRConfig } from 'swr';
 import { useTranslation } from 'react-i18next';
 
 import { useForm, Form } from '../common/useForm';
@@ -8,8 +9,7 @@ import { triggerAlert } from '../services/getAlert/getAlert';
 import accountTypeList from '../assets/data/accountType';
 import { formatDate } from '../services/utils';
 import { addAccountStyles } from '../styles/components/addAcount';
-import handleError from '../services/handleError';
-import { useAuth } from '../services/Auth';
+import { axiosUtil } from '../services/axiosinstance';
 
 const curDate = new Date();
 const y = curDate.getFullYear();
@@ -27,7 +27,7 @@ const initialValues = {
 function AddAccount({ setOpenPopup, recordForEdit }) {
   const classes = addAccountStyles();
   const { t } = useTranslation();
-  const { user, client, fetchAllAccounts } = useAuth();
+  const { mutate } = useSWRConfig();
   const [loading, setLoading] = useState(false);
   const validate = (fieldValues = values) => {
     const temp = { ...errors };
@@ -62,39 +62,15 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
 
   const handleAddAccount = async event => {
     event.preventDefault();
-    // const endpoint = recordForEdit ? `editaccount` : `addaccount`;
-    // setLoading(true);
-    // axiosUtil[recordForEdit ? 'put' : 'post'](endpoint, values)
-    //   .then(res => {
-    //     triggerAlert({ icon: 'success', title: res.data });
-    //     setOpenPopup(false);
-    //     mutate(`allaccounts`);
-    //   })
-    //   .finally(() => setLoading(false));
-    try {
-      setLoading(true);
-      const collection = await client.db('poaa').collection('accounts');
-      await collection.updateOne(
-        { accountNo: values.accountNo },
-        {
-          $set: {
-            ...values,
-            amount: +values.amount,
-            openingDate: new Date(values.openingDate),
-            maturityDate: new Date(values.maturityDate),
-            agentId: user.id,
-          },
-        },
-        { upsert: true }
-      );
-      triggerAlert({ icon: 'success', title: 'Account Saved!' });
-      setOpenPopup(false);
-      fetchAllAccounts();
-    } catch (error) {
-      handleError(error, triggerAlert);
-    } finally {
-      setLoading(false);
-    }
+    const endpoint = recordForEdit ? `editaccount` : `addaccount`;
+    setLoading(true);
+    axiosUtil[recordForEdit ? 'put' : 'post'](endpoint, values)
+      .then(res => {
+        triggerAlert({ icon: 'success', title: res.data });
+        setOpenPopup(false);
+        mutate('allaccounts');
+      })
+      .finally(() => setLoading(false));
   };
 
   return (

@@ -8,7 +8,8 @@ const createInstance = method => {
     baseURL: `${config.apiUrl}/api`,
   });
 
-  const token = window.localStorage.getItem('token');
+  // TODO : NEED TO change token1
+  const token = window.localStorage.getItem('token1');
   if (token?.length) instance.defaults.headers.Authorization = `Bearer ${token}`;
   instance.interceptors.response.use(
     response => {
@@ -27,5 +28,6 @@ export const axiosUtil = {
   get: (endpoint, options) => createInstance('get')(endpoint, { ...options }),
   post: (endpoint, options) => createInstance('post')(endpoint, { ...options }),
   put: (endpoint, options) => createInstance('put')(endpoint, { ...options }),
+  patch: (endpoint, options) => createInstance('patch')(endpoint, { ...options }),
   delete: (endpoint, options) => createInstance('delete')(endpoint, { ...options }),
 };
