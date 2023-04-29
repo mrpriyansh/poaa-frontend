@@ -2,11 +2,6 @@ export const formatDate = date => {
   return date.split('T')[0];
 };
 
-// TODO: Need to remove this dependency
-export const formatISODate = date => {
-  return date.toISOString().split('T')[0];
-};
-
 export const formatDateTime = date => {
   const d1 = new Date(date);
   return d1.toString().split('GMT')[0];

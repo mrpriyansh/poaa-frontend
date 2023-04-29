@@ -77,11 +77,18 @@ function App() {
   }, [authToken]);
 
   useEffect(() => {
-    const token = window.localStorage.getItem('token1');
+    const removedOldToken = window.localStorage.getItem('removedOldToken');
+    let token = null;
+    if (!removedOldToken) {
+      window.localStorage.clear();
+      window.localStorage.setItem('removedOldToken', true);
+    } else {
+      token = window.localStorage.getItem('token');
+    }
     if (token) setAuthToken(token);
   }, []);
   window.onstorage = () => {
-    const token = window.localStorage.getItem('token1');
+    const token = window.localStorage.getItem('token');
     setAuthToken(token);
   };
   const themeWithLocale = useMemo(() => createTheme(theme, locales[i18n.language]), [

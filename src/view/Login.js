@@ -43,7 +43,7 @@ function Login() {
     axiosUtil
       .post('signin', values)
       .then(res => {
-        window.localStorage.setItem('token1', res.data);
+        window.localStorage.setItem('token', res.data);
         setAuthToken(res.data);
         history.push('/');
       })
