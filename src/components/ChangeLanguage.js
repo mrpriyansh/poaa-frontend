@@ -47,7 +47,7 @@ export default function ChangeLanguage({ handleCloseParent }) {
       >
         {Object.keys(locales).map(lng => {
           return (
-            <MenuItem onClick={handleMenuClick} data-lng-code={lng}>
+            <MenuItem onClick={handleMenuClick} data-lng-code={lng} key={lng}>
               <IconButton> {lngIcon[lng]}</IconButton>
               {locales[lng].nativeName}
             </MenuItem>

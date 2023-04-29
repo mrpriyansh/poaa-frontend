@@ -9,7 +9,7 @@ i18n
   .use(initReactI18next)
   .init({
     lng: localStorage.getItem('i18nextLng') || 'hiIN',
-    debug: true,
+    debug: process.env.NODE_ENV === 'development',
     fallback: 'enUS',
     interpolation: {
       escapeValue: false,

@@ -79,18 +79,21 @@ function Header() {
   const isPortalDetails = user?.pPassword?.length;
   const menuOptions = [
     {
+      id: 'add_installment',
       onClickFunc: handleAddInstallment,
       isDisabled: !isPortalDetails,
       icon: <PostAddIcon />,
       text: t('installment.add'),
     },
     {
+      id: 'create_list',
       onClickFunc: () => redirectsTo('/create-list'),
       isDisabled: !isPortalDetails,
       icon: <SettingsIcon />,
       text: t('list.create'),
     },
     {
+      id: 'previous_lists',
       onClickFunc: () => redirectsTo('/previous-lists'),
       isDisabled: !isPortalDetails,
       icon: <HistoryIcon />,
@@ -98,6 +101,7 @@ function Header() {
     },
 
     {
+      id: 'add_account',
       onClickFunc: handleAddAccount,
       isDisabled: !isPortalDetails,
       icon: <NoteAddIcon />,
@@ -149,13 +153,27 @@ function Header() {
             getContentAnchorEl={null}
           >
             {user ? (
-              <>
-                <MenuItem>
+              [
+                <MenuItem key="saluation">
                   <Typography variant="body1">Hi {user?.name}!</Typography>
-                </MenuItem>
-                {menuOptions.map(optionDetails => {
+                </MenuItem>,
+                menuOptions.map((optionDetails, index) => {
+                  // only to render the logout button at last
+                  if (index === menuOptions.length - 1)
+                    return [
+                      <ChangeLanguage handleCloseParent={handleClose} />,
+                      <MenuItem
+                        key={optionDetails.id}
+                        onClick={optionDetails.onClickFunc}
+                        disabled={optionDetails.isDisabled}
+                      >
+                        <IconButton>{optionDetails.icon}</IconButton>
+                        &nbsp;{optionDetails.text}
+                      </MenuItem>,
+                    ];
                   return (
                     <MenuItem
+                      key={optionDetails.id}
                       onClick={optionDetails.onClickFunc}
                       disabled={optionDetails.isDisabled}
                     >
@@ -163,10 +181,11 @@ function Header() {
                       &nbsp;{optionDetails.text}
                     </MenuItem>
                   );
-                })}
-              </>
-            ) : null}
-            <ChangeLanguage handleCloseParent={handleClose} />
+                }),
+              ]
+            ) : (
+              <ChangeLanguage handleCloseParent={handleClose} />
+            )}
           </Menu>
         </>
       </Toolbar>

@@ -21,7 +21,7 @@ export default function Banner() {
 
   return (
     <Snackbar
-      open={open && response?.data}
+      open={open && Boolean(response?.data)}
       onClick={handleClose}
       action={<Button color="secondary" size="small" onClick={handleClose} text="Close" />}
       classes={{ root: classes.paperRoot }}
