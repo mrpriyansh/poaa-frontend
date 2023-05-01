@@ -51,6 +51,7 @@ function Header() {
     setAnchorEl(null);
   };
   const handleLogout = async () => {
+    localStorage.removeItem('token');
     setAuthToken(null);
     handleClose();
   };

@@ -11,7 +11,6 @@ import { Snackbar, ThemeProvider, createTheme } from '@material-ui/core';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
-import ConfirmUser from './view/ConfirmUser';
 import UserDetailsForm from './view/UserDetailsForm';
 import Button from './common/controls/Button';
 import { axiosUtil } from './services/axiosinstance';
@@ -118,16 +117,12 @@ function App() {
                     <ProtectedRoute exact path="/">
                       <Home />
                     </ProtectedRoute>
-                    <Route exact path="/login">
-                      {' '}
-                      <Login />{' '}
-                    </Route>
+                    <ProtectedRoute exact path="/login">
+                      <Login />
+                    </ProtectedRoute>
                     <ProtectedRoute exact path="/user-details">
                       <UserDetailsForm />
                     </ProtectedRoute>
-                    <Route exact path="/confirm-user">
-                      <ConfirmUser />{' '}
-                    </Route>
                     <ProtectedRoute exact path="/create-list">
                       <GenerateList />
                     </ProtectedRoute>
