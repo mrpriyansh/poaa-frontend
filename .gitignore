@@ -23,5 +23,6 @@ yarn-debug.log*
 yarn-error.log*
 
 .env
+dev-dist
 
 cypress/e2e/examples

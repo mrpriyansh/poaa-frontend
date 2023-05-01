@@ -1,18 +1,16 @@
 import React, { useState, useEffect, lazy, useMemo } from 'react';
 import { Detector } from 'react-detect-offline';
-import { Route, useHistory } from 'react-router-dom';
+import { useHistory } from 'react-router-dom';
 import * as locales from '@material-ui/core/locale';
 import { useTranslation } from 'react-i18next';
 
 import makeStyles from '@material-ui/core/styles/makeStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
-import { Snackbar, ThemeProvider, createTheme } from '@material-ui/core';
+import { ThemeProvider, createTheme } from '@material-ui/core';
 
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 import UserDetailsForm from './view/UserDetailsForm';
-import Button from './common/controls/Button';
 import { axiosUtil } from './services/axiosinstance';
 import './i18n';
 
@@ -40,24 +38,6 @@ function App() {
   const [authToken, setAuthToken] = useState(false);
 
   const [user, setUser] = useState(null);
-
-  const [showReload, setShowReload] = useState(false);
-  const [waitingWorker, setWaitingWorker] = useState(null);
-
-  const onSWUpdate = registration => {
-    setShowReload(true);
-    setWaitingWorker(registration.waiting);
-  };
-
-  const reloadPage = () => {
-    waitingWorker?.postMessage({ type: 'SKIP_WAITING' });
-    setShowReload(false);
-    window.location.reload(true);
-  };
-
-  useEffect(() => {
-    serviceWorkerRegistration.register({ onUpdate: onSWUpdate });
-  }, []);
 
   useEffect(() => {
     if (user && !user?.pPassword?.length) {
@@ -146,12 +126,6 @@ function App() {
         <CssBaseline />
       </AuthContext.Provider>
       <Banner />
-      <Snackbar
-        open={showReload}
-        message="A new version is available!"
-        onClick={reloadPage}
-        action={<Button color="secondary" size="small" onClick={reloadPage} text="Reload" />}
-      />
     </ThemeProvider>
   );
 }
