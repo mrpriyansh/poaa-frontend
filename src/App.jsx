@@ -8,6 +8,7 @@ import makeStyles from '@material-ui/core/styles/makeStyles';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { ThemeProvider, createTheme } from '@material-ui/core';
 
+import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 import UserDetailsForm from './view/UserDetailsForm';
@@ -54,6 +55,14 @@ function App() {
     if (authToken) fetchUser();
     else setUser(null);
   }, [authToken]);
+
+  useEffect(() => {
+    const sw = window.localStorage.getItem('swUnregistered');
+    if (!sw) {
+      serviceWorkerRegistration.unregister();
+      window.localStorage.setItem('swUnregistered', true);
+    }
+  }, []);
 
   useEffect(() => {
     const removedOldToken = window.localStorage.getItem('removedOldToken');
