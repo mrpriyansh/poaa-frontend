@@ -10,7 +10,7 @@ import useSWR from 'swr';
 import Controls from '../common/controls/Controls';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
-import { allAccountStyles } from '../styles/view/home';
+import { allAccountStyles } from '../styles/view/accounts';
 import { formatDateReverse, formatDate } from '../services/utils';
 
 import CustomTable from '../common/Table';

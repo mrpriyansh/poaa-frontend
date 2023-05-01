@@ -26,7 +26,8 @@
     "maturity": "Maturity Date",
     "open": "Opening Date",
     "amount": "Amount",
-    "add": "Add Account"
+    "add": "Add Account",
+    "all": "All Accounts"
   },
   "installment": {
     "add": "Add Installment",
@@ -41,7 +42,8 @@
     "updateDetails": "Update Details",
     "logout": "Logout",
     "save": "Save",
-    "generateRefNo": "Generate Reference No."
+    "generateRefNo": "Generate Reference No.",
+    "clickButtonOnZeroInstallment": "No Insatallments Found! Click Below to Add"
   },
   "list": {
     "all": "All List",

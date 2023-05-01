@@ -18,7 +18,7 @@ import './i18n';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
-const Home = lazy(() => import('./view/Home'));
+const Accounts = lazy(() => import('./view/Accounts'));
 const StatisticList = lazy(() => import('./components/StatisticList'));
 const GenerateList = lazy(() => import('./view/GenerateList'));
 const PreviousList = lazy(() => import('./view/PreviousList'));
@@ -115,7 +115,10 @@ function App() {
                 online ? (
                   <>
                     <ProtectedRoute exact path="/">
-                      <Home />
+                      <GenerateList />
+                    </ProtectedRoute>
+                    <ProtectedRoute exact path="/accounts">
+                      <Accounts />
                     </ProtectedRoute>
                     <ProtectedRoute exact path="/login">
                       <Login />

@@ -105,7 +105,7 @@ export default function GenerateList() {
         rows={rows}
         columns={columns}
         // pagination
-        emptyMessage="No Insatallments Found! Click Below to Add"
+        emptyMessage={t('operation.clickButtonOnZeroInstallment')}
       />
       {rows.length ? (
         <Box mt={2} mb={2}>

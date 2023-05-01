@@ -9,6 +9,7 @@ import PersonOutline from '@material-ui/icons/PersonOutline';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@material-ui/icons/History';
 import { useTranslation } from 'react-i18next';
+import { List } from '@material-ui/icons';
 
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
@@ -99,6 +100,14 @@ function Header() {
       isDisabled: !isPortalDetails,
       icon: <HistoryIcon />,
       text: t('list.previous'),
+    },
+
+    {
+      id: 'accounts',
+      onClickFunc: () => redirectsTo('/accounts'),
+      isDisabled: !isPortalDetails,
+      icon: <List />,
+      text: t('account.all'),
     },
 
     {
