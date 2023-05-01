@@ -6,7 +6,7 @@ import PostAddIcon from '@material-ui/icons/PostAdd';
 import SettingsIcon from '@material-ui/icons/Settings';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import useSWR, { useSWRConfig } from 'swr';
+import useSWR, { useSWRConfig, preload } from 'swr';
 
 import CustomTable from '../common/Table';
 import { formatDateReverse } from '../services/utils';
@@ -15,9 +15,8 @@ import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { axiosUtil } from '../services/axiosinstance';
-
-const Popup = lazy(() => import('../common/Popup'));
-const AddInstallment = lazy(() => import('../components/AddInstallment'));
+import AddInstallment from '../components/AddInstallment';
+import Popup from '../common/Popup';
 
 export default function GenerateList() {
   const classes = generateListStyles();
@@ -26,6 +25,8 @@ export default function GenerateList() {
   const history = useHistory();
   const [openPopupType, setOpenPopupType] = useState('');
   const [currentRecord, setCurrentRecord] = useState({});
+
+  preload('allaccounts', axiosUtil.swr);
   const { data: response } = useSWR('getAllInstallments', axiosUtil.swr);
 
   const EDIT_INSTALLMENT = useMemo(() => t('installment.edit'), [t]);
