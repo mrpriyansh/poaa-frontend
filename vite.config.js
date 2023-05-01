@@ -9,6 +9,14 @@ export default defineConfig(() => {
     build: {
       outDir: 'build',
     },
-    plugins: [react(), svgr(), vitePluginRequire(), VitePWA({ registerType: 'autoUpdate' })],
+    plugins: [
+      react(),
+      svgr(),
+      vitePluginRequire(),
+      VitePWA({
+        registerType: 'autoUpdate',
+        devOptions: { enabled: true },
+      }),
+    ],
   };
 });
