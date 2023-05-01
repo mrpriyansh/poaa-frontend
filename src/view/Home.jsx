@@ -27,7 +27,7 @@ function Home() {
   const classes = allAccountStyles();
   const { t } = useTranslation();
 
-  const { data: response, mutate } = useSWR(`allaccounts`, axiosUtil.get);
+  const { data: response, mutate } = useSWR(`allaccounts`, axiosUtil.swr);
 
   const [searchValue, changeSearchValue] = useState('');
   const [openPopupType, setOpenPopupType] = useState('');
@@ -54,7 +54,7 @@ function Home() {
   };
 
   const filteredAccounts = useMemo(() => {
-    return response?.data?.filter(account => {
+    return response?.filter(account => {
       if (searchType === 'name')
         return account.name.toLowerCase().includes(searchValue.toLowerCase());
       if (searchType === 'accountNumber') return account.accountNo?.includes(searchValue);

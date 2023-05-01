@@ -26,7 +26,7 @@ export default function GenerateList() {
   const history = useHistory();
   const [openPopupType, setOpenPopupType] = useState('');
   const [currentRecord, setCurrentRecord] = useState({});
-  const { data: response } = useSWR('getAllInstallments', axiosUtil.get);
+  const { data: response } = useSWR('getAllInstallments', axiosUtil.swr);
 
   const EDIT_INSTALLMENT = useMemo(() => t('installment.edit'), [t]);
   const ADD_INSTALLMENT = useMemo(() => t('installment.add'), [t]);
@@ -62,7 +62,7 @@ export default function GenerateList() {
       history.push('/previous-lists');
     });
   };
-  const rows = response?.data?.map(inst => {
+  const rows = response?.map(inst => {
     return {
       ...inst,
       createdAt: formatDateReverse(inst.createdAt),
@@ -81,14 +81,14 @@ export default function GenerateList() {
   });
   const totalAmount = () => {
     let sum = 0;
-    response?.data?.forEach(item => {
+    response?.forEach(item => {
       sum += item.amount * item.installments;
     });
     return sum;
   };
 
   // if (error) return <Offline />;
-  if (!response?.data) return <LoaderSVG />;
+  if (!response) return <LoaderSVG />;
   return (
     <Paper className={classes.root}>
       <header className={classes.header}>
@@ -111,7 +111,7 @@ export default function GenerateList() {
         <Box mt={2} mb={2}>
           <div className={classes.row}>
             <b>{t('total.accounts')} : </b>
-            <span> {response?.data?.length} </span>
+            <span> {response?.length} </span>
           </div>
           <div className={classes.row}>
             <b>{t('total.amount')} : </b>

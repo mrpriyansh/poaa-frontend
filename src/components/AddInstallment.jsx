@@ -29,7 +29,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const [errors, setErrors] = React.useState({});
   const [isLoading, setIsLoading] = React.useState(false);
 
-  const { data: response } = useSWR('allaccounts', axiosUtil.get);
+  const { data: response } = useSWR('allaccounts', axiosUtil.swr);
 
   useEffect(() => {
     if (isModifying) setInputValue(record);
@@ -66,7 +66,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
 
   const rdAccounts = useMemo(
     () =>
-      response?.data
+      response
         ?.filter(item => item.accountType === 'RD')
         ?.sort((a, b) => a.name.localeCompare(b.name)),
     [response]

@@ -29,4 +29,6 @@ export const axiosUtil = {
   put: (endpoint, options) => createInstance('put')(endpoint, { ...options }),
   patch: (endpoint, options) => createInstance('patch')(endpoint, { ...options }),
   delete: (endpoint, options) => createInstance('delete')(endpoint, { ...options }),
+  swr: (endpoint, options) =>
+    createInstance('get')(endpoint, { ...options }).then(res => res.data),
 };

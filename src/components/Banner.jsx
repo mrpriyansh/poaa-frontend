@@ -13,7 +13,7 @@ export default function Banner() {
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(true);
 
-  const { data: response } = useSWR('feature-flags', axiosUtil.get);
+  const { data: response } = useSWR('feature-flags', axiosUtil.swr);
 
   const handleClose = () => {
     setOpen(false);
@@ -21,13 +21,13 @@ export default function Banner() {
 
   return (
     <Snackbar
-      open={open && Boolean(response?.data)}
+      open={open && Boolean(response)}
       onClick={handleClose}
       action={<Button color="secondary" size="small" onClick={handleClose} text="Close" />}
       classes={{ root: classes.paperRoot }}
     >
-      <MuiAlert elevation={6} variant="filled" severity={response?.data?.metaInfo?.severity}>
-        {response?.data?.metaInfo?.text[i18n.language] || response?.data?.metaInfo?.text.fallBack}
+      <MuiAlert elevation={6} variant="filled" severity={response?.metaInfo?.severity}>
+        {response?.metaInfo?.text[i18n.language] || response?.metaInfo?.text.fallBack}
       </MuiAlert>
     </Snackbar>
   );
