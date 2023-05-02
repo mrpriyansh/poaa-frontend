@@ -1,3 +1,6 @@
+import CryptoJS from 'crypto-js';
+import config from './config';
+
 export const formatDate = date => {
   return date.split('T')[0];
 };
@@ -21,3 +24,6 @@ export const isNull = (obj, fields) => {
   });
   return empty;
 };
+
+export const encryptString = string =>
+  CryptoJS.AES.encrypt(string, config.env.ENCRYPT_KEY).toString();

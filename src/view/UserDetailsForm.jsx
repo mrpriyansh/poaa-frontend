@@ -10,9 +10,7 @@ import { loginStyles } from '../styles/view/login';
 import { useAuth } from '../services/Auth';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
-import { isNull } from '../services/utils';
-
-const crypto = require('crypto');
+import { encryptString, isNull } from '../services/utils';
 
 const initialValues = {
   name: '',
@@ -57,23 +55,13 @@ export default function UserDetailsForm() {
       .patch('update-user-details', {
         name: values.name,
         pAccountNo: values.pAccountNo,
-        pPassword: encrypt(values.pPassword),
+        pPassword: encryptString(values.pPassword),
       })
       .then(res => {
         setUser(res.data);
         history.push('/');
       })
       .finally(() => setLoading(false));
-  };
-
-  const encrypt = data => {
-    const mykey = crypto.createCipher(
-      process.env.REACT_APP_ENCRYPT_ALGO,
-      process.env.REACT_APP_ENCRYPT_SALT
-    );
-    let mystr = mykey.update(data, 'utf-8', 'hex');
-    mystr += mykey.final('hex');
-    return mystr;
   };
 
   const needToChange = () => {

@@ -1,5 +1,5 @@
 import { Paper, IconButton, Typography, Box } from '@material-ui/core';
-import React, { useState, lazy, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
 import PostAddIcon from '@material-ui/icons/PostAdd';
