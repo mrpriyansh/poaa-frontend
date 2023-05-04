@@ -8,8 +8,9 @@ import {
   TableHead,
   TablePagination,
   TableRow,
-} from '@material-ui/core';
-import { withStyles, makeStyles } from '@material-ui/core/styles';
+} from '@mui/material';
+import withStyles from '@mui/styles/withStyles';
+import makeStyles from '@mui/styles/makeStyles';
 
 const StyledTableCell = withStyles(theme => ({
   head: {

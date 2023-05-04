@@ -1,7 +1,7 @@
 /*eslint-disable*/
-import { Grid, Typography } from '@material-ui/core';
+import { Grid, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import InfoIcon from '@material-ui/icons/Info';
+import InfoIcon from '@mui/icons-material/Info';
 
 import NewWindow from 'react-new-window';
 import XLSX from 'xlsx';

@@ -1,13 +1,7 @@
 import React from 'react';
-import {
-  Dialog,
-  IconButton,
-  DialogContent,
-  DialogTitle,
-  Typography,
-  makeStyles,
-} from '@material-ui/core';
-import CloseIcon from '@material-ui/icons/Close';
+import { Dialog, IconButton, DialogContent, DialogTitle, Typography } from '@mui/material';
+import makeStyles from '@mui/styles/makeStyles';
+import CloseIcon from '@mui/icons-material/Close';
 
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
@@ -28,7 +22,7 @@ export default function Popup({ title, children, openPopup, setOpenPopup }) {
   const styles = useStyles();
   return (
     <Dialog open={openPopup}>
-      <DialogTitle className={styles.dialogTitle} disableTypography>
+      <DialogTitle className={styles.dialogTitle}>
         <Typography
           variant="h6"
           component="div"

@@ -1,9 +1,9 @@
-import { Paper, IconButton, Typography, Box } from '@material-ui/core';
+import { Paper, IconButton, Typography, Box } from '@mui/material';
 import React, { useState, useMemo } from 'react';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import PostAddIcon from '@material-ui/icons/PostAdd';
-import SettingsIcon from '@material-ui/icons/Settings';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import SettingsIcon from '@mui/icons-material/Settings';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useSWR, { useSWRConfig, preload } from 'swr';

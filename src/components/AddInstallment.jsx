@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react';
-import { Grid, TextField } from '@material-ui/core';
-import Autocomplete from '@material-ui/lab/Autocomplete';
+import { Grid, TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useSWR, { useSWRConfig } from 'swr';
@@ -77,35 +77,14 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
     <Form onSubmit={handleAddInstallment} className={classes.root}>
       <Grid container justifyContent="center">
         <Autocomplete
-          value={inputValue}
           className={classes.autoCompleteRoot}
+          options={rdAccounts.map(option => ({
+            name: option.name,
+            installments: 1,
+            amount: option.amount,
+            accountNo: option.accountNo,
+          }))}
           fullWidth
-          disabled={isModifying || isLoading}
-          onChange={(_, newValue) => {
-            if (newValue) setInputValue(newValue);
-            else setInputValue({ ...initialValues });
-          }}
-          inputValue={inputText}
-          onInputChange={(_, newInputValue) => {
-            handleChangeInputText(newInputValue);
-          }}
-          options={rdAccounts
-            // .filter(item => item.accountType === 'RD')
-            .map(option => ({
-              name: option.name,
-              installments: 1,
-              amount: option.amount,
-              accountNo: option.accountNo,
-            }))}
-          getOptionLabel={option => option.name}
-          filterOptions={options => {
-            return options.filter(option => {
-              return (
-                option.name.toLowerCase().includes(inputText.toLowerCase()) ||
-                option.accountNo.includes(inputText)
-              );
-            });
-          }}
           renderInput={params => (
             <TextField
               name="name"
@@ -116,14 +95,34 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
               {...(errors.name && { error: true, helperText: errors.name })}
             />
           )}
-          renderOption={option => {
+          filterOptions={options => {
+            return options.filter(option => {
+              return (
+                option.name.toLowerCase().includes(inputText.toLowerCase()) ||
+                option.accountNo.includes(inputText)
+              );
+            });
+          }}
+          // value={inputValue}
+          disabled={isModifying || isLoading}
+          onChange={(_, newValue) => {
+            console.log('dsfad', newValue);
+            if (newValue) setInputValue(newValue);
+            else setInputValue({ ...initialValues });
+          }}
+          inputValue={inputText}
+          onInputChange={(_, newInputValue) => {
+            console.log('f');
+            handleChangeInputText(newInputValue);
+          }}
+          getOptionLabel={option => option.name}
+          renderOption={(props, option, a) => {
+            console.log(props, a, option);
             return (
-              <div>
-                <span style={{ fontSize: '0.85em', fontWeight: '700' }}>
-                  {option.name} {'  '}
-                </span>
-                <span style={{ fontSize: '0.85em', color: 'green' }}>{option.amount}</span>
-              </div>
+              <li {...props} key={option.accountNo}>
+                <span style={{ fontSize: '0.85em', fontWeight: '700' }}>{option.name} &nbsp;</span>
+                <span style={{ fontSize: '0.85em', color: 'green' }}>{option.amount}</span> &nbsp;
+              </li>
             );
           }}
         />

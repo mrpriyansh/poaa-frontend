@@ -6,8 +6,8 @@ import {
   TableCell,
   TableRow,
   Toolbar,
-} from '@material-ui/core';
-import Search from '@material-ui/icons/Search';
+} from '@mui/material';
+import Search from '@mui/icons-material/Search';
 import React, { useEffect, useState } from 'react';
 
 import AddAccount from './AddAccount';

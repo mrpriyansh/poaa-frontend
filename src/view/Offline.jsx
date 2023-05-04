@@ -1,4 +1,4 @@
-import { Paper, Typography } from '@material-ui/core';
+import { Paper, Typography } from '@mui/material';
 import React from 'react';
 import { ReactComponent as OfflineSVG } from '../assets/icons/offline.svg';
 import { offlineStyles } from '../styles/view/offline';

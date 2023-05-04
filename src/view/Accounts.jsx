@@ -1,9 +1,9 @@
 import React, { useState, lazy, Suspense, useMemo } from 'react';
-import { Paper, Toolbar, InputAdornment, IconButton } from '@material-ui/core';
-import Search from '@material-ui/icons/Search';
-import EditOutlinedIcon from '@material-ui/icons/EditOutlined';
-import DeleteForeverIcon from '@material-ui/icons/DeleteForever';
-import PostAddIcon from '@material-ui/icons/PostAdd';
+import { Paper, Toolbar, InputAdornment, IconButton } from '@mui/material';
+import Search from '@mui/icons-material/Search';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import PostAddIcon from '@mui/icons-material/PostAdd';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 

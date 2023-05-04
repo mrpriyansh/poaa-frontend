@@ -1,12 +1,12 @@
 import React, { useState, useEffect, lazy, useMemo } from 'react';
 import { Detector } from 'react-detect-offline';
 import { useHistory } from 'react-router-dom';
-import * as locales from '@material-ui/core/locale';
+import * as locales from '@mui/material/locale';
 import { useTranslation } from 'react-i18next';
 
-import makeStyles from '@material-ui/core/styles/makeStyles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import { ThemeProvider, createTheme } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material';
 
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { AuthContext } from './services/Auth';
@@ -84,58 +84,60 @@ function App() {
   ]);
 
   return (
-    <ThemeProvider theme={themeWithLocale}>
-      <AuthContext.Provider
-        value={{
-          authToken,
-          setAuthToken,
-          statsData,
-          setStatsData,
-          user,
-          setUser,
-        }}
-      >
-        <>
-          <Header />
-          <div className={classes.container}>
-            <Detector
-              polling={{ url: 'https://ipv4.icanhazip.com/' }}
-              render={({ online }) =>
-                online ? (
-                  <>
-                    <ProtectedRoute exact path="/">
-                      <GenerateList />
-                    </ProtectedRoute>
-                    <ProtectedRoute exact path="/accounts">
-                      <Accounts />
-                    </ProtectedRoute>
-                    <ProtectedRoute exact path="/login">
-                      <Login />
-                    </ProtectedRoute>
-                    <ProtectedRoute exact path="/user-details">
-                      <UserDetailsForm />
-                    </ProtectedRoute>
-                    <ProtectedRoute exact path="/create-list">
-                      <GenerateList />
-                    </ProtectedRoute>
-                    <ProtectedRoute exact path="/previous-lists">
-                      <PreviousList />
-                    </ProtectedRoute>
-                    <ProtectedRoute exact path="/stats">
-                      <StatisticList />
-                    </ProtectedRoute>{' '}
-                  </>
-                ) : (
-                  <OfflineView />
-                )
-              }
-            />
-          </div>
-        </>
-        <CssBaseline />
-      </AuthContext.Provider>
-      <Banner />
-    </ThemeProvider>
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={themeWithLocale}>
+        <AuthContext.Provider
+          value={{
+            authToken,
+            setAuthToken,
+            statsData,
+            setStatsData,
+            user,
+            setUser,
+          }}
+        >
+          <>
+            <Header />
+            <div className={classes.container}>
+              <Detector
+                polling={{ url: 'https://ipv4.icanhazip.com/' }}
+                render={({ online }) =>
+                  online ? (
+                    <>
+                      <ProtectedRoute exact path="/">
+                        <GenerateList />
+                      </ProtectedRoute>
+                      <ProtectedRoute exact path="/accounts">
+                        <Accounts />
+                      </ProtectedRoute>
+                      <ProtectedRoute exact path="/login">
+                        <Login />
+                      </ProtectedRoute>
+                      <ProtectedRoute exact path="/user-details">
+                        <UserDetailsForm />
+                      </ProtectedRoute>
+                      <ProtectedRoute exact path="/create-list">
+                        <GenerateList />
+                      </ProtectedRoute>
+                      <ProtectedRoute exact path="/previous-lists">
+                        <PreviousList />
+                      </ProtectedRoute>
+                      <ProtectedRoute exact path="/stats">
+                        <StatisticList />
+                      </ProtectedRoute>{' '}
+                    </>
+                  ) : (
+                    <OfflineView />
+                  )
+                }
+              />
+            </div>
+          </>
+          <CssBaseline />
+        </AuthContext.Provider>
+        <Banner />
+      </ThemeProvider>
+    </StyledEngineProvider>
   );
 }
 

@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
-import {
-  Table,
-  TableRow,
-  TableCell,
-  TableHead,
-  makeStyles,
-  TablePagination,
-} from '@material-ui/core';
+import { Table, TableRow, TableCell, TableHead, TablePagination } from '@mui/material';
+
+import makeStyles from '@mui/styles/makeStyles';
 
 const useStyles = makeStyles(theme => ({
   table: {

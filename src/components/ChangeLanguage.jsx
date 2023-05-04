@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconButton, Menu, MenuItem } from '@material-ui/core';
+import { IconButton, Menu, MenuItem } from '@mui/material';
 import { useTranslation } from 'react-i18next';
 
 import { ReactComponent as ChangeLngSVG } from '../assets/icons/changeLanguage.svg';
@@ -43,7 +43,6 @@ export default function ChangeLanguage({ handleCloseParent }) {
           vertical: 'top',
           horizontal: 'right',
         }}
-        getContentAnchorEl={null}
       >
         {Object.keys(locales).map(lng => {
           return (

@@ -1,15 +1,15 @@
 import React, { useState, lazy, useMemo } from 'react';
-import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton } from '@material-ui/core';
-import MenuIcon from '@material-ui/icons/Menu';
-import NoteAddIcon from '@material-ui/icons/NoteAdd';
-import PowerSettingsNewIcon from '@material-ui/icons/PowerSettingsNew';
-import PostAddIcon from '@material-ui/icons/PostAdd';
-import SettingsIcon from '@material-ui/icons/Settings';
-import PersonOutline from '@material-ui/icons/PersonOutline';
+import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton } from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
+import NoteAddIcon from '@mui/icons-material/NoteAdd';
+import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
+import PostAddIcon from '@mui/icons-material/PostAdd';
+import SettingsIcon from '@mui/icons-material/Settings';
+import PersonOutline from '@mui/icons-material/PersonOutline';
 import { useHistory } from 'react-router-dom';
-import HistoryIcon from '@material-ui/icons/History';
+import HistoryIcon from '@mui/icons-material/History';
 import { useTranslation } from 'react-i18next';
-import { List } from '@material-ui/icons';
+import { List } from '@mui/icons-material';
 
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
@@ -160,7 +160,6 @@ function Header() {
               vertical: 'bottom',
               horizontal: 'left',
             }}
-            getContentAnchorEl={null}
           >
             {user ? (
               [

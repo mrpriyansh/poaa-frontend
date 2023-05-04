@@ -1,4 +1,4 @@
-import { createTheme } from '@material-ui/core/styles';
+import { createTheme } from '@mui/material/styles';
 
 export const theme = createTheme({
   palette: {
@@ -14,39 +14,43 @@ export const theme = createTheme({
       light: '#81c784',
     },
   },
-  typography: {
-    fontFamily: ['Noto Serif', 'serif'],
-  },
-  props: {
+  components: {
     MuiTextField: {
-      size: 'small',
-      fullWidth: true,
+      defaultProps: {
+        size: 'small',
+        fullWidth: true,
+      },
+      styleOverrides: {
+        root: {
+          margin: '0.5em',
+        },
+      },
     },
     MuiMenuItem: {
-      dense: true,
+      defaultProps: {
+        dense: true,
+      },
     },
     MuiIconButton: {
-      size: 'small',
-    },
-    MuiButton: {
-      size: 'small',
-    },
-  },
-
-  overrides: {
-    MuiTextField: {
-      root: {
-        margin: '0.5em',
+      defaultProps: {
+        size: 'small',
       },
     },
     MuiButton: {
-      root: {
-        margin: '0.5em',
+      defaultProps: {
+        size: 'small',
+      },
+      styleOverrides: {
+        root: {
+          margin: '0.5em',
+        },
       },
     },
-    Autocomplete: {
-      root: {
-        margin: '0.5em',
+    MuiAutocomplete: {
+      styleOverrides: {
+        root: {
+          margin: '0.5em',
+        },
       },
     },
   },

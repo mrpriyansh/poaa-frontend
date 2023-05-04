@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 
 export const previousListsStyles = makeStyles(theme => ({
   root: {
@@ -29,7 +29,7 @@ export const previousListsStyles = makeStyles(theme => ({
   },
 
   gridItem: {},
-  [theme.breakpoints.down('xs')]: {
+  [theme.breakpoints.down('sm')]: {
     gridItem: {
       alignItems: 'flex-start',
       borderTop: '0.75px solid #888',

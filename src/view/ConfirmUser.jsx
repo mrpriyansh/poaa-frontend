@@ -1,5 +1,5 @@
 import React from 'react';
-// import { Typography } from '@material-ui/core';
+// import { Typography } from '@mui/material';
 // import { useHistory, useLocation } from 'react-router-dom';
 // import { triggerAlert } from '../services/getAlert/getAlert';
 // import handleError from '../services/handleError';

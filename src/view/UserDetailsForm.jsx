@@ -1,8 +1,8 @@
-import { Grid, Paper, Typography } from '@material-ui/core';
+import { Grid, Paper, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
-import KeyboardArrowRightRoundedIcon from '@material-ui/icons/KeyboardArrowRightRounded';
+import KeyboardArrowRightRoundedIcon from '@mui/icons-material/KeyboardArrowRightRounded';
 import { useHistory } from 'react-router-dom';
-import { Warning } from '@material-ui/icons';
+import { Warning } from '@mui/icons-material';
 
 import Controls from '../common/controls/Controls';
 import { Form, useForm } from '../common/useForm';

@@ -1,4 +1,4 @@
-import { makeStyles } from '@material-ui/core';
+import makeStyles from '@mui/styles/makeStyles';
 
 export const generateListStyles = makeStyles(theme => ({
   root: {
@@ -15,7 +15,7 @@ export const generateListStyles = makeStyles(theme => ({
     justifyContent: 'center',
   },
 
-  [theme.breakpoints.down('xs')]: {
+  [theme.breakpoints.down('sm')]: {
     header: {
       flexDirection: 'column',
     },
