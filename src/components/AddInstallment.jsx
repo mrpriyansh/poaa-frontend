@@ -106,18 +106,15 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           // value={inputValue}
           disabled={isModifying || isLoading}
           onChange={(_, newValue) => {
-            console.log('dsfad', newValue);
             if (newValue) setInputValue(newValue);
             else setInputValue({ ...initialValues });
           }}
           inputValue={inputText}
           onInputChange={(_, newInputValue) => {
-            console.log('f');
             handleChangeInputText(newInputValue);
           }}
           getOptionLabel={option => option.name}
           renderOption={(props, option, a) => {
-            console.log(props, a, option);
             return (
               <li {...props} key={option.accountNo}>
                 <span style={{ fontSize: '0.85em', fontWeight: '700' }}>{option.name} &nbsp;</span>

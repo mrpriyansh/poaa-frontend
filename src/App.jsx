@@ -14,6 +14,8 @@ import { theme } from './styles/customTheme';
 import UserDetailsForm from './view/UserDetailsForm';
 import { axiosUtil } from './services/axiosinstance';
 import './i18n';
+import Banner from './featureFlags/Banner';
+import ForceLogout from './featureFlags/ForceLogout';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -23,7 +25,7 @@ const GenerateList = lazy(() => import('./view/GenerateList'));
 const PreviousList = lazy(() => import('./view/PreviousList'));
 const OfflineView = lazy(() => import('./view/Offline'));
 const ProtectedRoute = lazy(() => import('./common/ProtectedRoute'));
-const Banner = lazy(() => import('./components/Banner'));
+const FeatureFlag = lazy(() => import('./featureFlags/FeatureFlag'));
 
 const useStyles = makeStyles({
   container: {
@@ -134,8 +136,13 @@ function App() {
             </div>
           </>
           <CssBaseline />
+          <FeatureFlag name="forceLogout">
+            <ForceLogout />
+          </FeatureFlag>
+          <FeatureFlag name="banner">
+            <Banner />
+          </FeatureFlag>
         </AuthContext.Provider>
-        <Banner />
       </ThemeProvider>
     </StyledEngineProvider>
   );

@@ -8,12 +8,10 @@ import { bannerStyles } from '../styles/components/banner';
 import Button from '../common/controls/Button';
 import { axiosUtil } from '../services/axiosinstance';
 
-export default function Banner() {
+export default function Banner({ data }) {
   const classes = bannerStyles();
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(true);
-
-  const { data: response } = useSWR('feature-flags', axiosUtil.swr);
 
   const handleClose = () => {
     setOpen(false);
@@ -21,13 +19,13 @@ export default function Banner() {
 
   return (
     <Snackbar
-      open={open && Boolean(response)}
+      open={open && Boolean(data)}
       onClick={handleClose}
       action={<Button color="secondary" size="small" onClick={handleClose} text="Close" />}
       classes={{ root: classes.paperRoot }}
     >
-      <MuiAlert elevation={6} variant="filled" severity={response?.metaInfo?.severity}>
-        {response?.metaInfo?.text[i18n.language] || response?.metaInfo?.text.fallBack}
+      <MuiAlert elevation={6} variant="filled" severity={data?.metaInfo?.severity}>
+        {data?.metaInfo?.text[i18n.language] || data?.metaInfo?.text.fallBack}
       </MuiAlert>
     </Snackbar>
   );
