@@ -4,11 +4,11 @@ import { Grid, InputAdornment, Paper, Typography } from '@mui/material';
 import { t } from 'i18next';
 import { useDeferredValue, useMemo, useState } from 'react';
 import CustomTable from '../common/Table';
-import { formatDateReverse } from '../services/utils';
 import { unpaidInstallmentsStyles } from '../styles/view/unpaidInstallments';
 import AddIcon from '@mui/icons-material/Add';
 import Controls from '../common/controls/Controls';
 import { Search } from '@mui/icons-material';
+import { triggerAlert } from '../services/getAlert/getAlert';
 
 export default function() {
   const classes = unpaidInstallmentsStyles();
@@ -45,6 +45,7 @@ export default function() {
               text={t('installment.add')}
               variant="outlined"
               startIcon={<AddIcon />}
+              onClick={() => triggerAlert({ icon: 'info', title: 'Work in progress!' })}
             />
           ),
         };
