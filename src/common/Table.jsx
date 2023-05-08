@@ -37,6 +37,7 @@ const customTableStyles = makeStyles(theme => ({
   },
   paginationRoot: {
     marginLeft: 'auto',
+    minWidth: '16em',
   },
   emptyBlock: {
     width: '100%',
@@ -52,13 +53,14 @@ export default function CustomTable({
   paginationStartElement,
   data,
   emptyMessage,
+  defaultPageSize,
 }) {
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [rowsPerPage, setRowsPerPage] = React.useState(defaultPageSize || 10);
   const [page, setPage] = React.useState(0);
   const classes = customTableStyles();
 
   useEffect(() => {
-    if (!pagination) setRowsPerPage(rows.length);
+    if (!pagination) setRowsPerPage(rows?.length);
     if (!data) setPage(0);
   }, [rows, data, pagination]);
 
@@ -70,19 +72,17 @@ export default function CustomTable({
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  if (!rows?.length) {
-    return <div className={classes.emptyBlock}> {emptyMessage}</div>;
-  }
 
   return (
     <div className={classes.root}>
       {pagination && (
         <div className={classes.paginationWrapper}>
+          <div className={classes.flexGrow} />
           {paginationStartElement ? paginationStartElement : null}
           <TablePagination
             rowsPerPageOptions={[rowsPerPage]}
             component="div"
-            count={rows.length}
+            count={rows?.length ?? 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
@@ -92,53 +92,62 @@ export default function CustomTable({
           />
         </div>
       )}
-      <TableContainer
-        style={{
-          marginTop: '5px',
-          height: 'calc(100% - 4em)',
-        }}
-      >
-        <Table size="small">
-          <TableHead>
-            <TableRow style={{ height: 40 }}>
-              {columns.map(column => (
-                <StyledTableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{
-                    minWidth: column.minWidth,
-                    width: column.width,
-                  }}
-                >
-                  {column.label}
-                </StyledTableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row, index) => {
-              return (
-                <TableRow key={'key_' + index} style={{ height: 40 }}>
-                  {columns.map(column => {
-                    const value = row[column.id];
-                    return (
-                      <StyledTableCell
-                        key={column.id}
-                        align={column.align}
-                        style={{
-                          height: '20px',
-                        }}
-                      >
-                        {column.format && typeof value === 'number' ? column.format(value) : value}
-                      </StyledTableCell>
-                    );
-                  })}
-                </TableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+
+      {!rows?.length ? (
+        <div className={classes.emptyBlock}> {emptyMessage}</div>
+      ) : (
+        <TableContainer
+          style={{
+            marginTop: '5px',
+            height: 'calc(100% - 4em)',
+          }}
+        >
+          <Table size="small">
+            <TableHead>
+              <TableRow style={{ height: 40 }}>
+                {columns.map(column => (
+                  <StyledTableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{
+                      minWidth: column.minWidth,
+                      width: column.width,
+                    }}
+                  >
+                    {column.label}
+                  </StyledTableCell>
+                ))}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {rows
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  return (
+                    <TableRow key={'key_' + index} style={{ height: 40 }}>
+                      {columns.map(column => {
+                        const value = row[column.id];
+                        return (
+                          <StyledTableCell
+                            key={column.id}
+                            align={column.align}
+                            style={{
+                              height: '20px',
+                            }}
+                          >
+                            {column.format && typeof value === 'number'
+                              ? column.format(value)
+                              : value}
+                          </StyledTableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
     </div>
   );
 }

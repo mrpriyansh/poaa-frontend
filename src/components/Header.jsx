@@ -6,6 +6,7 @@ import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonOutline from '@mui/icons-material/PersonOutline';
+import MoneyOffCsredIcon from '@mui/icons-material/MoneyOffCsred';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@mui/icons-material/History';
 import { useTranslation } from 'react-i18next';
@@ -100,6 +101,13 @@ function Header() {
       isDisabled: !isPortalDetails,
       icon: <HistoryIcon />,
       text: t('list.previous'),
+    },
+    {
+      id: 'unpaidInstallments',
+      onClickFunc: () => redirectsTo('/unpaid-installments'),
+      isDisabled: !isPortalDetails,
+      icon: <MoneyOffCsredIcon />,
+      text: t('account.unpaid'),
     },
 
     {

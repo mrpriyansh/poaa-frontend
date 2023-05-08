@@ -26,6 +26,7 @@ const PreviousList = lazy(() => import('./view/PreviousList'));
 const OfflineView = lazy(() => import('./view/Offline'));
 const ProtectedRoute = lazy(() => import('./common/ProtectedRoute'));
 const FeatureFlag = lazy(() => import('./featureFlags/FeatureFlag'));
+const UnpaidInstallments = lazy(() => import('./view/UnpaidInstallments'));
 
 const useStyles = makeStyles({
   container: {
@@ -127,6 +128,9 @@ function App() {
                       <ProtectedRoute exact path="/stats">
                         <StatisticList />
                       </ProtectedRoute>{' '}
+                      <ProtectedRoute exact path="/unpaid-installments">
+                        <UnpaidInstallments />
+                      </ProtectedRoute>
                     </>
                   ) : (
                     <OfflineView />

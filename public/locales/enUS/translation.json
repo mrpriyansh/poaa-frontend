@@ -20,6 +20,9 @@
     "amount": "Incorrect Amount",
     "mobile": "Incorrect Mobile Number"
   },
+  "prompt": {
+    "allPaid": "All your accounts are paid for this month!"
+  },
   "account": {
     "type": "Account Type",
     "number": "Account Number",
@@ -27,7 +30,8 @@
     "open": "Opening Date",
     "amount": "Amount",
     "add": "Add Account",
-    "all": "All Accounts"
+    "all": "All Accounts",
+    "unpaid": "Unpaid Accounts"
   },
   "installment": {
     "add": "Add Installment",
