@@ -32,8 +32,8 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const { data: response } = useSWR('allaccounts', axiosUtil.swr);
 
   useEffect(() => {
-    if (isModifying) setInputValue(record);
-  }, [isModifying, record]);
+    if (record) setInputValue(record);
+  }, [record]);
 
   const handleChangeInstallments = e => {
     const { value } = e.target;
@@ -103,7 +103,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
               );
             });
           }}
-          // value={inputValue}
+          value={inputValue}
           disabled={isModifying || isLoading}
           onChange={(_, newValue) => {
             if (newValue) setInputValue(newValue);
