@@ -15,37 +15,23 @@ import { List } from '@mui/icons-material';
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
 import ChangeLanguage from './ChangeLanguage';
+import { useDispatch } from 'react-redux';
+import { setPopup } from '../redux/popup';
+import { ADD_ACCOUNT, ADD_INSTALLMENT } from '../services/constants';
 
-const UsingExcel = lazy(() => import('./UsingExcel'));
-const Popup = lazy(() => import('../common/Popup'));
-const AddAccount = lazy(() => import('./AddAccount'));
-const AddInstallment = lazy(() => import('./AddInstallment'));
-
-const ADD_BATCH = 'Add Using Excel';
+// const ADD_BATCH = 'Add Using Excel';
 
 function Header() {
   const classes = headerStyles();
+  const dispatch = useDispatch();
   const { t } = useTranslation();
   const { user, setAuthToken } = useAuth();
   const [anchorEl, setAnchorEl] = useState(null);
-  const [popupType, setPopupType] = useState('');
   const history = useHistory();
 
-  const ADD_ACCOUNT = useMemo(() => t('account.add'), [t]);
-  const ADD_INSTALLMENT = useMemo(() => t('installment.add'), [t]);
+  // const ADD_ACCOUNT = useMemo(() => t('account.add'), [t]);
+  // const ADD_INSTALLMENT = useMemo(() => t('installment.add'), [t]);
 
-  const popupComponent = () => {
-    switch (popupType) {
-      case ADD_ACCOUNT:
-        return <AddAccount setOpenPopup={setPopupType} />;
-      case ADD_BATCH:
-        return <UsingExcel />;
-      case ADD_INSTALLMENT:
-        return <AddInstallment setOpenPopup={setPopupType} />;
-      default:
-        <> </>;
-    }
-  };
   const handleOpenMenu = e => {
     setAnchorEl(e.currentTarget);
   };
@@ -59,18 +45,18 @@ function Header() {
   };
 
   const handleAddAccount = () => {
-    setPopupType(ADD_ACCOUNT);
+    dispatch(setPopup({ type: ADD_ACCOUNT, title: t(ADD_ACCOUNT) }));
     handleClose();
   };
 
   // eslint-disable-next-line
-  const handleAddBatchAccounts = () => {
-    setPopupType(ADD_BATCH);
-    handleClose();
-  };
+  // const handleAddBatchAccounts = () => {
+  //   setPopupType(ADD_BATCH);
+  //   handleClose();
+  // };
 
   const handleAddInstallment = () => {
-    setPopupType(ADD_INSTALLMENT);
+    dispatch(setPopup({ type: ADD_INSTALLMENT, title: t(ADD_INSTALLMENT) }));
     handleClose();
   };
 
@@ -206,9 +192,6 @@ function Header() {
           </Menu>
         </>
       </Toolbar>
-      <Popup openPopup={Boolean(popupType?.length)} setOpenPopup={setPopupType} title={popupType}>
-        {popupComponent()}
-      </Popup>
     </AppBar>
   );
 }

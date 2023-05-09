@@ -2,15 +2,26 @@ import React, { Suspense } from 'react';
 import ReactDOM from 'react-dom';
 import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
+import { Provider } from 'react-redux';
+import { configureStore } from '@reduxjs/toolkit';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ReactComponent as LoaderSVG } from './assets/icons/spinner.svg';
+import popupReducer from './redux/popup';
+
+const store = configureStore({
+  reducer: {
+    popup: popupReducer,
+  },
+});
 
 ReactDOM.render(
   <Suspense fallback={<LoaderSVG />}>
-    <Router>
-      <App />
-    </Router>
+    <Provider store={store}>
+      <Router>
+        <App />
+      </Router>
+    </Provider>
   </Suspense>,
   document.getElementById('root')
 );

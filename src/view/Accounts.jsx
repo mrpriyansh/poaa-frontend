@@ -1,4 +1,4 @@
-import React, { useState, lazy, Suspense, useMemo } from 'react';
+import React, { useState, Suspense, useMemo } from 'react';
 import { Paper, Toolbar, InputAdornment, IconButton } from '@mui/material';
 import Search from '@mui/icons-material/Search';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -15,24 +15,19 @@ import { formatDateReverse, formatDate } from '../services/utils';
 
 import CustomTable from '../common/Table';
 import { axiosUtil } from '../services/axiosinstance';
-
-const AddInstallment = lazy(() => import('../components/AddInstallment'));
-const AddAccount = lazy(() => import('../components/AddAccount'));
-const Popup = lazy(() => import('../common/Popup'));
-
-const EDIT_ACCOUNT = 'Edit Account';
-const ADD_INSTALLMENT = 'Add Installment';
+import { useDispatch } from 'react-redux';
+import { ADD_INSTALLMENT, EDIT_ACCOUNT } from '../services/constants';
+import { setPopup } from '../redux/popup';
 
 function Home() {
   const classes = allAccountStyles();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const { data: response, mutate } = useSWR(`allaccounts`, axiosUtil.swr);
 
   const [searchValue, changeSearchValue] = useState('');
-  const [openPopupType, setOpenPopupType] = useState('');
   const [searchType, changeSearchType] = useState('name');
-  const [recordForEdit, setRecordForEdit] = useState();
 
   const searchTypeList = useMemo(
     () => [
@@ -45,12 +40,13 @@ function Home() {
   );
 
   const handleEdit = item => {
-    setRecordForEdit(item);
-    setOpenPopupType(EDIT_ACCOUNT);
+    dispatch(
+      setPopup({ type: EDIT_ACCOUNT, title: t(EDIT_ACCOUNT), props: { recordForEdit: item } })
+    );
   };
 
   const handleAddInstallment = () => {
-    setOpenPopupType(ADD_INSTALLMENT);
+    dispatch(setPopup({ type: ADD_INSTALLMENT, title: t(ADD_INSTALLMENT) }));
   };
 
   const filteredAccounts = useMemo(() => {
@@ -145,17 +141,6 @@ function Home() {
           </Toolbar>
           <CustomTable rows={rows} columns={columns} pagination emptyMessage="No Account Found!" />
         </Paper>
-        <Popup
-          openPopup={Boolean(openPopupType?.length)}
-          setOpenPopup={setOpenPopupType}
-          title={openPopupType}
-        >
-          {openPopupType === EDIT_ACCOUNT ? (
-            <AddAccount setOpenPopup={setOpenPopupType} recordForEdit={recordForEdit} />
-          ) : (
-            <AddInstallment setOpenPopup={setOpenPopupType} />
-          )}
-        </Popup>
       </Suspense>
     </>
   );

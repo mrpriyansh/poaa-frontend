@@ -15,22 +15,20 @@ import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { axiosUtil } from '../services/axiosinstance';
-import AddInstallment from '../components/AddInstallment';
-import Popup from '../common/Popup';
+import { useDispatch } from 'react-redux';
+import { setPopup } from '../redux/popup';
+import { ADD_INSTALLMENT, EDIT_INSTALLMENT } from '../services/constants';
 
 export default function GenerateList() {
   const classes = generateListStyles();
   const { t } = useTranslation();
   const { mutate } = useSWRConfig();
+  const dispatch = useDispatch();
   const history = useHistory();
-  const [openPopupType, setOpenPopupType] = useState('');
-  const [currentRecord, setCurrentRecord] = useState({});
 
   preload('allaccounts', axiosUtil.swr);
   const { data: response } = useSWR('getAllInstallments', axiosUtil.swr);
 
-  const EDIT_INSTALLMENT = useMemo(() => t('installment.edit'), [t]);
-  const ADD_INSTALLMENT = useMemo(() => t('installment.add'), [t]);
   const columns = useMemo(
     () => [
       { id: 'name', label: t('pi.name'), minWidth: '15em' },
@@ -44,11 +42,19 @@ export default function GenerateList() {
   );
 
   const handleEdit = item => {
-    setCurrentRecord(item);
-    setOpenPopupType(EDIT_INSTALLMENT);
+    dispatch(
+      setPopup({
+        type: EDIT_INSTALLMENT,
+        title: t(EDIT_INSTALLMENT),
+        props: {
+          isModifying: true,
+          record: item,
+        },
+      })
+    );
   };
   const handleAddInstallment = () => {
-    setOpenPopupType(ADD_INSTALLMENT);
+    dispatch(setPopup({ type: ADD_INSTALLMENT, title: t(ADD_INSTALLMENT) }));
   };
   const handleDelete = async item => {
     axiosUtil.delete('/deleteInstallment', { data: { accountNo: item.accountNo } }).then(res => {
@@ -135,17 +141,6 @@ export default function GenerateList() {
           />
         )}
       </div>
-      <Popup
-        setOpenPopup={setOpenPopupType}
-        openPopup={Boolean(openPopupType?.length)}
-        title={openPopupType}
-      >
-        <AddInstallment
-          setOpenPopup={setOpenPopupType}
-          isModifying={openPopupType === EDIT_INSTALLMENT}
-          record={currentRecord}
-        />
-      </Popup>
     </Paper>
   );
 }

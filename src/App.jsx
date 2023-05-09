@@ -8,6 +8,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material';
 
+import { useDispatch, useSelector } from 'react-redux';
 import * as serviceWorkerRegistration from './serviceWorkerRegistration';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
@@ -16,6 +17,8 @@ import { axiosUtil } from './services/axiosinstance';
 import './i18n';
 import Banner from './featureFlags/Banner';
 import ForceLogout from './featureFlags/ForceLogout';
+import Popup, { GeneratePopupComponent } from './common/Popup';
+import { setPopup } from './redux/popup';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -37,6 +40,8 @@ const useStyles = makeStyles({
 function App() {
   const classes = useStyles();
   const { i18n } = useTranslation();
+  const popup = useSelector(state => state.popup);
+  const dispatch = useDispatch();
   const history = useHistory();
   const [statsData, setStatsData] = useState([]);
   const [authToken, setAuthToken] = useState(false);
@@ -86,6 +91,9 @@ function App() {
     i18n.language,
   ]);
 
+  const setOpenPopup = value => {
+    dispatch(setPopup(value));
+  };
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={themeWithLocale}>
@@ -146,6 +154,17 @@ function App() {
           <FeatureFlag name="banner">
             <Banner />
           </FeatureFlag>
+          <Popup
+            title={popup.title}
+            openPopup={Boolean(popup.type?.length)}
+            setOpenPopup={setOpenPopup}
+          >
+            <GeneratePopupComponent
+              type={popup.type}
+              {...popup.props}
+              setOpenPopup={setOpenPopup}
+            />
+          </Popup>
         </AuthContext.Provider>
       </ThemeProvider>
     </StyledEngineProvider>

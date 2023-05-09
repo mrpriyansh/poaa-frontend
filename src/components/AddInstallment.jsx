@@ -56,7 +56,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
     )
       .then(res => {
         mutate('getAllInstallments');
-        setOpenPopup(false);
+        setOpenPopup({ type: '' });
         history.push('/create-list');
         setInputValue({ ...initialValues });
         triggerAlert({ icon: 'success', title: res.data });

@@ -67,7 +67,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
     axiosUtil[recordForEdit ? 'put' : 'post'](endpoint, values)
       .then(res => {
         triggerAlert({ icon: 'success', title: res.data });
-        setOpenPopup(false);
+        setOpenPopup({ type: '' });
         mutate('allaccounts');
       })
       .finally(() => setLoading(false));

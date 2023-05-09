@@ -1,7 +1,16 @@
-import React from 'react';
+import React, { lazy } from 'react';
 import { Dialog, IconButton, DialogContent, DialogTitle, Typography } from '@mui/material';
 import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '@mui/icons-material/Close';
+import {
+  ADD_ACCOUNT,
+  ADD_INSTALLMENT,
+  EDIT_ACCOUNT,
+  EDIT_INSTALLMENT,
+} from '../services/constants';
+
+const AddInstallment = lazy(() => import('../components/AddInstallment'));
+const AddAccount = lazy(() => import('../components/AddAccount'));
 
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
@@ -31,7 +40,7 @@ export default function Popup({ title, children, openPopup, setOpenPopup }) {
         >
           {title}
         </Typography>
-        <IconButton onClick={() => setOpenPopup(false)}>
+        <IconButton onClick={() => setOpenPopup({ type: '' })}>
           <CloseIcon />
         </IconButton>
       </DialogTitle>
@@ -41,3 +50,16 @@ export default function Popup({ title, children, openPopup, setOpenPopup }) {
     </Dialog>
   );
 }
+
+export const GeneratePopupComponent = function(props) {
+  switch (props.type) {
+    case EDIT_ACCOUNT:
+    case ADD_ACCOUNT:
+      return <AddAccount {...props} />;
+    case EDIT_INSTALLMENT:
+    case ADD_INSTALLMENT:
+      return <AddInstallment {...props} />;
+    default:
+      <> </>;
+  }
+};
