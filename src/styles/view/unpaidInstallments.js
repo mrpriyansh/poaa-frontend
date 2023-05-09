@@ -5,4 +5,9 @@ export const unpaidInstallmentsStyles = makeStyles(theme => ({
     minWidth: '70vw',
     padding: theme.spacing(2, 2),
   },
+  [theme.breakpoints.down('sm')]: {
+    headerWrapper: {
+      justifyContent: 'center',
+    },
+  },
 }));

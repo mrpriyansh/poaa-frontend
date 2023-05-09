@@ -37,7 +37,7 @@ const customTableStyles = makeStyles(theme => ({
   },
   paginationRoot: {
     marginLeft: 'auto',
-    minWidth: '16em',
+    // minWidth: '16em',
   },
   emptyBlock: {
     width: '100%',

@@ -76,34 +76,37 @@ export default function() {
   if (isLoading) return <LoaderSVG />;
   return (
     <Paper className={classes.root}>
+      <Grid
+        container
+        justifyContent="space-between"
+        alignItems="center"
+        className={classes.headerWrapper}
+      >
+        <Grid item>
+          <Typography variant="h5">{t('account.unpaid')}</Typography>
+        </Grid>
+        <Grid item>
+          <Controls.Input
+            label="Search"
+            fullWidth={false}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <Search />
+                </InputAdornment>
+              ),
+            }}
+            value={searchValue}
+            onChange={event => setSearchValue(event.target.value)}
+          />
+        </Grid>
+      </Grid>
       <CustomTable
         rows={rows}
         columns={columns}
         emptyMessage={t('prompt.allPaid')}
         pagination
         defaultPageSize={20}
-        paginationStartElement={
-          <Grid container justifyContent="space-between" alignItems="center">
-            <Grid item>
-              <Typography variant="h5">{t('account.unpaid')}</Typography>
-            </Grid>
-            <Grid item>
-              <Controls.Input
-                label="Search"
-                fullWidth={false}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <Search />
-                    </InputAdornment>
-                  ),
-                }}
-                value={searchValue}
-                onChange={event => setSearchValue(event.target.value)}
-              />
-            </Grid>
-          </Grid>
-        }
       />
     </Paper>
   );
