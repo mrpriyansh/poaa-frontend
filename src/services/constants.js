@@ -6,3 +6,4 @@ export const ADD_INSTALLMENT = 'installment.add';
 export const EDIT_INSTALLMENT = 'installment.edit';
 export const ADD_ACCOUNT = 'account.add';
 export const EDIT_ACCOUNT = 'account.edit';
+export const REQUEST_NOTIFICATION = 'notification.request';

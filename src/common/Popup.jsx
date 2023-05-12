@@ -7,7 +7,9 @@ import {
   ADD_INSTALLMENT,
   EDIT_ACCOUNT,
   EDIT_INSTALLMENT,
+  REQUEST_NOTIFICATION,
 } from '../services/constants';
+import RequestNotification from '../components/RequestNotification';
 
 const AddInstallment = lazy(() => import('../components/AddInstallment'));
 const AddAccount = lazy(() => import('../components/AddAccount'));
@@ -27,7 +29,7 @@ const useStyles = makeStyles(theme => ({
     padding: theme.spacing(2),
   },
 }));
-export default function Popup({ title, children, openPopup, setOpenPopup }) {
+export default function Popup({ title, children, openPopup, setOpenPopup, disableClosing }) {
   const styles = useStyles();
   return (
     <Dialog open={openPopup}>
@@ -40,9 +42,11 @@ export default function Popup({ title, children, openPopup, setOpenPopup }) {
         >
           {title}
         </Typography>
-        <IconButton onClick={() => setOpenPopup({ type: '' })}>
-          <CloseIcon />
-        </IconButton>
+        {disableClosing && (
+          <IconButton onClick={() => setOpenPopup({ type: '' })}>
+            <CloseIcon />
+          </IconButton>
+        )}
       </DialogTitle>
       <DialogContent dividers className={styles.content}>
         {children}
@@ -59,7 +63,9 @@ export const GeneratePopupComponent = function(props) {
     case EDIT_INSTALLMENT:
     case ADD_INSTALLMENT:
       return <AddInstallment {...props} />;
+    case REQUEST_NOTIFICATION:
+      return <RequestNotification {...props} />;
     default:
-      <> </>;
+      <div> Work in progress</div>;
   }
 };

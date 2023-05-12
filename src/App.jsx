@@ -9,7 +9,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { ThemeProvider, StyledEngineProvider, createTheme } from '@mui/material';
 
 import { useDispatch, useSelector } from 'react-redux';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration';
+import * as serviceWorkerRegistration from './serviceWorker';
 import { AuthContext } from './services/Auth';
 import { theme } from './styles/customTheme';
 import UserDetailsForm from './view/UserDetailsForm';
@@ -19,6 +19,7 @@ import Banner from './featureFlags/Banner';
 import ForceLogout from './featureFlags/ForceLogout';
 import Popup, { GeneratePopupComponent } from './common/Popup';
 import { setPopup } from './redux/popup';
+import { REQUEST_NOTIFICATION } from './services/constants';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -39,7 +40,7 @@ const useStyles = makeStyles({
 
 function App() {
   const classes = useStyles();
-  const { i18n } = useTranslation();
+  const { i18n, t } = useTranslation();
   const popup = useSelector(state => state.popup);
   const dispatch = useDispatch();
   const history = useHistory();
@@ -70,6 +71,22 @@ function App() {
       serviceWorkerRegistration.unregister();
       window.localStorage.setItem('swUnregistered', true);
     }
+  }, []);
+
+  const checkForNotification = async () => {
+    if (Notification?.permission !== 'granted')
+      dispatch(
+        setPopup({
+          type: REQUEST_NOTIFICATION,
+          title: t(REQUEST_NOTIFICATION),
+          disableClosing: true,
+        })
+      );
+    await serviceWorkerRegistration.registerSW();
+    await serviceWorkerRegistration.subscribeNotification();
+  };
+  useEffect(() => {
+    checkForNotification();
   }, []);
 
   useEffect(() => {
@@ -158,6 +175,7 @@ function App() {
             title={popup.title}
             openPopup={Boolean(popup.type?.length)}
             setOpenPopup={setOpenPopup}
+            disableClosing={popup.disableClosing}
           >
             <GeneratePopupComponent
               type={popup.type}
