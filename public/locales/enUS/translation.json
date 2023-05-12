@@ -59,5 +59,9 @@
   "total": {
     "accounts": "Total Accounts",
     "amount": "Total Amount"
+  },
+  "notification": {
+    "allowPrompt": "Please allow browser notification and refresh the browser.",
+    "request": "Allow notification"
   }
 }
