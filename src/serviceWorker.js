@@ -52,3 +52,12 @@ export async function subscribeNotification() {
     });
   }
 }
+
+export async function registerSW() {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register(
+      config.env.MODE === 'production' ? '/sw.js' : '/dev-sw.js?dev-sw',
+      { type: config.env.MODE === 'production' ? 'classic' : 'module' }
+    );
+  }
+}

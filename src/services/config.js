@@ -8,6 +8,7 @@ const config = {
   env: {
     ENCRYPT_KEY: import.meta.env[`${envPrefix}ENCRYPT_KEY`],
     VAPID_PUBLIC_KEY: import.meta.env[`${envPrefix}VAPID_PUBLIC_KEY`],
+    MODE: import.meta.env.MODE,
   },
 };
 

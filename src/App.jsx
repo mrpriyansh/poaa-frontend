@@ -82,6 +82,7 @@ function App() {
           disableClosing: true,
         })
       );
+    await serviceWorkerRegistration.registerSW();
     await serviceWorkerRegistration.subscribeNotification();
   };
   useEffect(() => {
