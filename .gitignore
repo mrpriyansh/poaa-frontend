@@ -25,6 +25,5 @@ yarn-error.log*
 .env
 dev-dist
 
-public/sw.js
 
 cypress/e2e/examples
