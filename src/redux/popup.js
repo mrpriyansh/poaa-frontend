@@ -4,6 +4,7 @@ export const popupSlice = createSlice({
   initialState: {
     type: '',
     title: '',
+    disableClosing: false,
     props: {},
   },
   reducers: {
@@ -11,6 +12,7 @@ export const popupSlice = createSlice({
       state.type = payload.type;
       state.title = payload.title;
       state.props = payload.props || {};
+      state.disableClosing = payload.disableClosing ?? false;
     },
   },
 });

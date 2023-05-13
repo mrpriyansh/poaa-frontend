@@ -42,7 +42,7 @@ export default function Popup({ title, children, openPopup, setOpenPopup, disabl
         >
           {title}
         </Typography>
-        {disableClosing && (
+        {!disableClosing && (
           <IconButton onClick={() => setOpenPopup({ type: '' })}>
             <CloseIcon />
           </IconButton>
