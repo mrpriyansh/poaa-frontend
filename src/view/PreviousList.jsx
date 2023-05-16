@@ -6,6 +6,8 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight';
 import CancelIcon from '@mui/icons-material/Cancel';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import EditIcon from '@mui/icons-material/Edit';
+import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import WarningIcon from '@mui/icons-material/Warning';
 import copy from 'copy-to-clipboard';
 import { useHistory } from 'react-router-dom';
@@ -302,9 +304,22 @@ export default function PreviousList() {
                     </Typography>
                   </div>
                   <div className={classes.row}>
+                    {taskStats.misc[selectedListIndex].url ? (
+                      <a href={taskStats.misc[selectedListIndex].url} target="_blank" download>
+                        <IconButton
+                          color="success"
+                          onClick={() => {
+                            console.log('fdsa', taskStats.misc[selectedListIndex].url);
+                            taskStats.misc[selectedListIndex].url;
+                          }}
+                        >
+                          <ArrowCircleDownIcon />
+                        </IconButton>
+                      </a>
+                    ) : null}
                     <Typography variant="caption" classes={{ root: classes.greenText }}>
                       {' '}
-                      {taskStats.misc[selectedListIndex]}
+                      {taskStats.misc[selectedListIndex].refNo}
                     </Typography>
                   </div>
                 </>
