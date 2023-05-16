@@ -319,7 +319,8 @@ export default function PreviousList() {
                     ) : null}
                     <Typography variant="caption" classes={{ root: classes.greenText }}>
                       {' '}
-                      {taskStats.misc[selectedListIndex].refNo}
+                      {taskStats.misc[selectedListIndex].refNo ||
+                        taskStats.misc[selectedListIndex]}
                     </Typography>
                   </div>
                 </>
