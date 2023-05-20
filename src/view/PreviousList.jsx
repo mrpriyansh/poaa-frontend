@@ -182,7 +182,8 @@ export default function PreviousList() {
             startIcon={<EditIcon />}
             disabled={
               (selectedRecord?.taskId && !taskStats) ||
-              ['Running', 'Initiated', 'Done'].includes(taskStats?.status) ||
+              selectedRecord.status === 'REFERENCE_NO_CREATED' ||
+              [('Running', 'Initiated', 'Done')].includes(taskStats?.status) ||
               isLoading ||
               revertLoading
             }
@@ -261,34 +262,28 @@ export default function PreviousList() {
               className={classes.gridItem}
             >
               {' '}
-              {['Failed', 'Aborted'].includes(taskStats?.status) ? (
+              {selectedRecord.taskId && !taskStats ? (
+                <div className={classes.row}>
+                  <LoaderSVG width="3em" height="3em" />
+                </div>
+              ) : ['Running', 'Initiated'].includes(taskStats?.status) ? (
                 <>
                   <div className={classes.row}>
-                    {taskStats?.status === 'Failed' ? (
-                      <CancelIcon color="error" size="small" />
-                    ) : (
-                      <WarningIcon color="error" size="small" />
-                    )}
-                    &nbsp;{' '}
-                    <Typography color="error" variant="subtitle1">
+                    <RunningSvg width="2.5em" height="2.5em" color="success" size="small" /> &nbsp;{' '}
+                    <Typography classes={{ root: classes.greenText }} variant="subtitle1">
                       {' '}
-                      <b> {taskStats?.status}</b>
+                      <b> Running!</b>
                     </Typography>
                   </div>
                   <div className={classes.row}>
-                    <Typography variant="caption" color="error" align="center">
-                      {' '}
-                      {formatErrorMessage(taskStats.error)}
-                    </Typography>
-                  </div>
-                  <div className={classes.row}>
-                    <Typography variant="caption" align="center">
+                    <Typography variant="caption" classes={{ root: classes.lightGreenText }}>
                       {' '}
                       {taskStats.progress}
                     </Typography>
                   </div>
                 </>
-              ) : taskStats?.status === 'Done' ? (
+              ) : taskStats?.status === 'Done' ||
+                selectedRecord.status === 'REFERENCE_NO_CREATED' ? (
                 <>
                   <div className={classes.row}>
                     <CheckCircleIcon classes={{ root: classes.greenText }} size="small" /> &nbsp;{' '}
@@ -316,27 +311,38 @@ export default function PreviousList() {
                           <ArrowCircleDownIcon />
                         </IconButton>
                       </a>
+                    ) : ['Failed', 'Aborted'].includes(taskStats?.status) ? (
+                      <>
+                        <div className={classes.row}>
+                          {taskStats?.status === 'Failed' ? (
+                            <CancelIcon color="error" size="small" />
+                          ) : (
+                            <WarningIcon color="error" size="small" />
+                          )}
+                          &nbsp;{' '}
+                          <Typography color="error" variant="subtitle1">
+                            {' '}
+                            <b> {taskStats?.status}</b>
+                          </Typography>
+                        </div>
+                        <div className={classes.row}>
+                          <Typography variant="caption" color="error" align="center">
+                            {' '}
+                            {formatErrorMessage(taskStats.error)}
+                          </Typography>
+                        </div>
+                        <div className={classes.row}>
+                          <Typography variant="caption" align="center">
+                            {' '}
+                            {taskStats.progress}
+                          </Typography>
+                        </div>
+                      </>
                     ) : null}
                     <Typography variant="caption" classes={{ root: classes.greenText }}>
                       {' '}
                       {taskStats.misc[selectedListIndex].refNo ||
                         taskStats.misc[selectedListIndex]}
-                    </Typography>
-                  </div>
-                </>
-              ) : ['Running', 'Initiated'].includes(taskStats?.status) ? (
-                <>
-                  <div className={classes.row}>
-                    <RunningSvg width="2.5em" height="2.5em" color="success" size="small" /> &nbsp;{' '}
-                    <Typography classes={{ root: classes.greenText }} variant="subtitle1">
-                      {' '}
-                      <b> Running!</b>
-                    </Typography>
-                  </div>
-                  <div className={classes.row}>
-                    <Typography variant="caption" classes={{ root: classes.lightGreenText }}>
-                      {' '}
-                      {taskStats.progress}
                     </Typography>
                   </div>
                 </>
@@ -371,6 +377,7 @@ export default function PreviousList() {
                     onClick={handleGenerateList}
                     disabled={
                       (selectedRecord?.taskId && !taskStats) ||
+                      selectedRecord.status === 'REFERENCE_NO_CREATED' ||
                       ['Done', 'Initiated'].includes(taskStats?.status) ||
                       isLoading ||
                       revertLoading
