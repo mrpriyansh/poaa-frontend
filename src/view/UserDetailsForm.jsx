@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import KeyboardArrowRightRoundedIcon from '@mui/icons-material/KeyboardArrowRightRounded';
 import { useHistory } from 'react-router-dom';
 import { Warning } from '@mui/icons-material';
+import { Helmet } from 'react-helmet-async';
 
 import Controls from '../common/controls/Controls';
 import { Form, useForm } from '../common/useForm';
@@ -69,67 +70,72 @@ export default function UserDetailsForm() {
   };
 
   return (
-    <Paper className={classes.pageContent}>
-      <Form onSubmit={handleSubmit}>
-        <Grid container justifyContent="center">
-          <Typography variant="h5" classes={{ root: classes.titleRoot }}>
-            Update Details
-          </Typography>
-          <Grid container item xs={12} justifyContent="center">
-            <Controls.Input
-              variant="outlined"
-              label="Name"
-              name="name"
-              required
-              value={values.name}
-              onChange={handleInputChange}
-              error={errors.name}
-              classes={{ root: classes.inputRoot }}
-              disabled={!needToChange()}
-            />
+    <>
+      <Helmet>
+        <title>User Details Form</title>
+      </Helmet>
+      <Paper className={classes.pageContent}>
+        <Form onSubmit={handleSubmit}>
+          <Grid container justifyContent="center">
+            <Typography variant="h5" classes={{ root: classes.titleRoot }}>
+              Update Details
+            </Typography>
+            <Grid container item xs={12} justifyContent="center">
+              <Controls.Input
+                variant="outlined"
+                label="Name"
+                name="name"
+                required
+                value={values.name}
+                onChange={handleInputChange}
+                error={errors.name}
+                classes={{ root: classes.inputRoot }}
+                disabled={!needToChange()}
+              />
 
-            <Controls.Input
-              variant="outlined"
-              label="Portal Account No"
-              name="pAccountNo"
-              required
-              value={values.pAccountNo}
-              onChange={handleInputChange}
-              error={errors.pAccountNo}
-              classes={{ root: classes.inputRoot }}
-              disabled={!needToChange()}
-            />
+              <Controls.Input
+                variant="outlined"
+                label="Portal Account No"
+                name="pAccountNo"
+                required
+                value={values.pAccountNo}
+                onChange={handleInputChange}
+                error={errors.pAccountNo}
+                classes={{ root: classes.inputRoot }}
+                disabled={!needToChange()}
+              />
 
-            <Controls.Input
-              variant="outlined"
-              type="password"
-              label="Portal Current Password"
-              name="pPassword"
-              required
-              value={values.pPassword}
-              onChange={handleInputChange}
-              error={errors.pPassword}
-              classes={{ root: classes.inputRoot }}
-              disabled={!needToChange()}
-            />
+              <Controls.Input
+                variant="outlined"
+                type="password"
+                label="Portal Current Password"
+                name="pPassword"
+                required
+                value={values.pPassword}
+                onChange={handleInputChange}
+                error={errors.pPassword}
+                classes={{ root: classes.inputRoot }}
+                disabled={!needToChange()}
+              />
 
-            <Controls.Button
-              type="submit"
-              text={<KeyboardArrowRightRoundedIcon />}
-              disabled={loading || !needToChange()}
-              classes={{ root: classes.buttonRoot }}
-            />
-          </Grid>
-          {!needToChange() && (
-            <Grid container justifyContent="center" alignItems="center">
-              <Warning fontSize="small" />
-              <Typography variant="subtitle2" align="center">
-                No need to change details.
-              </Typography>
+              <Controls.Button
+                type="submit"
+                text={<KeyboardArrowRightRoundedIcon />}
+                disabled={loading || !needToChange()}
+                classes={{ root: classes.buttonRoot }}
+              />
             </Grid>
-          )}
-        </Grid>
-      </Form>
-    </Paper>
+            {!needToChange() && (
+              <Grid container justifyContent="center" alignItems="center">
+                <Warning fontSize="small" />
+                <Typography variant="subtitle2" align="center">
+                  No need to change details.
+                </Typography>
+              </Grid>
+            )}
+          </Grid>
+        </Form>
+      </Paper>
+    </>
   );
 }

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, lazy, useMemo, useCallback } from 'react';
 import { Detector } from 'react-detect-offline';
 import { useHistory } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
 import * as locales from '@mui/material/locale';
 import { useTranslation } from 'react-i18next';
 
@@ -115,76 +116,78 @@ function App() {
   return (
     <StyledEngineProvider injectFirst>
       <ThemeProvider theme={themeWithLocale}>
-        <AuthContext.Provider
-          value={{
-            authToken,
-            setAuthToken,
-            statsData,
-            setStatsData,
-            user,
-            setUser,
-          }}
-        >
-          <>
-            <Header />
-            <div className={classes.container}>
-              <Detector
-                polling={{ url: 'https://ipv4.icanhazip.com/' }}
-                render={({ online }) =>
-                  online ? (
-                    <>
-                      <ProtectedRoute exact path="/">
-                        <GenerateList />
-                      </ProtectedRoute>
-                      <ProtectedRoute exact path="/accounts">
-                        <Accounts />
-                      </ProtectedRoute>
-                      <ProtectedRoute exact path="/login">
-                        <Login />
-                      </ProtectedRoute>
-                      <ProtectedRoute exact path="/user-details">
-                        <UserDetailsForm />
-                      </ProtectedRoute>
-                      <ProtectedRoute exact path="/create-list">
-                        <GenerateList />
-                      </ProtectedRoute>
-                      <ProtectedRoute exact path="/previous-lists">
-                        <PreviousList />
-                      </ProtectedRoute>
-                      <ProtectedRoute exact path="/stats">
-                        <StatisticList />
-                      </ProtectedRoute>{' '}
-                      <ProtectedRoute exact path="/unpaid-installments">
-                        <UnpaidInstallments />
-                      </ProtectedRoute>
-                    </>
-                  ) : (
-                    <OfflineView />
-                  )
-                }
-              />
-            </div>
-          </>
-          <CssBaseline />
-          <FeatureFlag name="forceLogout">
-            <ForceLogout />
-          </FeatureFlag>
-          <FeatureFlag name="banner">
-            <Banner />
-          </FeatureFlag>
-          <Popup
-            title={popup.title}
-            openPopup={Boolean(popup.type?.length)}
-            setOpenPopup={setOpenPopup}
-            disableClosing={popup.disableClosing}
+        <HelmetProvider>
+          <AuthContext.Provider
+            value={{
+              authToken,
+              setAuthToken,
+              statsData,
+              setStatsData,
+              user,
+              setUser,
+            }}
           >
-            <GeneratePopupComponent
-              type={popup.type}
-              {...popup.props}
+            <>
+              <Header />
+              <div className={classes.container}>
+                <Detector
+                  polling={{ url: 'https://ipv4.icanhazip.com/' }}
+                  render={({ online }) =>
+                    online ? (
+                      <>
+                        <ProtectedRoute exact path="/">
+                          <GenerateList />
+                        </ProtectedRoute>
+                        <ProtectedRoute exact path="/accounts">
+                          <Accounts />
+                        </ProtectedRoute>
+                        <ProtectedRoute exact path="/login">
+                          <Login />
+                        </ProtectedRoute>
+                        <ProtectedRoute exact path="/user-details">
+                          <UserDetailsForm />
+                        </ProtectedRoute>
+                        <ProtectedRoute exact path="/create-list">
+                          <GenerateList />
+                        </ProtectedRoute>
+                        <ProtectedRoute exact path="/previous-lists">
+                          <PreviousList />
+                        </ProtectedRoute>
+                        <ProtectedRoute exact path="/stats">
+                          <StatisticList />
+                        </ProtectedRoute>{' '}
+                        <ProtectedRoute exact path="/unpaid-installments">
+                          <UnpaidInstallments />
+                        </ProtectedRoute>
+                      </>
+                    ) : (
+                      <OfflineView />
+                    )
+                  }
+                />
+              </div>
+            </>
+            <CssBaseline />
+            <FeatureFlag name="forceLogout">
+              <ForceLogout />
+            </FeatureFlag>
+            <FeatureFlag name="banner">
+              <Banner />
+            </FeatureFlag>
+            <Popup
+              title={popup.title}
+              openPopup={Boolean(popup.type?.length)}
               setOpenPopup={setOpenPopup}
-            />
-          </Popup>
-        </AuthContext.Provider>
+              disableClosing={popup.disableClosing}
+            >
+              <GeneratePopupComponent
+                type={popup.type}
+                {...popup.props}
+                setOpenPopup={setOpenPopup}
+              />
+            </Popup>
+          </AuthContext.Provider>
+        </HelmetProvider>
       </ThemeProvider>
     </StyledEngineProvider>
   );

@@ -5,6 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import { Search } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 
 import CustomTable from '../common/Table';
 import { unpaidInstallmentsStyles } from '../styles/view/unpaidInstallments';
@@ -78,39 +79,44 @@ export default function UnpaidInstallments() {
 
   if (isLoading) return <LoaderSVG />;
   return (
-    <Paper className={classes.root}>
-      <Grid
-        container
-        justifyContent="space-between"
-        alignItems="center"
-        className={classes.headerWrapper}
-      >
-        <Grid item>
-          <Typography variant="h5">{t('account.unpaid')}</Typography>
+    <>
+      <Helmet>
+        <title> UnPaid Installments</title>
+      </Helmet>
+      <Paper className={classes.root}>
+        <Grid
+          container
+          justifyContent="space-between"
+          alignItems="center"
+          className={classes.headerWrapper}
+        >
+          <Grid item>
+            <Typography variant="h5">{t('account.unpaid')}</Typography>
+          </Grid>
+          <Grid item>
+            <Controls.Input
+              label="Search"
+              fullWidth={false}
+              InputProps={{
+                startAdornment: (
+                  <InputAdornment position="start">
+                    <Search />
+                  </InputAdornment>
+                ),
+              }}
+              value={searchValue}
+              onChange={event => setSearchValue(event.target.value)}
+            />
+          </Grid>
         </Grid>
-        <Grid item>
-          <Controls.Input
-            label="Search"
-            fullWidth={false}
-            InputProps={{
-              startAdornment: (
-                <InputAdornment position="start">
-                  <Search />
-                </InputAdornment>
-              ),
-            }}
-            value={searchValue}
-            onChange={event => setSearchValue(event.target.value)}
-          />
-        </Grid>
-      </Grid>
-      <CustomTable
-        rows={rows}
-        columns={columns}
-        emptyMessage={t('prompt.allPaid')}
-        pagination
-        defaultPageSize={20}
-      />
-    </Paper>
+        <CustomTable
+          rows={rows}
+          columns={columns}
+          emptyMessage={t('prompt.allPaid')}
+          pagination
+          defaultPageSize={20}
+        />
+      </Paper>
+    </>
   );
 }

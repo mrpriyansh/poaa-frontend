@@ -4,6 +4,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useSWR, { useSWRConfig, preload } from 'swr';
@@ -97,50 +98,55 @@ export default function GenerateList() {
   // if (error) return <Offline />;
   if (!response) return <LoaderSVG />;
   return (
-    <Paper className={classes.root}>
-      <header className={classes.header}>
-        <Typography variant="h5">{t('installment.logged')}</Typography>
+    <>
+      <Helmet>
+        <title> Generate List</title>
+      </Helmet>
+      <Paper className={classes.root}>
+        <header className={classes.header}>
+          <Typography variant="h5">{t('installment.logged')}</Typography>
+          {rows.length ? (
+            <Controls.Button
+              text={t('installment.add')}
+              startIcon={<PostAddIcon />}
+              onClick={handleAddInstallment}
+            />
+          ) : null}
+        </header>
+        <CustomTable
+          rows={rows}
+          columns={columns}
+          // pagination
+          emptyMessage={t('operation.clickButtonOnZeroInstallment')}
+        />
         {rows.length ? (
-          <Controls.Button
-            text={t('installment.add')}
-            startIcon={<PostAddIcon />}
-            onClick={handleAddInstallment}
-          />
+          <Box mt={2} mb={2}>
+            <div className={classes.row}>
+              <b>{t('total.accounts')} : </b>
+              <span> {response?.length} </span>
+            </div>
+            <div className={classes.row}>
+              <b>{t('total.amount')} : </b>
+              <span> {totalAmount()} </span>
+            </div>
+          </Box>
         ) : null}
-      </header>
-      <CustomTable
-        rows={rows}
-        columns={columns}
-        // pagination
-        emptyMessage={t('operation.clickButtonOnZeroInstallment')}
-      />
-      {rows.length ? (
-        <Box mt={2} mb={2}>
-          <div className={classes.row}>
-            <b>{t('total.accounts')} : </b>
-            <span> {response?.length} </span>
-          </div>
-          <div className={classes.row}>
-            <b>{t('total.amount')} : </b>
-            <span> {totalAmount()} </span>
-          </div>
-        </Box>
-      ) : null}
-      <div className={classes.generateButtonWrapper}>
-        {rows?.length ? (
-          <Controls.Button
-            text={t('list.create')}
-            startIcon={<SettingsIcon />}
-            onClick={handleGenerateList}
-          />
-        ) : (
-          <Controls.Button
-            text={t('installment.add')}
-            startIcon={<PostAddIcon />}
-            onClick={handleAddInstallment}
-          />
-        )}
-      </div>
-    </Paper>
+        <div className={classes.generateButtonWrapper}>
+          {rows?.length ? (
+            <Controls.Button
+              text={t('list.create')}
+              startIcon={<SettingsIcon />}
+              onClick={handleGenerateList}
+            />
+          ) : (
+            <Controls.Button
+              text={t('installment.add')}
+              startIcon={<PostAddIcon />}
+              onClick={handleAddInstallment}
+            />
+          )}
+        </div>
+      </Paper>
+    </>
   );
 }

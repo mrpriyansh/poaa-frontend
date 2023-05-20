@@ -5,6 +5,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 import useSWR from 'swr';
 
 import { useDispatch } from 'react-redux';
@@ -109,6 +110,9 @@ function Home() {
 
   return (
     <>
+      <Helmet>
+        <title> All Accounts</title>
+      </Helmet>
       <Suspense fallback={<LoaderSVG />}>
         <Paper className={classes.pageContent} m={6}>
           <Controls.Button

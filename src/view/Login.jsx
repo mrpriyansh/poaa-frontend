@@ -2,6 +2,7 @@ import { Grid, Paper, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Helmet } from 'react-helmet-async';
 
 import { Form, useForm } from '../common/useForm';
 import Controls from '../common/controls/Controls';
@@ -55,61 +56,66 @@ function Login() {
   };
 
   return (
-    <Paper className={classes.pageContent}>
-      <Form onSubmit={handleSubmit}>
-        <Grid container justifyContent="center">
-          <Typography variant="h5" classes={{ root: classes.titleRoot }}>
-            {isLogin ? t('creds.login') : t('creds.signup')}
-          </Typography>
-          <Grid container item xs={12} justifyContent="center">
-            <Controls.Input
-              variant="outlined"
-              label={t('pi.email')}
-              name="email"
-              value={values.email}
-              onChange={handleInputChange}
-              error={errors.email}
-              classes={{ root: classes.inputRoot }}
-              required
-            />
-            <Controls.Input
-              variant="outlined"
-              label={t('pi.password')}
-              name="password"
-              type="password"
-              value={values.password}
-              onChange={handleInputChange}
-              classes={{ root: classes.inputRoot }}
-              error={errors.password}
-              required
-            />
-            <Controls.Button
-              type="submit"
-              text={isLogin ? t('creds.login') : t('creds.signup')}
-              disabled={loading}
-              classes={{ root: classes.buttonRoot }}
-            />
+    <>
+      <Helmet>
+        <title>Login</title>
+      </Helmet>
+      <Paper className={classes.pageContent}>
+        <Form onSubmit={handleSubmit}>
+          <Grid container justifyContent="center">
+            <Typography variant="h5" classes={{ root: classes.titleRoot }}>
+              {isLogin ? t('creds.login') : t('creds.signup')}
+            </Typography>
+            <Grid container item xs={12} justifyContent="center">
+              <Controls.Input
+                variant="outlined"
+                label={t('pi.email')}
+                name="email"
+                value={values.email}
+                onChange={handleInputChange}
+                error={errors.email}
+                classes={{ root: classes.inputRoot }}
+                required
+              />
+              <Controls.Input
+                variant="outlined"
+                label={t('pi.password')}
+                name="password"
+                type="password"
+                value={values.password}
+                onChange={handleInputChange}
+                classes={{ root: classes.inputRoot }}
+                error={errors.password}
+                required
+              />
+              <Controls.Button
+                type="submit"
+                text={isLogin ? t('creds.login') : t('creds.signup')}
+                disabled={loading}
+                classes={{ root: classes.buttonRoot }}
+              />
 
-            <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
-              {isLogin ? t('creds.newUser') : t('creds.alreadyUser')} &nbsp;
-              <span
-                role="button"
-                tabIndex="0"
-                onClick={() => changeType(SIGN_UP)}
-                onKeyDown={() => changeType(SIGN_UP)}
-              >
-                {isLogin ? t('creds.signup') : t('creds.login')}
-              </span>
-            </Grid>
-            <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
-              <span role="button" tabIndex="0">
-                {t('creds.forgotPwd')}
-              </span>
+              <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
+                {isLogin ? t('creds.newUser') : t('creds.alreadyUser')} &nbsp;
+                <span
+                  role="button"
+                  tabIndex="0"
+                  onClick={() => changeType(SIGN_UP)}
+                  onKeyDown={() => changeType(SIGN_UP)}
+                >
+                  {isLogin ? t('creds.signup') : t('creds.login')}
+                </span>
+              </Grid>
+              <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
+                <span role="button" tabIndex="0">
+                  {t('creds.forgotPwd')}
+                </span>
+              </Grid>
             </Grid>
           </Grid>
-        </Grid>
-      </Form>
-    </Paper>
+        </Form>
+      </Paper>
+    </>
   );
 }
 

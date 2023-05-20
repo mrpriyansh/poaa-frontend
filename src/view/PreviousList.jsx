@@ -9,6 +9,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ArrowCircleDownIcon from '@mui/icons-material/ArrowCircleDown';
 import WarningIcon from '@mui/icons-material/Warning';
 import copy from 'copy-to-clipboard';
+import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
@@ -170,227 +171,234 @@ export default function PreviousList() {
   };
 
   return (
-    <Paper classes={{ root: classes.root }}>
-      <header className={classes.headerWrapper}>
-        <Typography variant="h5" className={classes.heading}>
-          {t('list.all')}
-        </Typography>
-        {response?.data?.length ? (
-          <Controls.Button
-            text={t('list.edit')}
-            startIcon={<EditIcon />}
-            disabled={
-              (selectedRecord?.taskId && !taskStats) ||
-              selectedRecord.status === 'REFERENCE_NO_CREATED' ||
-              [('Running', 'Initiated', 'Done')].includes(taskStats?.status) ||
-              isLoading ||
-              revertLoading
-            }
-            onClick={handleRevertList}
-          />
-        ) : null}
-      </header>
+    <>
+      <Helmet>
+        {' '}
+        <title> Previous List </title>
+      </Helmet>
+      <Paper classes={{ root: classes.root }}>
+        <header className={classes.headerWrapper}>
+          <Typography variant="h5" className={classes.heading}>
+            {t('list.all')}
+          </Typography>
+          {response?.data?.length ? (
+            <Controls.Button
+              text={t('list.edit')}
+              startIcon={<EditIcon />}
+              disabled={
+                (selectedRecord?.taskId && !taskStats) ||
+                selectedRecord.status === 'REFERENCE_NO_CREATED' ||
+                [('Running', 'Initiated', 'Done')].includes(taskStats?.status) ||
+                isLoading ||
+                revertLoading
+              }
+              onClick={handleRevertList}
+            />
+          ) : null}
+        </header>
 
-      {rows?.length ? (
-        <>
-          <TextField
-            select
-            value={selectedRecordIndex}
-            label={t('list.select')}
-            onChange={handleChangeList}
-            variant="outlined"
-            disabled={revertLoading}
-          >
-            {response?.data?.map((list, ind) => (
-              <MenuItem key={list.createdAt} value={ind} selected={ind === 0}>
+        {rows?.length ? (
+          <>
+            <TextField
+              select
+              value={selectedRecordIndex}
+              label={t('list.select')}
+              onChange={handleChangeList}
+              variant="outlined"
+              disabled={revertLoading}
+            >
+              {response?.data?.map((list, ind) => (
+                <MenuItem key={list.createdAt} value={ind} selected={ind === 0}>
+                  {' '}
+                  {formatDateTime(list.createdAt)}
+                </MenuItem>
+              ))}
+            </TextField>
+
+            <Box mt={2} mb={2} className={classes.listTitleWrapper}>
+              <IconButton
+                fontSize="medium"
+                onClick={() => changeListNo(-1)}
+                disabled={selectedListIndex === 0 || revertLoading}
+              >
+                <ArrowLeftIcon />
+              </IconButton>
+              <Typography component="span" align="center" className={classes.listTitle}>
+                {`${selectedListIndex + 1} / ${selectedRecord.list.length}`}
+              </Typography>
+              <IconButton
+                fontSize="medium"
+                onClick={() => changeListNo(1)}
+                disabled={selectedListIndex === selectedRecord?.list?.length - 1 || revertLoading}
+              >
+                <ArrowRightIcon />
+              </IconButton>
+            </Box>
+            <CustomTable rows={rows || []} columns={columns} />
+
+            <Grid container>
+              <Grid item xs={12} sm={6}>
+                <Box mt={2} mb={1}>
+                  <div className={classes.row}>
+                    {' '}
+                    <b>{t('total.amount')}: &nbsp; </b>
+                    <span> {selectedList?.totalAmount} </span>
+                  </div>
+                  <div className={classes.row}>
+                    {' '}
+                    <b> {t('total.accounts')}:&nbsp; </b>
+                    <span>
+                      {selectedList?.accounts?.length}&nbsp; {'   '}
+                    </span>
+                    <IconButton color="primary" onClick={copyToClipboard}>
+                      <FileCopyIcon />
+                    </IconButton>
+                  </div>
+                </Box>
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={6}
+                container
+                direction="column"
+                alignItems="flex-end"
+                justifyContent="center"
+                className={classes.gridItem}
+              >
                 {' '}
-                {formatDateTime(list.createdAt)}
-              </MenuItem>
-            ))}
-          </TextField>
-
-          <Box mt={2} mb={2} className={classes.listTitleWrapper}>
-            <IconButton
-              fontSize="medium"
-              onClick={() => changeListNo(-1)}
-              disabled={selectedListIndex === 0 || revertLoading}
-            >
-              <ArrowLeftIcon />
-            </IconButton>
-            <Typography component="span" align="center" className={classes.listTitle}>
-              {`${selectedListIndex + 1} / ${selectedRecord.list.length}`}
-            </Typography>
-            <IconButton
-              fontSize="medium"
-              onClick={() => changeListNo(1)}
-              disabled={selectedListIndex === selectedRecord?.list?.length - 1 || revertLoading}
-            >
-              <ArrowRightIcon />
-            </IconButton>
-          </Box>
-          <CustomTable rows={rows || []} columns={columns} />
-
-          <Grid container>
-            <Grid item xs={12} sm={6}>
-              <Box mt={2} mb={1}>
-                <div className={classes.row}>
-                  {' '}
-                  <b>{t('total.amount')}: &nbsp; </b>
-                  <span> {selectedList?.totalAmount} </span>
-                </div>
-                <div className={classes.row}>
-                  {' '}
-                  <b> {t('total.accounts')}:&nbsp; </b>
-                  <span>
-                    {selectedList?.accounts?.length}&nbsp; {'   '}
-                  </span>
-                  <IconButton color="primary" onClick={copyToClipboard}>
-                    <FileCopyIcon />
-                  </IconButton>
-                </div>
-              </Box>
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={6}
-              container
-              direction="column"
-              alignItems="flex-end"
-              justifyContent="center"
-              className={classes.gridItem}
-            >
-              {' '}
-              {selectedRecord.taskId && !taskStats ? (
-                <div className={classes.row}>
-                  <LoaderSVG width="3em" height="3em" />
-                </div>
-              ) : ['Running', 'Initiated'].includes(taskStats?.status) ? (
-                <>
+                {selectedRecord.taskId && !taskStats ? (
                   <div className={classes.row}>
-                    <RunningSvg width="2.5em" height="2.5em" color="success" size="small" /> &nbsp;{' '}
-                    <Typography classes={{ root: classes.greenText }} variant="subtitle1">
-                      {' '}
-                      <b> Running!</b>
-                    </Typography>
+                    <LoaderSVG width="3em" height="3em" />
                   </div>
-                  <div className={classes.row}>
-                    <Typography variant="caption" classes={{ root: classes.lightGreenText }}>
-                      {' '}
-                      {taskStats.progress}
-                    </Typography>
-                  </div>
-                </>
-              ) : taskStats?.status === 'Done' ||
-                selectedRecord.status === 'REFERENCE_NO_CREATED' ? (
-                <>
-                  <div className={classes.row}>
-                    <CheckCircleIcon classes={{ root: classes.greenText }} size="small" /> &nbsp;{' '}
-                    <Typography classes={{ root: classes.greenText }} variant="subtitle1">
-                      {' '}
-                      <b>
+                ) : ['Running', 'Initiated'].includes(taskStats?.status) ? (
+                  <>
+                    <div className={classes.row}>
+                      <RunningSvg width="2.5em" height="2.5em" color="success" size="small" />{' '}
+                      &nbsp;{' '}
+                      <Typography classes={{ root: classes.greenText }} variant="subtitle1">
                         {' '}
-                        {`Completed in ${calcTime(
-                          taskStats.updatedAt,
-                          taskStats.createdAt
-                        )}!`}{' '}
-                      </b>
-                    </Typography>
-                  </div>
-                  <div className={classes.row}>
-                    {taskStats.misc[selectedListIndex].url ? (
-                      <a
-                        href={taskStats.misc[selectedListIndex].url}
-                        target="_blank"
-                        download
-                        rel="noreferrer"
-                      >
-                        <IconButton color="success">
-                          <ArrowCircleDownIcon />
-                        </IconButton>
-                      </a>
-                    ) : ['Failed', 'Aborted'].includes(taskStats?.status) ? (
-                      <>
-                        <div className={classes.row}>
-                          {taskStats?.status === 'Failed' ? (
-                            <CancelIcon color="error" size="small" />
-                          ) : (
-                            <WarningIcon color="error" size="small" />
-                          )}
-                          &nbsp;{' '}
-                          <Typography color="error" variant="subtitle1">
-                            {' '}
-                            <b> {taskStats?.status}</b>
-                          </Typography>
-                        </div>
-                        <div className={classes.row}>
-                          <Typography variant="caption" color="error" align="center">
-                            {' '}
-                            {formatErrorMessage(taskStats.error)}
-                          </Typography>
-                        </div>
-                        <div className={classes.row}>
-                          <Typography variant="caption" align="center">
-                            {' '}
-                            {taskStats.progress}
-                          </Typography>
-                        </div>
-                      </>
-                    ) : null}
-                    <Typography variant="caption" classes={{ root: classes.greenText }}>
-                      {' '}
-                      {taskStats.misc[selectedListIndex].refNo ||
-                        taskStats.misc[selectedListIndex]}
-                    </Typography>
-                  </div>
-                </>
-              ) : null}
-            </Grid>
-            <Grid item xs={12} container justifyContent="center" alignItems="center">
-              {['Running'].includes(taskStats?.status) ? (
-                <Controls.Button
-                  text="Abort It!"
-                  onClick={handleAbortListGeneration}
-                  style={{ background: 'red' }}
-                />
-              ) : (
-                <>
-                  <TextField
-                    select
-                    value={timeout}
-                    label="Timeout"
-                    onChange={handleChangeTimeout}
-                    variant="outlined"
-                    fullWidth={false}
-                  >
-                    {timeoutArray.map((elem, ind) => (
-                      <MenuItem key={elem.timeout} value={elem.timeout} selected={ind === 0}>
+                        <b> Running!</b>
+                      </Typography>
+                    </div>
+                    <div className={classes.row}>
+                      <Typography variant="caption" classes={{ root: classes.lightGreenText }}>
                         {' '}
-                        {elem.text}
-                      </MenuItem>
-                    ))}
-                  </TextField>
+                        {taskStats.progress}
+                      </Typography>
+                    </div>
+                  </>
+                ) : taskStats?.status === 'Done' ||
+                  selectedRecord.status === 'REFERENCE_NO_CREATED' ? (
+                  <>
+                    <div className={classes.row}>
+                      <CheckCircleIcon classes={{ root: classes.greenText }} size="small" /> &nbsp;{' '}
+                      <Typography classes={{ root: classes.greenText }} variant="subtitle1">
+                        {' '}
+                        <b>
+                          {' '}
+                          {`Completed in ${calcTime(
+                            taskStats.updatedAt,
+                            taskStats.createdAt
+                          )}!`}{' '}
+                        </b>
+                      </Typography>
+                    </div>
+                    <div className={classes.row}>
+                      {taskStats.misc[selectedListIndex].url ? (
+                        <a
+                          href={taskStats.misc[selectedListIndex].url}
+                          target="_blank"
+                          download
+                          rel="noreferrer"
+                        >
+                          <IconButton color="success">
+                            <ArrowCircleDownIcon />
+                          </IconButton>
+                        </a>
+                      ) : ['Failed', 'Aborted'].includes(taskStats?.status) ? (
+                        <>
+                          <div className={classes.row}>
+                            {taskStats?.status === 'Failed' ? (
+                              <CancelIcon color="error" size="small" />
+                            ) : (
+                              <WarningIcon color="error" size="small" />
+                            )}
+                            &nbsp;{' '}
+                            <Typography color="error" variant="subtitle1">
+                              {' '}
+                              <b> {taskStats?.status}</b>
+                            </Typography>
+                          </div>
+                          <div className={classes.row}>
+                            <Typography variant="caption" color="error" align="center">
+                              {' '}
+                              {formatErrorMessage(taskStats.error)}
+                            </Typography>
+                          </div>
+                          <div className={classes.row}>
+                            <Typography variant="caption" align="center">
+                              {' '}
+                              {taskStats.progress}
+                            </Typography>
+                          </div>
+                        </>
+                      ) : null}
+                      <Typography variant="caption" classes={{ root: classes.greenText }}>
+                        {' '}
+                        {taskStats.misc[selectedListIndex].refNo ||
+                          taskStats.misc[selectedListIndex]}
+                      </Typography>
+                    </div>
+                  </>
+                ) : null}
+              </Grid>
+              <Grid item xs={12} container justifyContent="center" alignItems="center">
+                {['Running'].includes(taskStats?.status) ? (
                   <Controls.Button
-                    text={t('operation.generateRefNo')}
-                    onClick={handleGenerateList}
-                    disabled={
-                      (selectedRecord?.taskId && !taskStats) ||
-                      selectedRecord.status === 'REFERENCE_NO_CREATED' ||
-                      ['Done', 'Initiated'].includes(taskStats?.status) ||
-                      isLoading ||
-                      revertLoading
-                    }
+                    text="Abort It!"
+                    onClick={handleAbortListGeneration}
+                    style={{ background: 'red' }}
                   />
-                </>
-              )}
+                ) : (
+                  <>
+                    <TextField
+                      select
+                      value={timeout}
+                      label="Timeout"
+                      onChange={handleChangeTimeout}
+                      variant="outlined"
+                      fullWidth={false}
+                    >
+                      {timeoutArray.map((elem, ind) => (
+                        <MenuItem key={elem.timeout} value={elem.timeout} selected={ind === 0}>
+                          {' '}
+                          {elem.text}
+                        </MenuItem>
+                      ))}
+                    </TextField>
+                    <Controls.Button
+                      text={t('operation.generateRefNo')}
+                      onClick={handleGenerateList}
+                      disabled={
+                        (selectedRecord?.taskId && !taskStats) ||
+                        selectedRecord.status === 'REFERENCE_NO_CREATED' ||
+                        ['Done', 'Initiated'].includes(taskStats?.status) ||
+                        isLoading ||
+                        revertLoading
+                      }
+                    />
+                  </>
+                )}
+              </Grid>
             </Grid>
-          </Grid>
-        </>
-      ) : (
-        <Typography variant="h6" align="center">
-          ***No List Found***
-        </Typography>
-      )}
-    </Paper>
+          </>
+        ) : (
+          <Typography variant="h6" align="center">
+            ***No List Found***
+          </Typography>
+        )}
+      </Paper>
+    </>
   );
 }
