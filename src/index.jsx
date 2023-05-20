@@ -4,10 +4,14 @@ import { BrowserRouter as Router } from 'react-router-dom';
 import './index.css';
 import { Provider } from 'react-redux';
 import { configureStore } from '@reduxjs/toolkit';
+import ga4react from 'react-ga4';
+
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { ReactComponent as LoaderSVG } from './assets/icons/spinner.svg';
 import popupReducer from './redux/popup';
+
+ga4react.initialize('G-S5271W07BV');
 
 const store = configureStore({
   reducer: {

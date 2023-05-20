@@ -13,6 +13,7 @@ import { Helmet } from 'react-helmet-async';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
+import ga4react from 'react-ga4';
 
 import { ReactComponent as RunningSvg } from '../assets/icons/running.svg';
 import { axiosUtil } from '../services/axiosinstance';
@@ -142,6 +143,9 @@ export default function PreviousList() {
   const handleRevertList = async e => {
     e.preventDefault();
     try {
+      ga4react.event('button_click', {
+        label: 'Edit_List',
+      });
       setRevertLoading(true);
       await axiosUtil.delete(`/revertList/${selectedRecord._id}`, {
         listId: selectedRecord._id,
@@ -311,6 +315,9 @@ export default function PreviousList() {
                           target="_blank"
                           download
                           rel="noreferrer"
+                          onClick={ga4react.event('link_click', {
+                            label: `Download_Report`,
+                          })}
                         >
                           <IconButton color="success">
                             <ArrowCircleDownIcon />
