@@ -1,4 +1,4 @@
-import React, { useState, lazy, useMemo } from 'react';
+import React, { useState } from 'react';
 import { AppBar, Toolbar, Typography, Menu, MenuItem, IconButton } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
 import NoteAddIcon from '@mui/icons-material/NoteAdd';
@@ -12,10 +12,10 @@ import HistoryIcon from '@mui/icons-material/History';
 import { useTranslation } from 'react-i18next';
 import { List } from '@mui/icons-material';
 
+import { useDispatch } from 'react-redux';
 import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
 import ChangeLanguage from './ChangeLanguage';
-import { useDispatch } from 'react-redux';
 import { setPopup } from '../redux/popup';
 import { ADD_ACCOUNT, ADD_INSTALLMENT } from '../services/constants';
 

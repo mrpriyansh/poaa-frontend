@@ -1,3 +1,4 @@
+/* eslint-disable */
 /* eslint-disable no-plusplus */
 /* eslint-disable import/prefer-default-export */
 import XLSX from 'xlsx';

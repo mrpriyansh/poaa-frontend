@@ -7,6 +7,7 @@ export function unregister() {
         registration.unregister();
       })
       .catch(error => {
+        // eslint-disable-next-line no-console
         console.error(error.message);
       });
   }
@@ -19,7 +20,8 @@ const base64ToUint8Array = base64 => {
   const rawData = window.atob(b64);
   const outputArray = new Uint8Array(rawData.length);
 
-  for (let i = 0; i < rawData.length; ++i) {
+  // eslint-disable-next-line no-plusplus
+  for (let i = 0; i < rawData.length; i++) {
     outputArray[i] = rawData.charCodeAt(i);
   }
   return outputArray;

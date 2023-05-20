@@ -7,6 +7,7 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 import { useTranslation } from 'react-i18next';
 import useSWR from 'swr';
 
+import { useDispatch } from 'react-redux';
 import Controls from '../common/controls/Controls';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { deleteTrigger } from '../services/getAlert/getAlert';
@@ -15,7 +16,6 @@ import { formatDateReverse, formatDate } from '../services/utils';
 
 import CustomTable from '../common/Table';
 import { axiosUtil } from '../services/axiosinstance';
-import { useDispatch } from 'react-redux';
 import { ADD_INSTALLMENT, EDIT_ACCOUNT } from '../services/constants';
 import { setPopup } from '../redux/popup';
 

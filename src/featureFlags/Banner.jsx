@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 import MuiAlert from '@mui/material/Alert';
 import { Snackbar } from '@mui/material';
-import useSWR from 'swr';
 import { useTranslation } from 'react-i18next';
 
 import { bannerStyles } from '../styles/components/banner';
 import Button from '../common/controls/Button';
-import { axiosUtil } from '../services/axiosinstance';
 
 export default function Banner({ data }) {
   const classes = bannerStyles();

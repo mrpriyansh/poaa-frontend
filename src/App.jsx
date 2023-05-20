@@ -1,4 +1,4 @@
-import React, { useState, useEffect, lazy, useMemo } from 'react';
+import React, { useState, useEffect, lazy, useMemo, useCallback } from 'react';
 import { Detector } from 'react-detect-offline';
 import { useHistory } from 'react-router-dom';
 import * as locales from '@mui/material/locale';
@@ -73,7 +73,7 @@ function App() {
     }
   }, []);
 
-  const checkForNotification = async () => {
+  const checkForNotification = useCallback(async () => {
     if (Notification?.permission !== 'granted')
       dispatch(
         setPopup({
@@ -84,10 +84,11 @@ function App() {
       );
     await serviceWorkerRegistration.registerSW();
     await serviceWorkerRegistration.subscribeNotification();
-  };
+  }, [t, dispatch]);
+
   useEffect(() => {
     checkForNotification();
-  }, []);
+  }, [checkForNotification]);
 
   useEffect(() => {
     const removedOldToken = window.localStorage.getItem('removedOldToken');

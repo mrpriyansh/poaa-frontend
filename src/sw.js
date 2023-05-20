@@ -1,4 +1,6 @@
-import { ExpirationPlugin } from 'workbox-expiration';
+/* eslint-disable no-restricted-globals */
+/* eslint-disable no-undef */
+/* eslint-disable func-names */
 import { precacheAndRoute, cleanupOutdatedCaches } from 'workbox-precaching';
 import { registerRoute } from 'workbox-routing';
 import { StaleWhileRevalidate } from 'workbox-strategies';
@@ -47,13 +49,14 @@ self.addEventListener('activate', () => self.clients.claim());
 // Receive push notifications
 self.addEventListener('push', function(e) {
   if (!(self.Notification && self.Notification.permission === 'granted')) {
-    //notifications aren't supported or permission not granted!
-    console.log('nononono');
+    // notifications aren't supported or permission not granted!
+    // eslint-disable-next-line no-console
+    console.info('nononono');
     return;
   }
 
   if (e.data) {
-    let message = e.data.json();
+    const message = e.data.json();
     e.waitUntil(
       self.registration.showNotification(message.title, {
         body: message.body,

@@ -1,21 +1,23 @@
 import useSWR from 'swr';
-import { axiosUtil } from '../services/axiosinstance';
 import { Grid, InputAdornment, Paper, Typography } from '@mui/material';
-import { t } from 'i18next';
-import { useDeferredValue, useMemo, useState } from 'react';
+import { useCallback, useDeferredValue, useMemo, useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import { Search } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
+
 import CustomTable from '../common/Table';
 import { unpaidInstallmentsStyles } from '../styles/view/unpaidInstallments';
-import AddIcon from '@mui/icons-material/Add';
 import Controls from '../common/controls/Controls';
-import { Search } from '@mui/icons-material';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
-import { useDispatch } from 'react-redux';
+import { axiosUtil } from '../services/axiosinstance';
 import { setPopup } from '../redux/popup';
 import { ADD_INSTALLMENT } from '../services/constants';
 
-export default function() {
+export default function UnpaidInstallments() {
   const classes = unpaidInstallmentsStyles();
   const dispatch = useDispatch();
+  const { t } = useTranslation();
   const { data, isLoading } = useSWR('unpaidInstallments', axiosUtil.swr);
   const [searchValue, setSearchValue] = useState('');
   const columns = useMemo(
@@ -36,41 +38,42 @@ export default function() {
     );
   }, [data, deferredQuery]);
 
-  const handleAddInstallment = account => {
-    dispatch(
-      setPopup({
-        type: ADD_INSTALLMENT,
-        title: t(ADD_INSTALLMENT),
-        props: {
-          record: {
-            name: account.name,
-            accountNo: account.accountNo,
-            amount: account.amount,
-            installments: 1,
+  const handleAddInstallment = useCallback(
+    account => {
+      dispatch(
+        setPopup({
+          type: ADD_INSTALLMENT,
+          title: t(ADD_INSTALLMENT),
+          props: {
+            record: {
+              name: account.name,
+              accountNo: account.accountNo,
+              amount: account.amount,
+              installments: 1,
+            },
           },
-        },
-      })
-    );
-  };
+        })
+      );
+    },
+    [dispatch, t]
+  );
   const rows = useMemo(
     () =>
-      filteredAccounts?.map(inst => {
-        return {
-          name: inst.name,
-          amount: inst.amount,
-          accountNo: inst.accountNo,
-          actions: (
-            <Controls.Button
-              size="small"
-              text={t('installment.add')}
-              variant="outlined"
-              startIcon={<AddIcon />}
-              onClick={() => handleAddInstallment(inst)}
-            />
-          ),
-        };
-      }),
-    [filteredAccounts]
+      filteredAccounts?.map(inst => ({
+        name: inst.name,
+        amount: inst.amount,
+        accountNo: inst.accountNo,
+        actions: (
+          <Controls.Button
+            size="small"
+            text={t('installment.add')}
+            variant="outlined"
+            startIcon={<AddIcon />}
+            onClick={() => handleAddInstallment(inst)}
+          />
+        ),
+      })),
+    [filteredAccounts, handleAddInstallment, t]
   );
 
   if (isLoading) return <LoaderSVG />;

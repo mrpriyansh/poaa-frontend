@@ -114,7 +114,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
             handleChangeInputText(newInputValue);
           }}
           getOptionLabel={option => option.name}
-          renderOption={(props, option, a) => {
+          renderOption={(props, option) => {
             return (
               <li {...props} key={option.accountNo}>
                 <span style={{ fontSize: '0.85em', fontWeight: '700' }}>{option.name} &nbsp;</span>

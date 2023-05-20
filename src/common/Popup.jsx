@@ -55,7 +55,8 @@ export default function Popup({ title, children, openPopup, setOpenPopup, disabl
   );
 }
 
-export const GeneratePopupComponent = function(props) {
+export const GeneratePopupComponent = props => {
+  // eslint-disable-next-line react/destructuring-assignment
   switch (props.type) {
     case EDIT_ACCOUNT:
     case ADD_ACCOUNT:

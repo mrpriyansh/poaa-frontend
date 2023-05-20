@@ -11,7 +11,6 @@ import { useAuth } from '../services/Auth';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { axiosUtil } from '../services/axiosinstance';
 import { encryptString, isNull } from '../services/utils';
-import config from '../services/config';
 
 const initialValues = {
   name: '',

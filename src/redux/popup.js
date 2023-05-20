@@ -1,4 +1,7 @@
-import { createSlice } from '@reduxjs/toolkit'; //next js redux toolkit
+/* eslint-disable no-param-reassign */
+
+import { createSlice } from '@reduxjs/toolkit';
+// next js redux toolkit
 export const popupSlice = createSlice({
   name: 'popup',
   initialState: {

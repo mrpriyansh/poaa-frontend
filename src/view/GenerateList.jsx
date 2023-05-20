@@ -1,5 +1,5 @@
 import { Paper, IconButton, Typography, Box } from '@mui/material';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 import PostAddIcon from '@mui/icons-material/PostAdd';
@@ -8,6 +8,7 @@ import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import useSWR, { useSWRConfig, preload } from 'swr';
 
+import { useDispatch } from 'react-redux';
 import CustomTable from '../common/Table';
 import { formatDateReverse } from '../services/utils';
 import { generateListStyles } from '../styles/view/generateList';
@@ -15,7 +16,6 @@ import Controls from '../common/controls/Controls';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { axiosUtil } from '../services/axiosinstance';
-import { useDispatch } from 'react-redux';
 import { setPopup } from '../redux/popup';
 import { ADD_INSTALLMENT, EDIT_INSTALLMENT } from '../services/constants';
 
