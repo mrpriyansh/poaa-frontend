@@ -6,7 +6,7 @@ export function useForm(initialValues, validateOnChange = false, validate) {
   const [errors, setErrors] = useState({});
   const handleInputChange = e => {
     const { name, value } = e.target;
-    setValues({ ...values, [name]: value });
+    setValues(prevState => ({ ...prevState, [name]: value }));
     if (validateOnChange) validate({ [name]: value });
   };
 

@@ -105,7 +105,7 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
           />
           <Controls.Select
             label={t('account.type')}
-            name="type"
+            name="accountType"
             value={values.accountType}
             onChange={handleInputChange}
             options={accountTypeList}
