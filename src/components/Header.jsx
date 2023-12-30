@@ -158,7 +158,7 @@ function Header() {
             {user ? (
               [
                 <MenuItem key="saluation">
-                  <Typography variant="body1">Hi {user?.name}!</Typography>
+                  <Typography variant="body1">Hi {user?.name || 'User'}!</Typography>
                 </MenuItem>,
                 menuOptions.map((optionDetails, index) => {
                   // only to render the logout button at last

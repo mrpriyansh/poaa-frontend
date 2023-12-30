@@ -18,6 +18,21 @@ const initialValues = {
 
 const SIGN_UP = 'SignUp';
 
+const fieldsArray = [
+  {
+    name: 'email',
+    key: 'email',
+    required: true,
+    type: 'text',
+  },
+  {
+    name: 'password',
+    key: 'password',
+    required: true,
+    type: 'password',
+  },
+];
+
 function Login() {
   const classes = loginStyles();
   const { t } = useTranslation();
@@ -37,9 +52,7 @@ function Login() {
   };
   const { values, errors, setErrors, handleInputChange } = useForm(initialValues, true, validate);
 
-  const handleSubmit = event => {
-    event.preventDefault();
-    if (!isLogin) return triggerAlert({ icon: 'info', title: 'Contact administration!' });
+  const userSignin = () => {
     setLoading(true);
     axiosUtil
       .post('signin', values)
@@ -49,6 +62,21 @@ function Login() {
         history.push('/');
       })
       .finally(() => setLoading(false));
+  };
+
+  const userSignup = () => {
+    axiosUtil
+      .post('signup', values)
+      .then(res => {
+        history.push('/');
+        return triggerAlert(res.data);
+      })
+      .finally(() => setLoading(false));
+  };
+  const handleSubmit = event => {
+    event.preventDefault();
+    if (isLogin) return userSignin();
+    return userSignup();
   };
 
   const changeType = () => {
@@ -67,27 +95,19 @@ function Login() {
               {isLogin ? t('creds.login') : t('creds.signup')}
             </Typography>
             <Grid container item xs={12} justifyContent="center">
-              <Controls.Input
-                variant="outlined"
-                label={t('pi.email')}
-                name="email"
-                value={values.email}
-                onChange={handleInputChange}
-                error={errors.email}
-                classes={{ root: classes.inputRoot }}
-                required
-              />
-              <Controls.Input
-                variant="outlined"
-                label={t('pi.password')}
-                name="password"
-                type="password"
-                value={values.password}
-                onChange={handleInputChange}
-                classes={{ root: classes.inputRoot }}
-                error={errors.password}
-                required
-              />
+              {fieldsArray.map(({ key, name, required, type }) => (
+                <Controls.Input
+                  variant="outlined"
+                  name={name}
+                  label={t(`pi.${key}`)}
+                  value={values[key]}
+                  onChange={handleInputChange}
+                  error={errors[key]}
+                  classes={{ root: classes.inputRoot }}
+                  required={required}
+                  type={type}
+                />
+              ))}
               <Controls.Button
                 type="submit"
                 text={isLogin ? t('creds.login') : t('creds.signup')}
