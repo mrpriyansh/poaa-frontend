@@ -10,6 +10,7 @@ import { useAuth } from '../services/Auth';
 import { loginStyles } from '../styles/view/login';
 import { axiosUtil } from '../services/axiosinstance';
 import { triggerAlert } from '../services/getAlert/getAlert';
+import { isKeyCodePressed, isKeyDown } from '../services/utils';
 
 const initialValues = {
   email: '',
@@ -20,16 +21,27 @@ const SIGN_UP = 'SignUp';
 
 const fieldsArray = [
   {
+    label: 'Name',
+    name: 'name',
+    required: true,
+    key: 'name',
+    autoComplete: 'name',
+  },
+  {
     name: 'email',
     key: 'email',
     required: true,
     type: 'text',
+    autoComplete: 'email',
+    requiredForSignIn: true,
   },
   {
     name: 'password',
     key: 'password',
     required: true,
     type: 'password',
+    autoComplete: 'password',
+    requiredForSignIn: true,
   },
 ];
 
@@ -79,8 +91,14 @@ function Login() {
     return userSignup();
   };
 
-  const changeType = () => {
+  const changeType = event => {
+    if (isKeyDown(event) && !isKeyCodePressed(event, [32])) return;
     setIsLogin(prevState => !prevState);
+  };
+
+  const handleForgetPassword = event => {
+    if (isKeyDown(event) && !isKeyCodePressed(event, [32])) return;
+    triggerAlert({ icon: 'info', title: 'Contact administration' });
   };
 
   return (
@@ -95,19 +113,22 @@ function Login() {
               {isLogin ? t('creds.login') : t('creds.signup')}
             </Typography>
             <Grid container item xs={12} justifyContent="center">
-              {fieldsArray.map(({ key, name, required, type }) => (
-                <Controls.Input
-                  variant="outlined"
-                  name={name}
-                  label={t(`pi.${key}`)}
-                  value={values[key]}
-                  onChange={handleInputChange}
-                  error={errors[key]}
-                  classes={{ root: classes.inputRoot }}
-                  required={required}
-                  type={type}
-                />
-              ))}
+              {fieldsArray.map(({ key, name, required, type, autoComplete, requiredForSignIn }) =>
+                !isLogin || requiredForSignIn ? (
+                  <Controls.Input
+                    variant="outlined"
+                    name={name}
+                    label={t(`pi.${key}`)}
+                    value={values[key]}
+                    onChange={handleInputChange}
+                    error={errors[key]}
+                    classes={{ root: classes.inputRoot }}
+                    required={required}
+                    type={type}
+                    autoComplete={autoComplete || 'off'}
+                  />
+                ) : null
+              )}
               <Controls.Button
                 type="submit"
                 text={isLogin ? t('creds.login') : t('creds.signup')}
@@ -117,17 +138,17 @@ function Login() {
 
               <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
                 {isLogin ? t('creds.newUser') : t('creds.alreadyUser')} &nbsp;
-                <span
-                  role="button"
-                  tabIndex="0"
-                  onClick={() => changeType(SIGN_UP)}
-                  onKeyDown={() => changeType(SIGN_UP)}
-                >
+                <span role="button" tabIndex="0" onClick={changeType} onKeyDown={changeType}>
                   {isLogin ? t('creds.signup') : t('creds.login')}
                 </span>
               </Grid>
               <Grid container item xs={12} justifyContent="center" className={classes.footLine}>
-                <span role="button" tabIndex="0">
+                <span
+                  role="button"
+                  tabIndex="0"
+                  onClick={handleForgetPassword}
+                  onKeyDown={handleForgetPassword}
+                >
                   {t('creds.forgotPwd')}
                 </span>
               </Grid>

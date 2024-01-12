@@ -31,7 +31,8 @@
     "amount": "Amount",
     "add": "Add Account",
     "all": "All Accounts",
-    "unpaid": "Unpaid Accounts"
+    "unpaid": "Unpaid Accounts",
+    "add_batch": "Add using Excel"
   },
   "installment": {
     "add": "Add Installment",

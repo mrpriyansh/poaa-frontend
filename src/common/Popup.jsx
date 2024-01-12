@@ -4,6 +4,7 @@ import makeStyles from '@mui/styles/makeStyles';
 import CloseIcon from '@mui/icons-material/Close';
 import {
   ADD_ACCOUNT,
+  ADD_BATCH,
   ADD_INSTALLMENT,
   EDIT_ACCOUNT,
   EDIT_INSTALLMENT,
@@ -13,6 +14,7 @@ import RequestNotification from '../components/RequestNotification';
 
 const AddInstallment = lazy(() => import('../components/AddInstallment'));
 const AddAccount = lazy(() => import('../components/AddAccount'));
+const UsingExcel = lazy(() => import('../components/UsingExcel'));
 
 const useStyles = makeStyles(theme => ({
   dialogTitle: {
@@ -66,7 +68,9 @@ export const GeneratePopupComponent = props => {
       return <AddInstallment {...props} />;
     case REQUEST_NOTIFICATION:
       return <RequestNotification {...props} />;
+    case ADD_BATCH:
+      return <UsingExcel {...props} />;
     default:
-      <div> Work in progress</div>;
+      return <div> Work in progress</div>;
   }
 };

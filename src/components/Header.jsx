@@ -7,6 +7,7 @@ import PostAddIcon from '@mui/icons-material/PostAdd';
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonOutline from '@mui/icons-material/PersonOutline';
 import MoneyOffCsredIcon from '@mui/icons-material/MoneyOffCsred';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import { useHistory } from 'react-router-dom';
 import HistoryIcon from '@mui/icons-material/History';
 import { useTranslation } from 'react-i18next';
@@ -17,9 +18,7 @@ import { useAuth } from '../services/Auth';
 import { headerStyles } from '../styles/components/header';
 import ChangeLanguage from './ChangeLanguage';
 import { setPopup } from '../redux/popup';
-import { ADD_ACCOUNT, ADD_INSTALLMENT } from '../services/constants';
-
-// const ADD_BATCH = 'Add Using Excel';
+import { ADD_ACCOUNT, ADD_INSTALLMENT, ADD_BATCH } from '../services/constants';
 
 function Header() {
   const classes = headerStyles();
@@ -49,11 +48,10 @@ function Header() {
     handleClose();
   };
 
-  // eslint-disable-next-line
-  // const handleAddBatchAccounts = () => {
-  //   setPopupType(ADD_BATCH);
-  //   handleClose();
-  // };
+  const handleAddBatchAccounts = () => {
+    dispatch(setPopup({ type: ADD_BATCH, title: t(ADD_BATCH) }));
+    handleClose();
+  };
 
   const handleAddInstallment = () => {
     dispatch(setPopup({ type: ADD_INSTALLMENT, title: t(ADD_INSTALLMENT) }));
@@ -111,12 +109,12 @@ function Header() {
       icon: <NoteAddIcon />,
       text: t('account.add'),
     },
-    // {
-    //   onClickFunc: handleAddBatchAccounts,
-    //   isDisabled: !isPortalDetails,
-    //   icon: <LibraryAddIcon />,
-    //   text: 'Add In Batch',
-    // },
+    {
+      onClickFunc: handleAddBatchAccounts,
+      isDisabled: !isPortalDetails,
+      icon: <LibraryAddIcon />,
+      text: t('account.add_batch'),
+    },
     {
       onClickFunc: () => redirectsTo('/user-details'),
       icon: <PersonOutline />,
