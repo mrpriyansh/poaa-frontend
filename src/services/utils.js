@@ -18,7 +18,7 @@ export const formatDateReverse = date => {
 export const isNull = (obj, fields) => {
   let empty = false;
   fields.forEach(prop => {
-    if (obj[prop]?.length === 0) {
+    if (!obj?.[prop]?.length ) {
       empty = true;
     }
   });
@@ -27,3 +27,14 @@ export const isNull = (obj, fields) => {
 
 export const encryptString = string =>
   CryptoJS.AES.encrypt(string, config.env.ENCRYPT_KEY).toString();
+
+export const isKeyCodePressed = (event, allowedKeyCodes=[])=> {
+    const {keyCode} = event;
+    if(!keyCode) return false;
+    return allowedKeyCodes.includes(keyCode)
+}
+
+export const isKeyDown = (event) => {
+  const {type} =  event;
+  return type==="keydown"
+}

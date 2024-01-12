@@ -11,6 +11,7 @@ import { triggerAlert } from '../services/getAlert/getAlert';
 import { useAuth } from '../services/Auth';
 import { usingExcelStyles } from '../styles/components/usingExcel';
 import { axiosUtil } from '../services/axiosinstance';
+import { reformatDate } from '../services/dateUtils';
 
 function UsingExcel() {
   const classes = usingExcelStyles();
@@ -40,7 +41,7 @@ function UsingExcel() {
               accountType: 'RD',
             },
           ]);
-        if (!account.Date)
+        if (!account.Date) {
           return setMatureCount(prev => [
             ...prev,
             {
@@ -50,7 +51,9 @@ function UsingExcel() {
               amount: account.Denomination.split('.')[0].replace(',', ''),
             },
           ]);
-        const date = new Date(excelDateToJSDate(account.Date));
+        }
+
+        const date = new Date(reformatDate({date: account.Date, inputFormat: "DD-MMM-YYYY"}));
         const openingDate = new Date(date.setMonth(date.getMonth() - account['Month Paid Upto']));
         const maturityDate = new Date(
           date.setFullYear(date.getFullYear() + 5 * Math.ceil(account['Month Paid Upto'] / 60))
@@ -110,12 +113,6 @@ function UsingExcel() {
     }
   }, [data, authToken]);
 
-  // function to convert excel date to normal js date
-  function excelDateToJSDate(excelDate) {
-    const date = new Date(Math.round((excelDate - (25567 + 2)) * 86400 * 1000));
-    const convertedDate = date.toISOString().split('T')[0];
-    return convertedDate;
-  }
   useEffect(() => {
     if (
       data.length &&
@@ -186,14 +183,12 @@ function UsingExcel() {
           <Controls.Button
             variant="outlined"
             text={`Failed - ${failedCount.length}`}
-            color="default"
             disabled={loading || !failedCount.length}
             onClick={() => handleRoute(failedCount)}
           />
           <Controls.Button
             variant="outlined"
             text={`Full Paid Account - ${matureCount.length}`}
-            color="default"
             disabled={loading || !matureCount.length}
             onClick={() => handleRoute(matureCount)}
           />
@@ -202,14 +197,12 @@ function UsingExcel() {
           <Controls.Button
             variant="outlined"
             text={`Already Added - ${alreadyCount.length}`}
-            color="default"
             disabled={loading || !alreadyCount.length}
             onClick={() => handleRoute(alreadyCount)}
           />
           <Controls.Button
             variant="outlined"
             text={`Uploaded Successfully - ${addedCount.length}`}
-            color="primary"
             disabled={loading || !addedCount.length}
             onClick={() => handleRoute(addedCount)}
           />
@@ -217,7 +210,6 @@ function UsingExcel() {
             variant="outlined"
             text={`Total Account - ${data.length}`}
             disabled={!data.length}
-            color="default"
           />
         </Grid>
       </Grid>

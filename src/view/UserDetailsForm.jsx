@@ -19,6 +19,29 @@ const initialValues = {
   pPassword: '',
 };
 
+const inputFields = [
+  {
+    label: 'Name',
+    name: 'name',
+    required: true,
+    key: 'name',
+    autoComplete: 'name',
+  },
+  {
+    label: 'Portal Account No',
+    name: 'pAccountNo',
+    required: true,
+    key: 'pAccountNo',
+  },
+  {
+    label: 'Portal Current Password',
+    name: 'pPassword',
+    required: true,
+    key: 'pPassword',
+    type: 'password',
+  },
+];
+
 export default function UserDetailsForm() {
   const classes = loginStyles();
   const { user, setUser } = useAuth();
@@ -81,42 +104,20 @@ export default function UserDetailsForm() {
               Update Details
             </Typography>
             <Grid container item xs={12} justifyContent="center">
-              <Controls.Input
-                variant="outlined"
-                label="Name"
-                name="name"
-                required
-                value={values.name}
-                onChange={handleInputChange}
-                error={errors.name}
-                classes={{ root: classes.inputRoot }}
-                disabled={!needToChange()}
-              />
-
-              <Controls.Input
-                variant="outlined"
-                label="Portal Account No"
-                name="pAccountNo"
-                required
-                value={values.pAccountNo}
-                onChange={handleInputChange}
-                error={errors.pAccountNo}
-                classes={{ root: classes.inputRoot }}
-                disabled={!needToChange()}
-              />
-
-              <Controls.Input
-                variant="outlined"
-                type="password"
-                label="Portal Current Password"
-                name="pPassword"
-                required
-                value={values.pPassword}
-                onChange={handleInputChange}
-                error={errors.pPassword}
-                classes={{ root: classes.inputRoot }}
-                disabled={!needToChange()}
-              />
+              {inputFields.map(({ label, name, key, required, autoComplete }) => (
+                <Controls.Input
+                  variant="outlined"
+                  label={label}
+                  name={name}
+                  required={required}
+                  value={values[key]}
+                  onChange={handleInputChange}
+                  error={errors[key]}
+                  classes={{ root: classes.inputRoot }}
+                  disabled={!needToChange()}
+                  autoComplete={autoComplete || 'off'}
+                />
+              ))}
 
               <Controls.Button
                 type="submit"
