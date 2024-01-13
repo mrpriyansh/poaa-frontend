@@ -62,15 +62,6 @@ export default function PreviousList() {
 
   const { data: response, isLoading: dataLoading } = useSWR('getAllLists', axiosUtil.get);
 
-  const formatErrorMessage = message => {
-    const regexTemp = /(waiting for) .*/;
-    const match = message?.match(regexTemp);
-    if (match?.length >= 2 && match[1] === 'waiting for')
-      return 'DOP server was slow. Please try again!';
-
-    return message;
-  };
-
   const selectedRecord = response?.data?.length > 0 ? response?.data?.[selectedRecordIndex] : {};
   const selectedList =
     selectedRecord?.list?.length > 0 ? selectedRecord?.list[selectedListIndex] : {};
@@ -165,13 +156,6 @@ export default function PreviousList() {
     axiosUtil.post('/abortProcesses', { id, processIds }).then(res => {
       triggerAlert({ icon: 'success', title: res.data });
     });
-  };
-
-  const calcTime = (t1, t2) => {
-    const timeDiff = (new Date(t1) - new Date(t2)) / 1000;
-    const minutes = timeDiff / 60;
-    const seconds = timeDiff % 60;
-    return `${minutes.toFixed(0)} min ${seconds.toFixed(0)} sec `;
   };
 
   return (
@@ -276,88 +260,16 @@ export default function PreviousList() {
                     <LoaderSVG width="3em" height="3em" />
                   </div>
                 ) : ['Running', 'Initiated'].includes(taskStats?.status) ? (
-                  <>
-                    <div className={classes.row}>
-                      <RunningSvg width="2.5em" height="2.5em" color="success" size="small" />{' '}
-                      &nbsp;{' '}
-                      <Typography classes={{ root: classes.greenText }} variant="subtitle1">
-                        {' '}
-                        <b> Running!</b>
-                      </Typography>
-                    </div>
-                    <div className={classes.row}>
-                      <Typography variant="caption" classes={{ root: classes.lightGreenText }}>
-                        {' '}
-                        {taskStats.progress}
-                      </Typography>
-                    </div>
-                  </>
+                  <TaskRunningStats progress={taskStats?.progress} />
                 ) : taskStats?.status === 'Done' ||
                   selectedRecord.status === 'REFERENCE_NO_CREATED' ? (
-                  <>
-                    <div className={classes.row}>
-                      <CheckCircleIcon classes={{ root: classes.greenText }} size="small" /> &nbsp;{' '}
-                      <Typography classes={{ root: classes.greenText }} variant="subtitle1">
-                        {' '}
-                        <b>
-                          {' '}
-                          {`Completed in ${calcTime(
-                            taskStats.updatedAt,
-                            taskStats.createdAt
-                          )}!`}{' '}
-                        </b>
-                      </Typography>
-                    </div>
-                    <div className={classes.row}>
-                      {taskStats.misc[selectedListIndex].url ? (
-                        <a
-                          href={taskStats.misc[selectedListIndex].url}
-                          target="_blank"
-                          download
-                          rel="noreferrer"
-                          onClick={ga4react.event('link_click', {
-                            label: `Download_Report`,
-                          })}
-                        >
-                          <IconButton color="success">
-                            <ArrowCircleDownIcon />
-                          </IconButton>
-                        </a>
-                      ) : ['Failed', 'Aborted'].includes(taskStats?.status) ? (
-                        <>
-                          <div className={classes.row}>
-                            {taskStats?.status === 'Failed' ? (
-                              <CancelIcon color="error" size="small" />
-                            ) : (
-                              <WarningIcon color="error" size="small" />
-                            )}
-                            &nbsp;{' '}
-                            <Typography color="error" variant="subtitle1">
-                              {' '}
-                              <b> {taskStats?.status}</b>
-                            </Typography>
-                          </div>
-                          <div className={classes.row}>
-                            <Typography variant="caption" color="error" align="center">
-                              {' '}
-                              {formatErrorMessage(taskStats.error)}
-                            </Typography>
-                          </div>
-                          <div className={classes.row}>
-                            <Typography variant="caption" align="center">
-                              {' '}
-                              {taskStats.progress}
-                            </Typography>
-                          </div>
-                        </>
-                      ) : null}
-                      <Typography variant="caption" classes={{ root: classes.greenText }}>
-                        {' '}
-                        {taskStats.misc[selectedListIndex].refNo ||
-                          taskStats.misc[selectedListIndex]}
-                      </Typography>
-                    </div>
-                  </>
+                  <TaskDoneStats taskStats={taskStats} selectedListIndex={selectedListIndex} />
+                ) : ['Failed', 'Aborted'].includes(taskStats?.status) ? (
+                  <TaskFailedStats
+                    status={taskStats?.status}
+                    progress={taskStats?.progress}
+                    error={taskStats?.error}
+                  />
                 ) : null}
               </Grid>
               <Grid item xs={12} container justifyContent="center" alignItems="center">
@@ -409,3 +321,107 @@ export default function PreviousList() {
     </>
   );
 }
+
+const TaskFailedStats = ({ status, error, progress }) => {
+  const classes = previousListsStyles();
+  const formatErrorMessage = message => {
+    const regexTemp = /(waiting for) .*/;
+    const match = message?.match(regexTemp);
+    if (match?.length >= 2 && match[1] === 'waiting for')
+      return 'DOP server was slow. Please try again!';
+
+    return message;
+  };
+  return (
+    <>
+      <div className={classes.row}>
+        {status === 'Failed' ? (
+          <CancelIcon color="error" size="small" />
+        ) : (
+          <WarningIcon color="error" size="small" />
+        )}
+        &nbsp;{' '}
+        <Typography color="error" variant="subtitle1">
+          <b> {status}</b>
+        </Typography>
+      </div>
+      <div className={classes.row}>
+        <Typography variant="caption" color="error" align="center">
+          {formatErrorMessage(error)}
+        </Typography>
+      </div>
+      <div className={classes.row}>
+        <Typography variant="caption" align="center">
+          {progress}
+        </Typography>
+      </div>
+    </>
+  );
+};
+
+const TaskDoneStats = ({ taskStats, selectedListIndex }) => {
+  const classes = previousListsStyles();
+  const calcTime = (t1, t2) => {
+    const timeDiff = (new Date(t1) - new Date(t2)) / 1000;
+    const minutes = timeDiff / 60;
+    const seconds = timeDiff % 60;
+    return `${minutes.toFixed(0)} min ${seconds.toFixed(0)} sec `;
+  };
+  return (
+    <>
+      <div className={classes.row}>
+        <CheckCircleIcon classes={{ root: classes.greenText }} size="small" /> &nbsp;{' '}
+        <Typography classes={{ root: classes.greenText }} variant="subtitle1">
+          {' '}
+          <b> {`Completed in ${calcTime(taskStats.updatedAt, taskStats.createdAt)}!`} </b>
+        </Typography>
+      </div>
+      <div className={classes.row}>
+        {taskStats?.misc?.[selectedListIndex]?.url ? (
+          <a
+            href={taskStats?.misc?.[selectedListIndex]?.url}
+            target="_blank"
+            download
+            rel="noreferrer"
+            onClick={ga4react.event('link_click', {
+              label: `Download_Report`,
+            })}
+          >
+            <IconButton color="success">
+              <ArrowCircleDownIcon />
+            </IconButton>
+          </a>
+        ) : (
+          <Typography variant="caption" component="i">
+            {' '}
+            Please download list from portal! &nbsp;
+          </Typography>
+        )}
+        <Typography variant="caption" classes={{ root: classes.greenText }}>
+          {' '}
+          {taskStats?.misc?.[selectedListIndex]?.refNo || taskStats?.misc?.[selectedListIndex]}
+        </Typography>
+      </div>
+    </>
+  );
+};
+
+const TaskRunningStats = ({ progress }) => {
+  const classes = previousListsStyles();
+  return (
+    <>
+      <div className={classes.row}>
+        <RunningSvg width="2.5em" height="2.5em" color="success" size="small" /> &nbsp;{' '}
+        <Typography classes={{ root: classes.greenText }} variant="subtitle1">
+          <b> Running!</b>
+        </Typography>
+      </div>
+      <div className={classes.row}>
+        <Typography variant="caption" classes={{ root: classes.lightGreenText }}>
+          {' '}
+          {progress}
+        </Typography>
+      </div>
+    </>
+  );
+};
