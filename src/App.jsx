@@ -75,21 +75,23 @@ function App() {
   }, []);
 
   const checkForNotification = useCallback(async () => {
-    if (Notification?.permission !== 'granted')
+    if (Notification?.permission !== 'granted') {
+      Notification?.requestPermission();
       dispatch(
         setPopup({
           type: REQUEST_NOTIFICATION,
           title: t(REQUEST_NOTIFICATION),
-          disableClosing: true,
         })
       );
+    }
+
     await serviceWorkerRegistration.registerSW();
     await serviceWorkerRegistration.subscribeNotification();
   }, [t, dispatch]);
 
-  // useEffect(() => {
-  //   checkForNotification();
-  // }, [checkForNotification]);
+  useEffect(() => {
+    checkForNotification();
+  }, [checkForNotification]);
 
   useEffect(() => {
     const removedOldToken = window.localStorage.getItem('removedOldToken');
