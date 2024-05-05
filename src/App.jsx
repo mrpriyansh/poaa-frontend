@@ -87,9 +87,9 @@ function App() {
     await serviceWorkerRegistration.subscribeNotification();
   }, [t, dispatch]);
 
-  useEffect(() => {
-    checkForNotification();
-  }, [checkForNotification]);
+  // useEffect(() => {
+  //   checkForNotification();
+  // }, [checkForNotification]);
 
   useEffect(() => {
     const removedOldToken = window.localStorage.getItem('removedOldToken');

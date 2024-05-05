@@ -40,26 +40,38 @@ export default defineConfig(({ mode }) => {
 });
 
 const manifest = {
-  name: 'Post Office Agent Assistant',
-  icons: [
-    {
-      src: 'favicon.ico',
-      sizes: '64x64 32x32 24x24 16x16',
-      type: 'image/x-icon',
-    },
-    {
-      src: 'logo192.png',
-      type: 'image/png',
-      sizes: '192x192',
-    },
-    {
-      src: 'logo512.png',
-      type: 'image/png',
-      sizes: '512x512',
-    },
-  ],
-  start_url: '.',
-  display: 'standalone',
-  theme_color: '#fff',
-  background_color: '#000',
+    "name": "Post Office Agent Assistant",
+    "short_name": "POAA",
+    "start_url": ".",
+    "display": "standalone",
+    "background_color": "#000",
+    "lang": "en",
+    "scope": "/",
+    "icons": [
+        {
+            "src": "favicon.ico",
+            "sizes": "64x64 24x24",
+            "type": "image/x-icon"
+        },
+		{
+            "src": "logo16.png",
+            "type": "image/png",
+            "sizes": "16x16"
+        },
+        {
+            "src": "logo32.png",
+            "type": "image/png",
+            "sizes": "32x32"
+        },{
+            "src": "logo192.png",
+            "type": "image/png",
+            "sizes": "192x192"
+        },
+        {
+            "src": "logo512.png",
+            "type": "image/png",
+            "sizes": "512x512"
+        }
+    ],
+    "theme_color": "#fff"
 };
