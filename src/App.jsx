@@ -21,6 +21,7 @@ import ForceLogout from './featureFlags/ForceLogout';
 import Popup, { GeneratePopupComponent } from './common/Popup';
 import { setPopup } from './redux/popup';
 import { REQUEST_NOTIFICATION } from './services/constants';
+import AdsComponent from './common/AdsComponent';
 
 const Header = lazy(() => import('./components/Header'));
 const Login = lazy(() => import('./view/Login'));
@@ -188,6 +189,7 @@ function App() {
                 setOpenPopup={setOpenPopup}
               />
             </Popup>
+            <AdsComponent dataAdSlot="4572218448" />
           </AuthContext.Provider>
         </HelmetProvider>
       </ThemeProvider>
