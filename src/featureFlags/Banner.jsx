@@ -10,8 +10,12 @@ export default function Banner({ data }) {
   const classes = bannerStyles();
   const { i18n } = useTranslation();
   const [open, setOpen] = useState(true);
+  const { url: redirectionUrl } = data?.metaInfo || {};
 
   const handleClose = () => {
+    if (redirectionUrl) {
+      window.open(redirectionUrl);
+    }
     setOpen(false);
   };
 
@@ -20,7 +24,7 @@ export default function Banner({ data }) {
       open={open && Boolean(data)}
       onClick={handleClose}
       action={<Button color="secondary" size="small" onClick={handleClose} text="Close" />}
-      classes={{ root: classes.paperRoot }}
+      classes={{ root: `${classes.paperRoot} , ${redirectionUrl ? classes.cPointer : ''}` }}
     >
       <MuiAlert elevation={6} variant="filled" severity={data?.metaInfo?.severity}>
         {data?.metaInfo?.text[i18n.language] || data?.metaInfo?.text.fallBack}

@@ -9,4 +9,7 @@ export const bannerStyles = makeStyles(() => ({
       margin: 'auto',
     },
   },
+  cPointer: {
+    cursor: 'pointer'
+  }
 }));
