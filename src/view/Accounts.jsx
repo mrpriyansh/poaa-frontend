@@ -26,7 +26,6 @@ function Home() {
   const dispatch = useDispatch();
 
   const { data: response, mutate } = useSWR(`allaccounts`, axiosUtil.swr);
-
   const [searchValue, changeSearchValue] = useState('');
   const [searchType, changeSearchType] = useState('name');
 
@@ -69,14 +68,24 @@ function Home() {
     deleteTrigger(mutate, item.accountNo);
   };
 
-  const createData = (name, accountNo, accountType, amount, opening, maturityDate, actions) => {
-    return { name, accountNo, accountType, amount, opening, maturityDate, actions };
+  const createData = (
+    name,
+    cifid,
+    accountNo,
+    accountType,
+    amount,
+    opening,
+    maturityDate,
+    actions
+  ) => {
+    return { name, cifid, accountNo, accountType, amount, opening, maturityDate, actions };
   };
 
   const columns = useMemo(
     () => [
       { id: 'name', label: t('pi.name'), minWidth: '15em' },
       { id: 'amount', label: t('account.amount'), align: 'center' },
+      { id: 'cifid', label: t('account.cifid'), align: 'center' },
       { id: 'accountType', label: t('account.type'), align: 'center' },
       { id: 'accountNo', label: t('account.number'), align: 'center', minWidth: '8em' },
       { id: 'opening', label: t('account.open'), align: 'center', minWidth: '9em' },
@@ -89,6 +98,7 @@ function Home() {
   const rows = filteredAccounts?.map(acc => {
     return createData(
       acc.name,
+      acc.cifid,
       acc.accountNo,
       acc.accountType,
       acc.amount,

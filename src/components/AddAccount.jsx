@@ -123,6 +123,14 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             error={errors.amount}
           />
           <Controls.Input
+            label={t('account.cifid')}
+            name="cifid"
+            value={values.cifid}
+            onChange={handleInputChange}
+            required
+            error={errors.cifid}
+          />
+          <Controls.Input
             label={t('pi.phone')}
             name="phone"
             value={values.phone}

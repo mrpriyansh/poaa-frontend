@@ -32,7 +32,8 @@
     "add": "Add Account",
     "all": "All Accounts",
     "unpaid": "Unpaid Accounts",
-    "add_batch": "Add using Excel"
+    "add_batch": "Add using Excel",
+    "cifid": "CIF Id"
   },
   "installment": {
     "add": "Add Installment",
