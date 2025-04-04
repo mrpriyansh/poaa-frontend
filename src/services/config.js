@@ -1,7 +1,7 @@
 const envPrefix = 'VITE_';
 const apiUrl =
   process.env.NODE_ENV === 'production'
-    ? 'https://poaa-api-267217237716.us-central1.run.app'
+    ? 'https://poaa-api-267217237716.northamerica-northeast1.run.app'
     : 'http://localhost:4000';
 const config = {
   apiUrl,
