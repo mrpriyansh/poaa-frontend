@@ -23,6 +23,7 @@ const initialValues = {
   openingDate: `${y}-${m < 10 ? `0${m}` : m}-${d < 10 ? `0${d}` : d}`,
   maturityDate: `${y + 5}-${m < 10 ? `0${m}` : m}-${d < 10 ? `0${d}` : d}`,
   mobile: '',
+  cifid: '',
 };
 function AddAccount({ setOpenPopup, recordForEdit }) {
   const classes = addAccountStyles();
@@ -127,7 +128,6 @@ function AddAccount({ setOpenPopup, recordForEdit }) {
             name="cifid"
             value={values.cifid}
             onChange={handleInputChange}
-            required
             error={errors.cifid}
           />
           <Controls.Input
