@@ -1,4 +1,13 @@
-import { Box, IconButton, MenuItem, Grid, Paper, TextField, Typography } from '@mui/material';
+import {
+  Box,
+  IconButton,
+  MenuItem,
+  Grid,
+  Paper,
+  TextField,
+  Typography,
+  Chip,
+} from '@mui/material';
 import React, { useState, useEffect, useMemo } from 'react';
 import ArrowLeftIcon from '@mui/icons-material/ArrowLeft';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
@@ -24,6 +33,7 @@ import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import Controls from '../common/controls/Controls';
 import config from '../services/config';
 import { triggerAlert } from '../services/getAlert/getAlert';
+import { PAYMENT_MODES } from '../services/constants';
 
 const useEventSource = taskId => {
   const [data, updateData] = useState(null);
@@ -66,6 +76,8 @@ export default function PreviousList() {
   const selectedList =
     selectedRecord?.list?.length > 0 ? selectedRecord?.list[selectedListIndex] : {};
 
+  const isDopCheque = selectedList?.payMode === PAYMENT_MODES.DOP_CHEQUE;
+
   const taskStats = useEventSource(selectedRecord?.taskId);
 
   const handleChangeList = e => {
@@ -94,8 +106,14 @@ export default function PreviousList() {
       { id: 'amount', label: t('account.amount'), align: 'right' },
       { id: 'totalAmount', label: t('total.amount'), minWidth: '10em', align: 'right' },
       { id: 'accountNo', label: t('account.number'), minWidth: '8em', align: 'center' },
+      ...(isDopCheque
+        ? [
+            { id: 'chequeNo', label: 'Cheque No', minWidth: '8em', align: 'center' },
+            { id: 'chequeAccNo', label: 'Cheque Acc No', minWidth: '10em', align: 'center' },
+          ]
+        : []),
     ],
-    [t]
+    [t, isDopCheque]
   );
 
   const timeoutArray = [
@@ -221,6 +239,12 @@ export default function PreviousList() {
               >
                 <ArrowRightIcon />
               </IconButton>
+              <Chip
+                label={selectedList?.payMode === PAYMENT_MODES.DOP_CHEQUE ? 'DOP Cheque' : 'Cash'}
+                color={selectedList?.payMode === PAYMENT_MODES.DOP_CHEQUE ? 'primary' : 'default'}
+                size="small"
+                style={{ marginLeft: '1em' }}
+              />
             </Box>
             <CustomTable rows={rows || []} columns={columns} />
 

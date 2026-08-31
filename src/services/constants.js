@@ -8,3 +8,10 @@ export const ADD_ACCOUNT = 'account.add';
 export const ADD_BATCH = 'account.add_batch';
 export const EDIT_ACCOUNT = 'account.edit';
 export const REQUEST_NOTIFICATION = 'notification.request';
+
+export const PAYMENT_MODES = {
+  CASH: 'CASH',
+  DOP_CHEQUE: 'DOP_CHEQUE',
+  NON_DOP_CHEQUE: 'NON_DOP_CHEQUE',
+};
+

@@ -1,4 +1,4 @@
-import { Paper, IconButton, Typography, Box } from '@mui/material';
+import { Paper, IconButton, Typography, Box, Chip } from '@mui/material';
 import React, { useMemo } from 'react';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
@@ -18,7 +18,7 @@ import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { axiosUtil } from '../services/axiosinstance';
 import { setPopup } from '../redux/popup';
-import { ADD_INSTALLMENT, EDIT_INSTALLMENT } from '../services/constants';
+import { ADD_INSTALLMENT, EDIT_INSTALLMENT, PAYMENT_MODES } from '../services/constants';
 
 export default function GenerateList() {
   const classes = generateListStyles();
@@ -33,6 +33,7 @@ export default function GenerateList() {
   const columns = useMemo(
     () => [
       { id: 'name', label: t('pi.name'), minWidth: '15em' },
+      { id: 'payModeDisplay', label: 'Mode', align: 'center', minWidth: '8em' },
       { id: 'amount', label: t('account.amount'), align: 'right' },
       { id: 'installments', label: t('installment.number'), align: 'center' },
       { id: 'accountNo', label: t('account.number'), align: 'center', minWidth: '8em' },
@@ -73,6 +74,13 @@ export default function GenerateList() {
   const rows = response?.map(inst => {
     return {
       ...inst,
+      payModeDisplay: (
+        <Chip
+          label={inst.payMode === PAYMENT_MODES.DOP_CHEQUE ? 'DOP Cheque' : 'Cash'}
+          color={inst.payMode === PAYMENT_MODES.DOP_CHEQUE ? 'primary' : 'default'}
+          size="small"
+        />
+      ),
       createdAt: formatDateReverse(inst.createdAt),
       actions: (
         <>

@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { Grid, TextField } from '@mui/material';
+import { Grid, TextField, MenuItem } from '@mui/material';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useHistory } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -11,12 +11,16 @@ import { addInstallmentsStyles } from '../styles/components/addInstallments';
 import { triggerAlert } from '../services/getAlert/getAlert';
 import { ReactComponent as LoaderSVG } from '../assets/icons/spinner.svg';
 import { axiosUtil } from '../services/axiosinstance';
+import { PAYMENT_MODES } from '../services/constants';
 
 const initialValues = {
   name: '',
   accountNo: '',
   amount: '',
   installments: 1,
+  payMode: PAYMENT_MODES.CASH,
+  chequeNo: '',
+  chequeAccNo: '',
 };
 
 export default function AddInstallment({ setOpenPopup, isModifying, record }) {
@@ -38,17 +42,61 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
   const handleChangeInstallments = e => {
     const { value } = e.target;
     const errorMessage = value > 0 ? '' : 'Invalid Installments Number';
-    setErrors({ installments: errorMessage });
+    setErrors(prev => ({ ...prev, installments: errorMessage }));
     setInputValue(prevState => ({ ...prevState, installments: +value }));
   };
+
   const handleChangeInputText = value => {
     const errorMessage = value ? '' : 'Name is required';
-    setErrors({ name: errorMessage });
+    setErrors(prev => ({ ...prev, name: errorMessage }));
     setInputText(value);
   };
 
+  const handlePayModeChange = e => {
+    const { value } = e.target;
+    setInputValue(prevState => ({ ...prevState, payMode: value, chequeAccNo: '', chequeNo: '' }));
+    if (value === PAYMENT_MODES.DOP_CHEQUE) {
+      setErrors(prev => ({
+        ...prev,
+        chequeNo: 'Cheque No is required',
+        chequeAccNo: 'Cheque Acc No is required',
+      }));
+    } else {
+      setErrors(prev => ({
+        ...prev,
+        chequeNo: '',
+        chequeAccNo: '',
+      }));
+    }
+  };
+
+  const handleChequeNoChange = e => {
+    const { value } = e.target;
+    const errorMessage = value.trim() ? '' : 'Cheque number is required';
+    setErrors(prev => ({ ...prev, chequeNo: errorMessage }));
+    setInputValue(prevState => ({ ...prevState, chequeNo: value }));
+  };
+
+  const handleChequeAccNoChange = e => {
+    const { value } = e.target;
+    const errorMessage = /^\d{10}(\d{2})?$/.test(value.trim())
+      ? ''
+      : 'Account number must be 10 or 12 digits';
+    setErrors(prev => ({ ...prev, chequeAccNo: errorMessage }));
+    setInputValue(prevState => ({ ...prevState, chequeAccNo: value }));
+  };
+
   const handleAddInstallment = () => {
-    if (errors.installments || errors.name) return;
+    if (
+      errors.installments ||
+      errors.name ||
+      errors.chequeNo ||
+      errors.chequeAccNo ||
+      (inputValue.payMode === PAYMENT_MODES.DOP_CHEQUE &&
+        (!inputValue.chequeNo || !inputValue.chequeAccNo))
+    )
+      return;
+
     setIsLoading(true);
     axiosUtil[isModifying ? 'put' : 'post'](
       isModifying ? 'editInstallment' : '/addInstallment',
@@ -106,7 +154,7 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           value={inputValue}
           disabled={isModifying || isLoading}
           onChange={(_, newValue) => {
-            if (newValue) setInputValue(newValue);
+            if (newValue) setInputValue(prevState => ({ ...prevState, ...newValue }));
             else setInputValue({ ...initialValues });
           }}
           inputValue={inputText}
@@ -149,6 +197,42 @@ export default function AddInstallment({ setOpenPopup, isModifying, record }) {
           required
           {...(errors.installments && { error: true, helperText: errors.installments })}
         />
+
+        <TextField
+          select
+          label="Mode of Payment"
+          name="payMode"
+          value={inputValue.payMode || PAYMENT_MODES.CASH}
+          onChange={handlePayModeChange}
+          variant="outlined"
+          fullWidth
+          disabled={isLoading}
+        >
+          <MenuItem value={PAYMENT_MODES.CASH}>Cash</MenuItem>
+          <MenuItem value={PAYMENT_MODES.DOP_CHEQUE}>DOP Cheque</MenuItem>
+        </TextField>
+
+        <TextField
+          label="Cheque Number"
+          value={inputValue.chequeNo}
+          onChange={handleChequeNoChange}
+          variant="outlined"
+          fullWidth
+          required
+          disabled={isLoading || inputValue.payMode !== PAYMENT_MODES.DOP_CHEQUE}
+          {...(errors.chequeNo && { error: true, helperText: errors.chequeNo })}
+        />
+        <TextField
+          label="Cheque Savings Account Number (10 or 12 digits)"
+          value={inputValue.chequeAccNo}
+          onChange={handleChequeAccNoChange}
+          variant="outlined"
+          fullWidth
+          required
+          disabled={isLoading || inputValue.payMode !== PAYMENT_MODES.DOP_CHEQUE}
+          {...(errors.chequeAccNo && { error: true, helperText: errors.chequeAccNo })}
+        />
+
         <Control.Button
           text={t('operation.save')}
           onClick={handleAddInstallment}
